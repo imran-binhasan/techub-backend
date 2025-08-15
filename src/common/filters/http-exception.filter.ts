@@ -1,6 +1,6 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus, Inject, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import e, { Request, Response } from "express";
+import { Request, Response } from "express";
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -33,7 +33,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
             status: 'error',
             message,
             ...(errorCode && { errorCode }),
-            ...(errors && errors),
+            ...(errors && {errors}),
             meta: {
                 timestamp: new Date().toISOString(),
                 requestId,
@@ -69,7 +69,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
                 }
             }
         }
-        return { message: 'An error occured' }
+        return { message: 'An error occurred' }
     }
 
     private formatValidationErrors(validationErrors: any[]): Record<string, string[]> {
@@ -123,7 +123,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
             [HttpStatus.BAD_REQUEST]: 'BAD_REQUEST',
             [HttpStatus.UNAUTHORIZED]: 'UNAUTHORIZED',
             [HttpStatus.FORBIDDEN]: 'FORBIDDEN',
-            [HttpStatus.NOT_FOUND]: 'NOT FOUND',
+            [HttpStatus.NOT_FOUND]: 'NOT_FOUND',
             [HttpStatus.CONFLICT]: 'CONFLICT',
             [HttpStatus.UNPROCESSABLE_ENTITY]: 'UNPROCESSABLE_ENTITY',
             [HttpStatus.TOO_MANY_REQUESTS]: 'TOO_MANY_REQUESTS',
