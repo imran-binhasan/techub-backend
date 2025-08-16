@@ -1,6 +1,6 @@
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from "@nestjs/common";
 import { map, Observable } from "rxjs";
-import { ApiResponse, PaginatedServiceResponse } from "../interfaces/api-response.interface";
+import { ApiResponse, PaginatedServiceResponse } from "../interface/api-response.interface";
 
 @Injectable()
 export class ResponseInterceptor<T>
