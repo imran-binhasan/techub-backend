@@ -9,7 +9,7 @@ export class AuthService {
     ){}
 
    generateToken(payload:JwtPayload):string{
-    return this.jwtService.sign(payload, {expiresIn: '12h'})
+    return this.jwtService.sign(payload)
    }
 
    verifyToken(token:string):JwtPayload{
