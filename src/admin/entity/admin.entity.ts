@@ -1,4 +1,5 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Role } from "src/role/entity/role.entity";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, RelationId, UpdateDateColumn } from "typeorm";
 
 @Entity('admin')
 export class Admin{
@@ -19,6 +20,13 @@ export class Admin{
 
    @Column({nullable:true})
    image?:string;
+
+   @ManyToOne(()=> Role, role => role.admins)
+   @JoinColumn({name:'roleId'})
+   role:Role;
+
+   @RelationId((admin:Admin) => admin.role)
+   roleId:string
 
    @CreateDateColumn()
    createdAt:Date;
