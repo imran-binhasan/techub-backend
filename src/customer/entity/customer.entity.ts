@@ -1,6 +1,7 @@
 import { Address } from "src/address/entity/address.entity";
 import { Cart } from "src/cart/entity/cart.entity";
 import { Base } from "src/common/entity/base.entity";
+import { Notification } from "src/notification/entity/notification.entity";
 import { Wishlist } from "src/wishlist/entity/wishlist.entity";
 import { Column, Entity, OneToMany } from "typeorm";
 
@@ -32,4 +33,7 @@ export class Customer extends Base {
 
     @OneToMany(() => Wishlist, wishlist => wishlist.customer)
     wishlists: Wishlist[];
+
+    @OneToMany(()=> Notification, notification => notification.customer)
+    notifications: Notification[];
 }

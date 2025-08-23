@@ -10,7 +10,7 @@ export enum OrderStatus {
 }
 
 @Entity('order')
-export class Customer extends Base {
+export class Order extends Base {
     @Column()
     totalAmount: number;
 
