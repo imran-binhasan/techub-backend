@@ -34,6 +34,6 @@ export class Customer extends Base {
     @OneToMany(() => Wishlist, wishlist => wishlist.customer)
     wishlists: Wishlist[];
 
-    @OneToMany(()=> Notification, notification => notification.customer)
+    @OneToMany(()=> Notification, notification => notification.customers)
     notifications: Notification[];
 }

@@ -1,6 +1,6 @@
 import { Base } from "src/common/entity/base.entity";
 import { Customer } from "src/customer/entity/customer.entity";
-import { Column, Entity, ManyToOne } from "typeorm";
+import { Column, Entity, ManyToMany, ManyToOne } from "typeorm";
 
 
 @Entity('notification')
@@ -11,6 +11,6 @@ export class Notification extends Base {
     @Column()
     description:string;
 
-    @ManyToOne(()=> Customer, customer => customer.notifications)
-    customer:Customer;
+    @ManyToMany(()=> Customer, customer => customer.notifications)
+    customers:Customer[];
 }
