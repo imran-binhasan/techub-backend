@@ -1,16 +1,19 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity('category')
-export class Category {
+@Entity('product')
+export class Product {
     @PrimaryGeneratedColumn('uuid')
-    id:string;
+    id:number;
 
     @Column()
     name:string;
 
-    @ManyToOne(()=> Category, category => category.children, {nullable:true, onDelete:'CASCADE'})
-    parent: Category;
+    @Column()
+    description:string;
 
-    @OneToMany(()=> Category, category => category.parent)
-    children:Category[];
+    @Column()
+    stock:number;
+
+    @Column()
+    price:number
 }
