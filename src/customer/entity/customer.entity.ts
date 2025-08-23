@@ -1,5 +1,6 @@
 import { Address } from "src/address/entity/address.entity";
 import { Cart } from "src/cart/entity/cart.entity";
+import { Wishlist } from "src/wishlist/entity/wishlist.entity";
 import { Column, DeleteDateColumn, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('customer')
@@ -28,8 +29,11 @@ export class Customer {
     @OneToMany(()=> Address, (address) => address.customer)
     addresses: Address[];
 
-    @OneToMany(()=> Cart, cart => cart.product)
+    @OneToMany(()=> Cart, cart => cart.customer)
     carts:Cart[];
+
+    @OneToMany(()=> Wishlist, wishlist => wishlist.customer)
+    wishlists:Wishlist[];
 
     @DeleteDateColumn({ nullable: true })
     deletedAt: Date;
