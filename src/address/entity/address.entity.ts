@@ -1,5 +1,6 @@
+import { Base } from "src/common/entity/base.entity";
 import { Customer } from "src/customer/entity/customer.entity";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne } from "typeorm";
 
 export enum CountryList {
       BANGLADESH = "bangladesh",
@@ -9,9 +10,7 @@ export enum CountryList {
 }
 
 @Entity('address')
-export class Address {
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
+export class Address extends Base {
 
     @Column()
     street: string;

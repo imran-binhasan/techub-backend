@@ -1,11 +1,9 @@
+import { Base } from "src/common/entity/base.entity";
 import { Role } from "src/role/entity/role.entity";
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, RelationId, UpdateDateColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, RelationId } from "typeorm";
 
 @Entity('admin')
-export class Admin{
-   @PrimaryGeneratedColumn('uuid')
-   id:string;
-
+export class Admin extends Base {
    @Column()
    firstName:string
 
@@ -27,13 +25,4 @@ export class Admin{
 
    @RelationId((admin:Admin) => admin.role)
    roleId:string
-
-   @CreateDateColumn()
-   createdAt:Date;
-
-   @UpdateDateColumn()
-   updatedAt:Date
-
-   @DeleteDateColumn({nullable:true})
-   deletedAt:Date
 }

@@ -1,13 +1,12 @@
 import { Brand } from "src/brand/entity/brand.entity";
 import { Cart } from "src/cart/entity/cart.entity";
 import { Category } from "src/category/entity/category.entity";
+import { Base } from "src/common/entity/base.entity";
 import { ProductImage } from "src/product_image/entity/product_image.entity";
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('product')
-export class Product {
-    @PrimaryGeneratedColumn('uuid')
-    id: number;
+export class Product extends Base {
 
     @Column()
     name: string;

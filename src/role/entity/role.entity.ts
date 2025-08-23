@@ -1,12 +1,10 @@
 import { Admin } from "src/admin/entity/admin.entity";
+import { Base } from "src/common/entity/base.entity";
 import { Permission } from "src/permission/entity/permission.entity";
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, OneToMany } from "typeorm";
 
 @Entity('role')
-export class Role {
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
-
+export class Role extends Base{
     @Column()
     name: string;
 
@@ -23,14 +21,4 @@ export class Role {
         inverseJoinColumn: { name: 'permissionId', referencedColumnName: 'id' }
     })
     permissions: Permission[]
-
-    @CreateDateColumn()
-    createdAt: Date;
-
-    @UpdateDateColumn()
-    updatedAt: Date
-
-
-    @DeleteDateColumn({ nullable: true })
-    deletedAt: Date;
 }

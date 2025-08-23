@@ -1,10 +1,9 @@
+import { Base } from "src/common/entity/base.entity";
 import { Customer } from "src/customer/entity/customer.entity";
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Entity, ManyToOne} from "typeorm";
 
 @Entity('wishlist')
-export class Wishlist {
-    @PrimaryGeneratedColumn('uuid')
-    id: number;
+export class Wishlist extends Base {
 
     @ManyToOne(()=> Customer, customer => customer.wishlists, {onDelete: 'CASCADE'})
     customer:Customer;

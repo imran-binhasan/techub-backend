@@ -1,40 +1,35 @@
 import { Address } from "src/address/entity/address.entity";
 import { Cart } from "src/cart/entity/cart.entity";
+import { Base } from "src/common/entity/base.entity";
 import { Wishlist } from "src/wishlist/entity/wishlist.entity";
-import { Column, DeleteDateColumn, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany } from "typeorm";
 
 @Entity('customer')
-export class Customer {
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
+export class Customer extends Base {
+    @Column()
+    firstName: string;
 
     @Column()
-    firstName:string;
-
-    @Column()
-    lastName:string;
+    lastName: string;
 
     @Column({ unique: true })
-    email:string;
+    email: string;
 
     @Column({ nullable: true })
-    phone:string;
+    phone: string;
 
     @Column({ select: false })
-    password:string;
+    password: string;
 
     @Column({ nullable: true })
-    image?:string;
+    image?: string;
 
-    @OneToMany(()=> Address, (address) => address.customer)
+    @OneToMany(() => Address, (address) => address.customer)
     addresses: Address[];
 
-    @OneToMany(()=> Cart, cart => cart.customer)
-    carts:Cart[];
+    @OneToMany(() => Cart, cart => cart.customer)
+    carts: Cart[];
 
-    @OneToMany(()=> Wishlist, wishlist => wishlist.customer)
-    wishlists:Wishlist[];
-
-    @DeleteDateColumn({ nullable: true })
-    deletedAt: Date;
+    @OneToMany(() => Wishlist, wishlist => wishlist.customer)
+    wishlists: Wishlist[];
 }
