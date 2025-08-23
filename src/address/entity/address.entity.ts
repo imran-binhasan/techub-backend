@@ -9,6 +9,11 @@ export enum CountryList {
       CANADA = "canada",
 }
 
+export enum AddressType {
+    SHIPPING = "shipping",
+    BILLING = "billing"
+}
+
 @Entity('address')
 export class Address extends Base {
 
@@ -27,7 +32,10 @@ export class Address extends Base {
     @Column({nullable:true})
     addressLine: string;
 
-    @Column({type:"enum", enum: CountryList})
+    @Column({type:"enum", enum:AddressType, default: AddressType.SHIPPING})
+    type: AddressType
+
+    @Column({type:"enum", enum: CountryList, default: CountryList.BANGLADESH})
     country:CountryList;
 
     @ManyToOne(()=> Customer, (customer) => customer.addresses)
