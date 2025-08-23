@@ -1,5 +1,5 @@
 import { Role } from "src/role/entity/role.entity";
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, RelationId, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, RelationId, UpdateDateColumn } from "typeorm";
 
 @Entity('admin')
 export class Admin{
@@ -33,4 +33,7 @@ export class Admin{
 
    @UpdateDateColumn()
    updatedAt:Date
+
+   @DeleteDateColumn({nullable:true})
+   deletedAt:Date
 }

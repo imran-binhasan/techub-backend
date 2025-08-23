@@ -1,5 +1,5 @@
 import { Role } from "src/role/entity/role.entity";
-import { Column, CreateDateColumn, Entity, ManyToMany, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, ManyToMany, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity('permission')
 export class Permission {
@@ -20,4 +20,8 @@ export class Permission {
 
     @UpdateDateColumn()
     updatedAt: Date
+
+
+    @DeleteDateColumn({ nullable: true })
+    deletedAt: Date;
 }

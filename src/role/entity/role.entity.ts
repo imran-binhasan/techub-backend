@@ -1,6 +1,6 @@
 import { Admin } from "src/admin/entity/admin.entity";
 import { Permission } from "src/permission/entity/permission.entity";
-import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity('role')
 export class Role {
@@ -18,7 +18,7 @@ export class Role {
 
     @ManyToMany(() => Permission)
     @JoinTable({
-        name: 'role_permissions',
+        name: 'role_permission',
         joinColumn: { name: 'roleId', referencedColumnName: 'id' },
         inverseJoinColumn: { name: 'permissionId', referencedColumnName: 'id' }
     })
@@ -30,4 +30,7 @@ export class Role {
     @UpdateDateColumn()
     updatedAt: Date
 
+
+    @DeleteDateColumn({ nullable: true })
+    deletedAt: Date;
 }
