@@ -4,7 +4,7 @@ import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 export enum CountryList {
       BANGLADESH = "bangladesh",
       GERMANY = "germany",
-      USA = "united_state",
+      USA = "united_states",
       CANADA = "canada",
 }
 

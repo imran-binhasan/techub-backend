@@ -1,5 +1,4 @@
 import { Brand } from "src/brand/entity/brand.entity";
-import { Cart } from "src/cart/entity/cart.entity";
 import { Category } from "src/category/entity/category.entity";
 import { ProductImage } from "src/product_image/entity/product_image.entity";
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
@@ -29,7 +28,4 @@ export class Product {
 
     @ManyToOne(() => Brand, brand => brand.products, { nullable: true, onDelete: 'SET NULL' })
     brand: Brand;
-
-    @OneToMany(()=> Cart, cart => cart.product)
-    carts: Cart[];
 }
