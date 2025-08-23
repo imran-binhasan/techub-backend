@@ -9,11 +9,18 @@ export enum couponType {
 
 @Entity('coupon')
 export class Coupon extends Base{
+
+    @Column()
+    name:string;
+
     @Column()
     minPurchase: number;
 
     @Column()
-    maxDiscount: number;
+    maxDiscountAmount: number;
+
+    @Column()
+    discountPerchantage: number;
 
     @Column()
     couponType: couponType

@@ -19,7 +19,7 @@ export class Product extends Base {
     stock: number;
 
     @Column()
-    price: number
+    price: number;
 
     @OneToMany(() => ProductImage, image => image.product)
     images: ProductImage[];

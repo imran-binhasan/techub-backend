@@ -13,6 +13,6 @@ export class ProductReview extends Base {
     @Column()
     comment: string;
     
-    @ManyToOne(()=> Product, product => product.rating)
+    @ManyToOne(()=> Product, product => product.reviews)
     product: Product;
 }
