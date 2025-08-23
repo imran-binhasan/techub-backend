@@ -6,7 +6,6 @@ export enum CountryList {
       GERMANY = "germany",
       USA = "united_state",
       CANADA = "canada",
-
 }
 
 @Entity('address')
