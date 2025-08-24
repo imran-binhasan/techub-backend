@@ -21,4 +21,7 @@ export class CreateAdminDto {
     @MinLength(6)
     password: string;
 
+    @IsNotEmpty()
+    roleId:string;
+
 }

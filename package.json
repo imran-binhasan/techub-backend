@@ -29,6 +29,7 @@
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/typeorm": "^11.0.0",
     "@types/multer": "^2.0.0",
+    "argon2": "^0.44.0",
     "class-validator": "^0.14.2",
     "cloudinary": "^2.7.0",
     "multer": "^2.0.2",
