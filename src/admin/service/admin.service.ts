@@ -7,6 +7,7 @@ import { Role } from "src/role/entity/role.entity";
 import { AuthService } from "src/auth/service/auth.service";
 import { CloudinaryService } from "src/upload/service/cloudinary.service";
 import { CreateAdminDto } from "../dto/create-admin.dto";
+import { UpdateAdminDto } from '../dto/update-admin.dto';
 
 @Injectable()
 export class AdminService {
@@ -25,20 +26,22 @@ export class AdminService {
         image?: Express.Multer.File
     ): Promise<any> {
         const existingAdmin = await this.adminRepository.findOne({
-            where: { email: createAdminDto.email },
+            where: { email: createAdminDto.email }, withDeleted: true,
         });
 
         if (existingAdmin) {
             throw new ConflictException('Email already exists')
         }
 
-        const hashedPassword = await argon2.hash(createAdminDto.password, { type: argon2.argon2id });
-
         const role = createAdminDto.roleId && await this.roleRepository.findOneBy({ id: createAdminDto.roleId })
 
         if (!role) {
             throw new NotFoundException('Role not found')
         }
+
+        const hashedPassword = await argon2.hash(createAdminDto.password, { type: argon2.argon2id });
+
+
 
         const { image: imageFile, ...withoutImage } = createAdminDto;
         const admin = this.adminRepository.create({
@@ -58,16 +61,81 @@ export class AdminService {
 
         const token = this.authService.generateToken({
             sub: savedAdmin.id,
-            email:savedAdmin.email,
-            role:role.name,
-            type:'admin'
+            email: savedAdmin.email,
+            role: role.name,
+            type: 'admin'
         })
 
 
-         const {password:_, ...result} = savedAdmin;
-         return {
+        const { password: _, ...result } = savedAdmin;
+        return {
             access_token: token,
-            admin:result
-         }
+            admin: result
+        }
     }
+
+    async findAll(): Promise<Admin[]> {
+        return await this.adminRepository.find({
+            relations: ['role']
+        })
+    }
+
+    async findOne(id: string): Promise<Admin> {
+        const admin = await this.adminRepository.findOne({
+            where: { id },
+            relations: ['role']
+        });
+
+        if (!admin) {
+            throw new NotFoundException(`Admin with ID ${id} not found`)
+        }
+        return admin
+    }
+
+    async update(
+        id: string,
+        updateAdminDto: UpdateAdminDto,
+        image?: Express.Multer.File
+    ) {
+        const existingAdmin = await this.adminRepository.findOne({ where: { id }, withDeleted: true })
+
+        // Check if employee id doesn't exist
+        if (!existingAdmin) {
+            throw new NotFoundException(`Admin with ID ${id} not found`)
+        }
+
+        // If updating email, check that it doesnt conflict with existing employee
+        if (updateAdminDto.email && updateAdminDto.email !== existingAdmin.email) {
+            const adminWithEmail = await this.adminRepository.findOne({ where: { email: updateAdminDto.email }, withDeleted: true });
+
+            if (adminWithEmail) {
+                throw new ConflictException(`Admin with email ${updateAdminDto.email} already exists`)
+            }
+        }
+
+        if (updateAdminDto.password) {
+            updateAdminDto.password = await argon2.hash(updateAdminDto.password, { type: argon2.argon2id })
+        }
+
+        const { image: imageFile, ...withoutImage } = updateAdminDto;
+
+        const admin = await this.adminRepository.preload({
+            id, ...withoutImage
+        })
+
+        if (!admin) {
+            throw new NotFoundException(`Admin with ID ${id} not found`);
+        }
+
+        // if (image){
+        //     const uploadedImageUrl = await this.cloudinaryService.uploadAdminImage(image, admin?.id);
+
+        //     admin?.image = uploadedImageUrl;
+        // }
+
+        const savedAdmin = await this.adminRepository.save(admin)
+        return this.findOne(savedAdmin.id)
+    }
+
+
 }

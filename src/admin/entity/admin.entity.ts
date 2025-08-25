@@ -19,7 +19,8 @@ export class Admin extends Base {
    @Column({nullable:true})
    image?:string;
 
-   @ManyToOne(()=> Role, role => role.admins)
+   @ManyToOne(()=> Role, role => role.admins, {eager:false, onDelete:'RESTRICT'})
+   
    @JoinColumn({name:'roleId'})
    role:Role;
 
