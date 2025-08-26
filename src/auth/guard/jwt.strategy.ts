@@ -1,3 +1,4 @@
+// jwt.strategy.ts
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { PassportStrategy } from "@nestjs/passport";
@@ -7,9 +8,9 @@ export interface JwtPayload {
     sub: string;
     email: string;
     type: 'admin' | 'customer';
-    role: string;
-    roleId: string;
-    permissions: string[];
+    role?: string;        // Optional - only for admins
+    roleId?: string;      // Optional - only for admins
+    permissions?: string[]; // Optional - only for admins
     iat?: number;
     exp?: number;
 }
@@ -25,13 +26,23 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     }
 
     async validate(payload: JwtPayload) {
-        return {
+        const baseUser = {
             id: payload.sub,
             email: payload.email,
             type: payload.type,
-            role: payload.role,
-            roleId: payload.roleId,
-            permissions: payload.permissions || []
         };
+
+        // Add role-based properties only for admins
+        if (payload.type === 'admin') {
+            return {
+                ...baseUser,
+                role: payload.role,
+                roleId: payload.roleId,
+                permissions: payload.permissions || []
+            };
+        }
+
+        // For customers, just return basic info
+        return baseUser;
     }
 }

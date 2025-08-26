@@ -1,4 +1,3 @@
-// jwt-auth.guard.ts
 import { CanActivate, ExecutionContext, Injectable, Logger, UnauthorizedException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { JwtPayload } from "./jwt.strategy";
@@ -34,7 +33,7 @@ export class JwtAuthGuard implements CanActivate {
             }
             
             request.user = await this.attachUser(payload);
-            this.logger.debug(`[JwtAuthGuard] Successfully authenticated user ${payload.sub}`);
+            this.logger.debug(`[JwtAuthGuard] Successfully authenticated ${payload.type} user ${payload.sub}`);
             return true;
         } catch (error) {
             if (error instanceof UnauthorizedException) {
@@ -46,26 +45,44 @@ export class JwtAuthGuard implements CanActivate {
     }
 
     private isValidJwtPayload(payload: any): payload is JwtPayload {
-        return (
+        const isValid = (
             payload &&
             typeof payload === 'object' &&
             typeof payload.sub === 'string' &&
             typeof payload.email === 'string' &&
-            (payload.type === 'admin' || payload.type === 'customer') &&
-            typeof payload.role === 'string' &&
-            typeof payload.roleId === 'string' &&
-            Array.isArray(payload.permissions)
+            (payload.type === 'admin' || payload.type === 'customer')
         );
+
+        // Additional validation for admin users
+        if (payload.type === 'admin') {
+            return isValid && 
+                   typeof payload.role === 'string' &&
+                   typeof payload.roleId === 'string' &&
+                   Array.isArray(payload.permissions);
+        }
+
+        // For customers, basic validation is enough
+        return isValid;
     }
 
     private async attachUser(payload: JwtPayload): Promise<any> {
-        return {
+        const baseUser = {
             id: payload.sub,
             email: payload.email,
             type: payload.type,
-            role: payload.role,
-            roleId: payload.roleId,
-            permissions: payload.permissions
         };
+
+        // Add admin-specific properties
+        if (payload.type === 'admin') {
+            return {
+                ...baseUser,
+                role: payload.role,
+                roleId: payload.roleId,
+                permissions: payload.permissions || []
+            };
+        }
+
+        // For customers, return basic info
+        return baseUser;
     }
 }

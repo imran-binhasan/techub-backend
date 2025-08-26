@@ -25,6 +25,10 @@ export class Customer extends Base {
     @Column({ nullable: true })
     image?: string;
 
+    @Column({ default: true })
+    isActive: boolean;
+
+    
     @OneToMany(() => Address, (address) => address.customer)
     addresses: Address[];
 
