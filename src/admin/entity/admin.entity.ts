@@ -4,26 +4,28 @@ import { Column, Entity, JoinColumn, ManyToOne, RelationId } from "typeorm";
 
 @Entity('admin')
 export class Admin extends Base {
-   @Column()
-   firstName:string
+    @Column()
+    firstName: string;
 
-   @Column()
-   lastName:string;
+    @Column()
+    lastName: string;
 
-   @Column({unique:true})
-   email:string;
+    @Column({ unique: true })
+    email: string;
 
-   @Column({select:false})
-   password:string
+    @Column({ select: false })
+    password: string;
 
-   @Column({nullable:true})
-   image?:string;
+    @Column({ nullable: true })
+    image?: string;
 
-   @ManyToOne(()=> Role, role => role.admins, {eager:false, onDelete:'RESTRICT'})
-   
-   @JoinColumn({name:'roleId'})
-   role:Role;
+    @Column({ default: true })
+    isActive: boolean;
 
-   @RelationId((admin:Admin) => admin.role)
-   roleId:string
+    @ManyToOne(() => Role, role => role.admins, { eager: false, onDelete: 'RESTRICT' })
+    @JoinColumn({ name: 'roleId' })
+    role: Role;
+
+    @RelationId((admin: Admin) => admin.role)
+    roleId: string;
 }
