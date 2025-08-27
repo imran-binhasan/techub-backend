@@ -1,9 +1,8 @@
-import { PartialType } from "@nestjs/mapped-types";
-import { CreateAdminDto } from "./create-admin.dto";
-import { IsOptional } from "class-validator";
+// admin/dto/update-admin-role.dto.ts
+import { IsUUID, IsNotEmpty } from 'class-validator';
 
-export class UpdateAdminRoleDto{
-    
-    @IsOptional()
-    roleId?: string;
+export class UpdateAdminRoleDto {
+  @IsUUID(4, { message: 'Role ID must be a valid UUID' })
+  @IsNotEmpty({ message: 'Role ID is required' })
+  roleId: string;
 }

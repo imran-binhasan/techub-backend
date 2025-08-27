@@ -1,27 +1,32 @@
-import { Base } from "src/common/entity/base.entity";
-import { Admin } from "src/admin/entity/admin.entity";
-import { Permission } from "src/permission/entity/permission.entity";
-import { Column, Entity, OneToMany, ManyToMany, JoinTable } from "typeorm";
+import { Base } from 'src/common/entity/base.entity';
+import { Admin } from 'src/admin/entity/admin.entity';
+import { Permission } from 'src/permission/entity/permission.entity';
+import {
+  Column,
+  Entity,
+  OneToMany,
+  ManyToMany,
+  JoinTable,
+  Index,
+} from 'typeorm';
 
 @Entity('role')
 export class Role extends Base {
-    @Column({ unique: true })
-    name: string;
+  @Column()
+  resource: string; // e.g., 'admin', 'manager', 'user'
 
-    @Column({ nullable: true })
-    description?: string;
+  @Column()
+  action: string; // e.g., 'super', 'limited', 'read-only'
+  @OneToMany(() => Admin, (admin) => admin.role)
+  admins: Admin[];
 
-    @Column({ default: true })
-    isActive: boolean;
-
-    @OneToMany(() => Admin, admin => admin.role)
-    admins: Admin[];
-
-    @ManyToMany(() => Permission, permission => permission.roles, { eager: false })
-    @JoinTable({
-        name: 'role_permissions',
-        joinColumn: { name: 'roleId', referencedColumnName: 'id' },
-        inverseJoinColumn: { name: 'permissionId', referencedColumnName: 'id' }
-    })
-    permissions: Permission[];
+  @ManyToMany(() => Permission, (permission) => permission.roles, {
+    eager: false,
+  })
+  @JoinTable({
+    name: 'role_permissions',
+    joinColumn: { name: 'roleId', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'permissionId', referencedColumnName: 'id' },
+  })
+  permissions: Permission[];
 }

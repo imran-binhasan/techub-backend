@@ -1,25 +1,62 @@
-import { Module } from "@nestjs/common";
-import { ConfigModule, ConfigService } from "@nestjs/config";
-import { JwtModule } from "@nestjs/jwt";
-import { PassportModule } from "@nestjs/passport";
-import { TypeOrmModule } from "@nestjs/typeorm";
-import { JwtStrategy } from "../guard/jwt.strategy";
-import { JwtAuthGuard } from "../guard/jwt-auth.guard";
-import { AuthService } from "../service/auth.service";
+import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { CacheModule } from '@nestjs/cache-manager';
+
+import { Admin } from 'src/admin/entity/admin.entity';
+import { Customer } from 'src/customer/entity/customer.entity';
+import { Role } from 'src/role/entity/role.entity';
+import { Permission } from 'src/permission/entity/permission.entity';
+
+import { RoleService } from 'src/role/service/role.service';
+import { AuthController } from '../controller/auth.controller';
+import { AuthService } from '../service/auth-service';
+import { TokenService } from '../service/token-service';
+import { PermissionCacheService } from '../service/permission-cache.service';
+import { JwtAuthGuard } from '../guard/jwt-auth-guard';
+import { UserTypeGuard } from '../guard/user-type.guard';
+import { DynamicRbacGuard } from '../guard/dynamic-rbac.guard';
+import { PermissionService } from 'src/permission/service/permission.service';
 
 @Module({
-    imports:[PassportModule.register({defaultStrategy: 'jwt'}), ConfigModule, TypeOrmModule.forFeature([]),JwtModule.registerAsync({
-        imports: [ConfigModule],
-        inject:[ConfigService],
-        useFactory: async (configService:ConfigService) => ({
-            secret: configService.get<string>('JWT_SECRET'),
-            signOptions: {
-                expiresIn: configService.get<string>('JWT_EXPIRATION', '24h'),
-            }
-        })
-    })],
-    providers:[JwtStrategy, JwtAuthGuard, AuthService],
-    exports:[JwtModule,JwtStrategy,JwtAuthGuard]
+  imports: [
+    ConfigModule,
+    TypeOrmModule.forFeature([Admin, Customer, Role, Permission]),
+    CacheModule.register({
+      ttl: 300, // 5 minutes
+      max: 1000, // maximum number of items in cache
+    }),
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET'),
+        signOptions: {
+          expiresIn: configService.get<string>('JWT_ACCESS_EXPIRES_IN', '15m'),
+        },
+      }),
+    }),
+  ],
+  controllers: [AuthController],
+  providers: [
+    AuthService,
+    TokenService,
+    PermissionCacheService,
+    PermissionService,
+    RoleService,
+    JwtAuthGuard,
+    UserTypeGuard,
+    DynamicRbacGuard,
+  ],
+  exports: [
+    AuthService,
+    TokenService,
+    JwtAuthGuard,
+    UserTypeGuard,
+    DynamicRbacGuard,
+    PermissionService,
+    RoleService,
+  ],
 })
-
 export class AuthModule {}

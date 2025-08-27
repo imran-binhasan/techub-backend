@@ -1,43 +1,56 @@
-import { Address } from "src/address/entity/address.entity";
-import { Cart } from "src/cart/entity/cart.entity";
-import { Base } from "src/common/entity/base.entity";
-import { Notification } from "src/notification/entity/notification.entity";
-import { Wishlist } from "src/wishlist/entity/wishlist.entity";
-import { Column, Entity, OneToMany } from "typeorm";
+import { Base } from 'src/common/entity/base.entity';
+import { Address } from 'src/address/entity/address.entity';
+import { Cart } from 'src/cart/entity/cart.entity';
+import { Notification } from 'src/notification/entity/notification.entity';
+import { Wishlist } from 'src/wishlist/entity/wishlist.entity';
+import { 
+  Column, 
+  Entity, 
+  OneToMany, 
+  Index 
+} from 'typeorm';
 
 @Entity('customer')
 export class Customer extends Base {
-    @Column()
-    firstName: string;
+  @Column({ type: 'varchar', length: 100 })
+  firstName: string;
 
-    @Column()
-    lastName: string;
+  @Column({ type: 'varchar', length: 100 })
+  lastName: string;
 
-    @Column({ unique: true })
-    email: string;
+  @Column({ type: 'varchar', length: 255, unique: true })
+  email: string;
 
-    @Column({ nullable: true })
-    phone: string;
+  @Column({ type: 'varchar', length: 20, nullable: true })
+  phone: string;
 
-    @Column({ select: false })
-    password: string;
+  @Column({ type: 'text', select: false })
+  password: string;
 
-    @Column({ nullable: true })
-    image?: string;
+  @Column({ type: 'varchar', length: 500, nullable: true })
+  image?: string;
 
-    @Column({ default: true })
-    isActive: boolean;
+  @Column({ type: 'boolean', default: true })
+  isActive: boolean;
 
-    
-    @OneToMany(() => Address, (address) => address.customer)
-    addresses: Address[];
+  @OneToMany(() => Address, (address) => address.customer, {
+    onDelete: 'CASCADE'
+  })
+  addresses: Address[];
 
-    @OneToMany(() => Cart, cart => cart.customer)
-    carts: Cart[];
+  @OneToMany(() => Cart, cart => cart.customer, {
+    onDelete: 'CASCADE'
+  })
+  carts: Cart[];
 
-    @OneToMany(() => Wishlist, wishlist => wishlist.customer)
-    wishlists: Wishlist[];
+  @OneToMany(() => Wishlist, wishlist => wishlist.customer, {
+    onDelete: 'CASCADE'
+  })
+  wishlists: Wishlist[];
 
-    @OneToMany(()=> Notification, notification => notification.customers)
-    notifications: Notification[];
+  @OneToMany(() => Notification, notification => notification.customers, {
+    onDelete: 'CASCADE'
+  })
+  notifications: Notification[];
+
 }

@@ -1,7 +1,7 @@
-export interface BaseAuthenticatedUser {
-    id: string;
-    email: string;
-    type: 'admin' | 'customer';
+export interface BaseAuthenticatedUser{
+    id:string,
+    email:string,
+    type: 'admin' | 'customer'
 }
 
 export interface AuthenticatedAdmin extends BaseAuthenticatedUser {
@@ -13,6 +13,15 @@ export interface AuthenticatedAdmin extends BaseAuthenticatedUser {
 
 export interface AuthenticatedCustomer extends BaseAuthenticatedUser {
     type: 'customer';
+
 }
 
-export type AuthenticatedUser = AuthenticatedAdmin | AuthenticatedCustomer;
+export type AuthenticatedUser = AuthenticatedAdmin | AuthenticatedCustomer
+
+export function isAdmin(user:AuthenticatedUser):user is AuthenticatedAdmin {
+    return user.type === 'admin'
+}
+
+export function isCustomer(user:AuthenticatedCustomer):user is AuthenticatedCustomer {
+    return user.type === 'customer'
+}

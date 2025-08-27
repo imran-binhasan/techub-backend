@@ -67,4 +67,13 @@ export class CloudinaryService {
     const result = await this.uploadFile(file.buffer, folder, adminId);
     return result.secure_url; // return Cloudinary public URL
   }
+
+  async uploadCustomerImage(
+    file: Express.Multer.File,
+    customerId: string,
+  ): Promise<string> {
+    const folder = `customers/${customerId}`;
+    const result = await this.uploadFile(file.buffer, folder, customerId);
+    return result.secure_url; // return Cloudinary public URL
+  }
 }

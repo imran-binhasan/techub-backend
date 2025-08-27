@@ -1,31 +1,46 @@
-import { Base } from "src/common/entity/base.entity";
-import { Role } from "src/role/entity/role.entity";
-import { Column, Entity, JoinColumn, ManyToOne, RelationId } from "typeorm";
+
+// admin/entity/admin.entity.ts
+import { Base } from 'src/common/entity/base.entity';
+import { Role } from 'src/role/entity/role.entity';
+import { 
+  Column, 
+  Entity, 
+  JoinColumn, 
+  ManyToOne, 
+  RelationId, 
+  Index 
+} from 'typeorm';
 
 @Entity('admin')
 export class Admin extends Base {
-    @Column()
-    firstName: string;
+  @Column({ type: 'varchar', length: 100 })
+  firstName: string;
 
-    @Column()
-    lastName: string;
+  @Column({ type: 'varchar', length: 100 })
+  lastName: string;
 
-    @Column({ unique: true })
-    email: string;
+  @Column({ type: 'varchar', length: 255, unique: true })
+  email: string;
 
-    @Column({ select: false })
-    password: string;
+  @Column({ type: 'text', select: false })
+  password: string;
 
-    @Column({ nullable: true })
-    image?: string;
+  @Column({ type: 'varchar', length: 500, nullable: true })
+  image?: string;
 
-    @Column({ default: true })
-    isActive: boolean;
+  @Column({ type: 'boolean', default: true })
+  isActive: boolean;
 
-    @ManyToOne(() => Role, role => role.admins, { eager: false, onDelete: 'RESTRICT' })
-    @JoinColumn({ name: 'roleId' })
-    role: Role;
+  @ManyToOne(() => Role, role => role.admins, { 
+    eager: false, 
+    onDelete: 'RESTRICT',
+    onUpdate: 'CASCADE'
+  })
+  @JoinColumn({ name: 'roleId' })
+  role: Role;
 
-    @RelationId((admin: Admin) => admin.role)
-    roleId: string;
+  @RelationId((admin: Admin) => admin.role)
+  @Column({ type: 'uuid' })
+  roleId: string;
+
 }
