@@ -57,6 +57,7 @@ import { PermissionService } from 'src/permission/service/permission.service';
     DynamicRbacGuard,
     PermissionService,
     RoleService,
+    PermissionCacheService
   ],
 })
 export class AuthModule {}

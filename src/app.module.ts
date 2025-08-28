@@ -35,7 +35,6 @@ import { BrandModule } from './brand/module/brand.module';
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_NAME'),
         synchronize: true,
-dropSchema: true,
         logging: configService.get<string>('NODE_ENV') == 'development',
         autoLoadEntities: true,
         ssl: { rejectUnauthorized: false },
