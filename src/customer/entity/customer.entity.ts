@@ -7,7 +7,6 @@ import {
   Column, 
   Entity, 
   OneToMany, 
-  Index 
 } from 'typeorm';
 
 @Entity('customer')

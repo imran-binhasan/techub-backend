@@ -4,10 +4,15 @@ import { Column, Entity, OneToMany } from "typeorm";
 
 @Entity('brand')
 export class Brand extends Base {
+  @Column({ unique: true })
+  name: string;
 
-    @Column()
-    name:string;
+  @Column({ nullable: true })
+  description?: string;
 
-    @OneToMany(()=> Product, product => product.brand)
-    products: Product[];
+  @Column({ nullable: true })
+  logo?: string;
+
+  @OneToMany(() => Product, product => product.brand)
+  products: Product[];
 }

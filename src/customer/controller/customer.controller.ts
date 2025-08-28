@@ -23,10 +23,10 @@ import {
   Public
 } from 'src/auth/decorator/auth.decorator';
 import type { AuthenticatedUser } from 'src/auth/interface/auth-user.interface';
-import { PaginationQuery } from 'src/common/interface/api-response.interface';
 import { CreateCustomerDto } from '../dto/create-customer.dto';
 import { UpdateCustomerDto } from '../dto/update-customer.dto';
 import { CurrentUser } from 'src/auth/decorator/current-user.decorator';
+import { PaginationQuery } from 'src/common/dto/pagination_query.dto';
 
 @Controller('customer')
 export class CustomerController {

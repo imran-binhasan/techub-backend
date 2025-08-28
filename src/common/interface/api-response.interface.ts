@@ -25,9 +25,3 @@ export interface PaginatedServiceResponse <T> {
 export interface ServiceResponse<T> {
     data: T;
 }
-
-export interface PaginationQuery {
-    page?:number;
-    limit?:number;
-    search?:string;
-}

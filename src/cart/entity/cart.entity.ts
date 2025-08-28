@@ -1,13 +1,24 @@
-import { Base } from "src/common/entity/base.entity";
-import { Customer } from "src/customer/entity/customer.entity";
-import { Product } from "src/product/entity/product.entity";
-import {Entity, ManyToOne} from "typeorm";
+import { Base } from 'src/common/entity/base.entity';
+import { Customer } from 'src/customer/entity/customer.entity';
+import { Product } from 'src/product/entity/product.entity';
+import { Entity, ManyToOne, Column, JoinColumn, Unique } from 'typeorm';
 
 @Entity('cart')
 export class Cart extends Base {
-    @ManyToOne(() => Customer, customer => customer.carts, { onDelete: 'CASCADE' })
-    customer: Customer;
+  @Column()
+  customerId: string;
 
-    @ManyToOne(() => Product, product => product.carts, { onDelete: 'CASCADE' })
-    product: Product;
+  @Column()
+  productId: string;
+
+  @Column({ type: 'int', default: 1 })
+  quantity: number;
+
+  @ManyToOne(() => Customer, customer => customer.carts, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'customerId' })
+  customer: Customer;
+
+  @ManyToOne(() => Product, product => product.carts, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'productId' })
+  product: Product;
 }

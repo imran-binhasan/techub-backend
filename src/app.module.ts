@@ -13,6 +13,11 @@ import { JwtAuthGuard } from './auth/guard/jwt-auth-guard';
 import { RequestIdMiddleware } from './common/middleware/request-id.middleware';
 import { CustomerModule } from './customer/module/customer.module';
 import { AuthModule } from './auth/module/auth.module';
+import { ProductModule } from './product/module/product.module';
+import { Attribute } from './attribute/entity/attribute.entity';
+import { AttributeModule } from './attribute/module/attribute.module';
+import { AttributeValueModule } from './attribute_value/module/attribute_value.module';
+import { BrandModule } from './brand/module/brand.module';
 
 @Module({
   imports: [
@@ -40,7 +45,11 @@ dropSchema: true,
     AdminModule,
     RoleModule,
     PermissionModule,
-    CustomerModule
+    CustomerModule,
+    ProductModule,
+    AttributeModule,
+    AttributeValueModule,
+    BrandModule
   ],
   controllers: [AppController],
   providers: [

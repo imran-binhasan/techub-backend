@@ -13,8 +13,8 @@ import { CreateCustomerDto } from '../dto/create-customer.dto';
 import { UpdateCustomerDto } from '../dto/update-customer.dto';
 import {
   PaginatedServiceResponse,
-  PaginationQuery,
 } from 'src/common/interface/api-response.interface';
+import { PaginationQuery } from 'src/common/dto/pagination_query.dto';
 
 @Injectable()
 export class CustomerService {

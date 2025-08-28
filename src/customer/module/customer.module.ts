@@ -8,10 +8,12 @@ import { Address } from 'src/address/entity/address.entity';
 import { Cart } from 'src/cart/entity/cart.entity';
 import { Wishlist } from 'src/wishlist/entity/wishlist.entity';
 import { Notification } from 'src/notification/entity/notification.entity';
+import { AuthModule } from 'src/auth/module/auth.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Customer,Address,Cart,Wishlist,Notification]),
+    AuthModule,
   ],
   controllers: [CustomerController],
   providers: [

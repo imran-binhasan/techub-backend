@@ -25,10 +25,10 @@ import {
   RequireResource,
 } from 'src/auth/decorator/auth.decorator';
 import type { AuthenticatedUser } from 'src/auth/interface/auth-user.interface';
-import { PaginationQuery } from 'src/common/interface/api-response.interface';
 import { UpdateAdminDto } from '../dto/update-admin.dto';
 import { UpdateAdminRoleDto } from '../dto/update-admin_role.dto';
 import { CurrentUser } from 'src/auth/decorator/current-user.decorator';
+import { PaginationQuery } from 'src/common/dto/pagination_query.dto';
 
 @Controller('admin')
 export class AdminController {

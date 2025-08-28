@@ -76,4 +76,13 @@ export class CloudinaryService {
     const result = await this.uploadFile(file.buffer, folder, customerId);
     return result.secure_url; // return Cloudinary public URL
   }
+
+  async uploadBrandLogo(
+    file: Express.Multer.File,
+    brandId: string,
+  ): Promise<string> {
+    const folder = `brands/${brandId}`;
+    const result = await this.uploadFile(file.buffer, folder, brandId);
+    return result.secure_url; // return Cloudinary public URL
+  }
 }
