@@ -11,6 +11,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { ProductAttributeValue } from './product_attribute_value.entity';
+import { Wishlist } from 'src/wishlist/entity/wishlist.entity';
 
 @Entity('product')
 export class Product extends Base {
@@ -23,7 +24,7 @@ export class Product extends Base {
   @Column()
   stock: number;
 
-  @Column()
+  @Column({ type: 'decimal', precision: 10, scale: 2 })
   price: number;
 
   @OneToMany(() => ProductImage, (image) => image.product)
@@ -45,6 +46,9 @@ export class Product extends Base {
 
   @OneToMany(() => ProductReview, (review) => review.product)
   reviews: ProductReview[];
+
+  @OneToMany(() => Wishlist, (wishlist) => wishlist.product)
+  wishlists: Wishlist[];
 
   @OneToMany(() => ProductAttributeValue, (pav) => pav.product, {
     cascade: true,
