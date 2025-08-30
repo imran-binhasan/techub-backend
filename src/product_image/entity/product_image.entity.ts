@@ -3,10 +3,21 @@ import { Product } from "src/product/entity/product.entity";
 import { Column, Entity, ManyToOne } from "typeorm";
 
 @Entity('product_image')
-export class ProductImage extends Base {        
+export class ProductImage extends Base {
     @Column()
     url: string;
 
-    @ManyToOne(()=> Product, product=> product.images, {onDelete: 'CASCADE'})
-    product:Product;
+    @Column({ nullable: true })
+    altText: string;
+
+    @Column({ default: false })
+    isPrimary: boolean;
+
+    @Column({ nullable: true })
+    sortOrder: number;
+
+    @ManyToOne(() => Product, product => product.images, { 
+        onDelete: 'CASCADE' 
+    })
+    product: Product;
 }
