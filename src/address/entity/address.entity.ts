@@ -3,10 +3,10 @@ import { Customer } from "src/customer/entity/customer.entity";
 import { Column, Entity, ManyToOne } from "typeorm";
 
 export enum CountryList {
-      BANGLADESH = "bangladesh",
-      GERMANY = "germany",
-      USA = "united_states",
-      CANADA = "canada",
+    BANGLADESH = "bangladesh",
+    GERMANY = "germany",
+    USA = "united_states",
+    CANADA = "canada",
 }
 
 export enum AddressType {
@@ -16,28 +16,33 @@ export enum AddressType {
 
 @Entity('address')
 export class Address extends Base {
-
     @Column()
     street: string;
 
     @Column()
     city: string;
 
-    @Column({nullable:true})
+    @Column({nullable: true})
     state: string;
 
     @Column({nullable: true})
     postalCode: string;
 
-    @Column({nullable:true})
+    @Column({nullable: true})
     addressLine: string;
 
-    @Column({type:"enum", enum:AddressType, default: AddressType.SHIPPING})
-    type: AddressType
+    @Column({type: "enum", enum: AddressType, default: AddressType.SHIPPING})
+    type: AddressType;
 
-    @Column({type:"enum", enum: CountryList, default: CountryList.BANGLADESH})
-    country:CountryList;
+    @Column({type: "enum", enum: CountryList, default: CountryList.BANGLADESH})
+    country: CountryList;
 
-    @ManyToOne(()=> Customer, (customer) => customer.addresses)
+    @Column({default: false})
+    isDefault: boolean;
+
+    @ManyToOne(() => Customer, (customer) => customer.addresses, {
+        onDelete: 'CASCADE'
+    })
     customer: Customer;
 }
+
