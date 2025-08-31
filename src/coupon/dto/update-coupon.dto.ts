@@ -3,32 +3,33 @@ import {
     IsNumber, 
     IsOptional, 
     IsEnum,
-    IsNotEmpty,
     IsDate,
     Min,
     Max,
-    ValidateIf
+    ValidateIf,
+    IsBoolean
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { CouponType } from '../entity/coupon.entity';
 
-export class CreateCouponDto {
+export class UpdateCouponDto {
+    @IsOptional()
     @IsString()
-    @IsNotEmpty()
-    name: string;
+    name?: string;
 
+    @IsOptional()
     @IsString()
-    @IsNotEmpty()
-    code: string;
+    code?: string;
 
+    @IsOptional()
     @IsEnum(CouponType)
-    couponType: CouponType;
+    couponType?: CouponType;
 
     @IsOptional()
     @IsNumber()
     @Min(0)
     @Type(() => Number)
-    minPurchase?: number = 0;
+    minPurchase?: number;
 
     @IsOptional()
     @IsNumber()
@@ -36,6 +37,7 @@ export class CreateCouponDto {
     @Type(() => Number)
     maxDiscountAmount?: number;
 
+    @IsOptional()
     @ValidateIf(o => o.couponType === CouponType.PERCENTAGE)
     @IsNumber()
     @Min(0)
@@ -43,23 +45,30 @@ export class CreateCouponDto {
     @Type(() => Number)
     discountPercentage?: number;
 
+    @IsOptional()
     @ValidateIf(o => o.couponType === CouponType.FIXED)
     @IsNumber()
     @Min(0)
     @Type(() => Number)
     discountAmount?: number;
 
+    @IsOptional()
     @IsDate()
     @Type(() => Date)
-    startDate: Date;
+    startDate?: Date;
 
+    @IsOptional()
     @IsDate()
     @Type(() => Date)
-    endDate: Date;
+    endDate?: Date;
 
     @IsOptional()
     @IsNumber()
     @Min(1)
     @Type(() => Number)
     maxUsageLimit?: number;
+
+    @IsOptional()
+    @IsBoolean()
+    isActive?: boolean;
 }
