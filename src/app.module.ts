@@ -14,10 +14,10 @@ import { RequestIdMiddleware } from './common/middleware/request-id.middleware';
 import { CustomerModule } from './customer/module/customer.module';
 import { AuthModule } from './auth/module/auth.module';
 import { ProductModule } from './product/module/product.module';
-import { Attribute } from './attribute/entity/attribute.entity';
 import { AttributeModule } from './attribute/module/attribute.module';
 import { AttributeValueModule } from './attribute_value/module/attribute_value.module';
 import { BrandModule } from './brand/module/brand.module';
+import { RedisModule } from './redis/module/redis.module';
 
 @Module({
   imports: [
@@ -48,7 +48,8 @@ import { BrandModule } from './brand/module/brand.module';
     ProductModule,
     AttributeModule,
     AttributeValueModule,
-    BrandModule
+    BrandModule,
+    RedisModule
   ],
   controllers: [AppController],
   providers: [
