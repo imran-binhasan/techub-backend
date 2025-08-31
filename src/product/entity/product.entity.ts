@@ -4,14 +4,10 @@ import { Category } from 'src/category/entity/category.entity';
 import { Base } from 'src/common/entity/base.entity';
 import { ProductImage } from 'src/product_image/entity/product_image.entity';
 import { ProductReview } from 'src/product_review/entity/product_review.entity';
-import {
-  Column,
-  Entity,
-  ManyToOne,
-  OneToMany,
-} from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { ProductAttributeValue } from './product_attribute_value.entity';
 import { Wishlist } from 'src/wishlist/entity/wishlist.entity';
+import { Inventory } from 'src/inventory/entity/inventory.entity';
 
 @Entity('product')
 export class Product extends Base {
@@ -49,6 +45,11 @@ export class Product extends Base {
 
   @OneToMany(() => Wishlist, (wishlist) => wishlist.product)
   wishlists: Wishlist[];
+
+  @OneToMany(() => Inventory, (inventory) => inventory.product, {
+    cascade: true,
+  })
+  inventory: Inventory[];
 
   @OneToMany(() => ProductAttributeValue, (pav) => pav.product, {
     cascade: true,
