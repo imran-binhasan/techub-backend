@@ -31,6 +31,9 @@ import { ProductReviewModule } from './product_review/module/product_review.modu
 import { WishlistModule } from './wishlist/module/wishlist.module';
 import { SmsModule } from './sms/module/sms.module';
 import { AddressModule } from './address/module/address.module';
+import { OrderModule } from './order/module/order.module';
+import { PaymentModule } from './payment/module/payment.module';
+import { PaymentGatewayModule } from './payment-gateway/payment-gateway.module';
 
 @Module({
   imports: [
@@ -76,6 +79,9 @@ import { AddressModule } from './address/module/address.module';
     WishlistModule,
     SmsModule,
     AddressModule,
+    OrderModule,
+    PaymentModule,
+    PaymentGatewayModule,
   ],
   controllers: [AppController],
   providers: [
