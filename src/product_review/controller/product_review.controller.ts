@@ -17,10 +17,10 @@ import {
   RequireResource,
   Public,
 } from 'src/auth/decorator/auth.decorator';
-import { ProductReviewService } from '../service/product_review.dto';
 import { CreateProductReviewDto } from '../dto/create-product_review.dto';
 import { UpdateProductReviewDto } from '../dto/update-product_review.dto';
 import { ProductReviewQueryDto } from '../dto/query-product_review.dto';
+import { ProductReviewService } from '../service/product_review.service';
 
 @Controller('product-review')
 export class ProductReviewController {
