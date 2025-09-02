@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Product } from 'src/product/entity/product.entity';
 import { ProductReview } from '../entity/product_review.entity';
 import { ProductReviewController } from '../controller/product_review.controller';
-import { ProductReviewService } from '../service/product_review.dto';
+import { ProductReviewService } from '../service/product_review.service';
 import { AuthModule } from 'src/auth/module/auth.module';
 
 @Module({

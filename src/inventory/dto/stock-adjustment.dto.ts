@@ -6,7 +6,7 @@ import {
   IsNotEmpty,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { TransactionType } from '../entity/inventory-transactuin.entity';
+import { TransactionType } from '../entity/inventory-transaction.entity';
 
 export class StockAdjustmentDto {
   @IsEnum(TransactionType)

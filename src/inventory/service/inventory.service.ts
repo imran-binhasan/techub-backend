@@ -16,7 +16,7 @@ import { PaginatedServiceResponse } from 'src/common/interface/api-response.inte
 import {
   InventoryTransaction,
   TransactionType,
-} from '../entity/inventory-transactuin.entity';
+} from '../entity/inventory-transaction.entity';
 import { InventoryQueryDto } from '../dto/query-inventory.dto';
 
 @Injectable()
