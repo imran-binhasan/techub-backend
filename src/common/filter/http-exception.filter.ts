@@ -100,7 +100,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
         if (property && constraints) {
           const messages = Object.values(constraints);
           messages.forEach((msg) =>
-            this.addErrorToField(formattedErrors, property, msg),
+            this.addErrorToField(formattedErrors, property, String(msg)),
           );
         }
       }

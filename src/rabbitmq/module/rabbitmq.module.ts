@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { RabbitMQModule as NestRabbitMQModule } from '@golevelup/nestjs-rabbitmq';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { RabbitMQService } from '../service/rabbitmq.service';
+import { AuthModule } from 'src/auth/module/auth.module';
 
 export interface RabbitMQModuleOptions {
   exchanges?: Array<{
@@ -24,6 +25,7 @@ export class RabbitMQModule {
       module: RabbitMQModule,
       imports: [
         ConfigModule,
+        AuthModule,
         EventEmitterModule.forRoot(),
         NestRabbitMQModule.forRootAsync({
           imports: [ConfigModule],
