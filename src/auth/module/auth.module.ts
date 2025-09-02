@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { CacheModule } from '@nestjs/cache-manager';
 
 import { Admin } from 'src/admin/entity/admin.entity';
 import { Customer } from 'src/customer/entity/customer.entity';
@@ -23,10 +22,6 @@ import { PermissionService } from 'src/permission/service/permission.service';
   imports: [
     ConfigModule,
     TypeOrmModule.forFeature([Admin, Customer, Role, Permission]),
-    CacheModule.register({
-      ttl: 300, // 5 minutes
-      max: 1000, // maximum number of items in cache
-    }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],

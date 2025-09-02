@@ -45,7 +45,7 @@ export class TokenService {
   verifyRefreshToken(token: string): JwtPayload {
     try {
       return this.jwtService.verify<JwtPayload>(token, {
-        secret: this.configService.get('J'),
+        secret: this.configService.get('JWT_REFRESH_SECRET'),
       });
     } catch (error) {
       throw new UnauthorizedException('Invalid or expired refresh token');

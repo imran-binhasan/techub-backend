@@ -4,9 +4,10 @@ import { Product } from 'src/product/entity/product.entity';
 import { ProductReview } from '../entity/product_review.entity';
 import { ProductReviewController } from '../controller/product_review.controller';
 import { ProductReviewService } from '../service/product_review.dto';
+import { AuthModule } from 'src/auth/module/auth.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ProductReview, Product])],
+  imports: [TypeOrmModule.forFeature([ProductReview, Product]), AuthModule],
   controllers: [ProductReviewController],
   providers: [ProductReviewService],
   exports: [ProductReviewService],

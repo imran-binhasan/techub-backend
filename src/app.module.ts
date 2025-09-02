@@ -18,6 +18,19 @@ import { AttributeModule } from './attribute/module/attribute.module';
 import { AttributeValueModule } from './attribute_value/module/attribute_value.module';
 import { BrandModule } from './brand/module/brand.module';
 import { RedisModule } from './redis/module/redis.module';
+import { CacheModule } from './cache/module/cache.module';
+import { RabbitMQModule } from './rabbitmq/module/rabbitmq.module';
+import { UploadModule } from './upload/module/upload.module';
+import { CategoryModule } from './category/module/category.module';
+import { CartModule } from './cart/module/cart.module';
+import { CouponModule } from './coupon/module/coupon.module';
+import { InventoryModule } from './inventory/module/inventory.module';
+import { NotificationModule } from './notification/module/notification.module';
+import { ProductImageModule } from './product_image/module/product_image.module';
+import { ProductReviewModule } from './product_review/module/product_review.module';
+import { WishlistModule } from './wishlist/module/wishlist.module';
+import { SmsModule } from './sms/module/sms.module';
+import { AddressModule } from './address/module/address.module';
 
 @Module({
   imports: [
@@ -40,6 +53,10 @@ import { RedisModule } from './redis/module/redis.module';
         ssl: { rejectUnauthorized: false },
       }),
     }),
+    RedisModule,
+    CacheModule,
+    RabbitMQModule.forRootAsync(),
+    UploadModule,
     AuthModule,
     AdminModule,
     RoleModule,
@@ -49,7 +66,16 @@ import { RedisModule } from './redis/module/redis.module';
     AttributeModule,
     AttributeValueModule,
     BrandModule,
-    RedisModule,
+    CategoryModule,
+    CartModule,
+    CouponModule,
+    InventoryModule,
+    NotificationModule,
+    ProductImageModule,
+    ProductReviewModule,
+    WishlistModule,
+    SmsModule,
+    AddressModule,
   ],
   controllers: [AppController],
   providers: [
