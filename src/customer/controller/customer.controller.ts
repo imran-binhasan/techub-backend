@@ -15,12 +15,12 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CustomerService } from '../service/customer.service';
-import { 
-  AdminOnly, 
+import {
+  AdminOnly,
   CustomerOnly,
-  RequirePermissions, 
+  RequirePermissions,
   RequireResource,
-  Public
+  Public,
 } from 'src/auth/decorator/auth.decorator';
 import type { AuthenticatedUser } from 'src/auth/interface/auth-user.interface';
 import { CreateCustomerDto } from '../dto/create-customer.dto';
@@ -94,7 +94,11 @@ export class CustomerController {
     @Body() updateCustomerDto: UpdateCustomerDto,
     @UploadedFile() image?: Express.Multer.File,
   ) {
-    const result = await this.customerService.update(id, updateCustomerDto, image);
+    const result = await this.customerService.update(
+      id,
+      updateCustomerDto,
+      image,
+    );
     return {
       success: true,
       message: 'Customer updated successfully',
@@ -157,7 +161,11 @@ export class CustomerController {
     @Body() updateCustomerDto: Omit<UpdateCustomerDto, 'isActive'>,
     @UploadedFile() image?: Express.Multer.File,
   ) {
-    const result = await this.customerService.update(user.id, updateCustomerDto, image);
+    const result = await this.customerService.update(
+      user.id,
+      updateCustomerDto,
+      image,
+    );
     return {
       success: true,
       message: 'Profile updated successfully',
@@ -176,4 +184,3 @@ export class CustomerController {
     };
   }
 }
-

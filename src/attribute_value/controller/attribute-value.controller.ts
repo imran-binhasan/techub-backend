@@ -29,7 +29,9 @@ export class AttributeValueController {
   @RequireResource('attribute_value', 'create')
   @Post()
   async create(@Body() createAttributeValueDto: CreateAttributeValueDto) {
-    const result = await this.attributeValueService.create(createAttributeValueDto);
+    const result = await this.attributeValueService.create(
+      createAttributeValueDto,
+    );
     return {
       success: true,
       message: 'Attribute value created successfully',
@@ -76,7 +78,10 @@ export class AttributeValueController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateAttributeValueDto: UpdateAttributeValueDto,
   ) {
-    const result = await this.attributeValueService.update(id, updateAttributeValueDto);
+    const result = await this.attributeValueService.update(
+      id,
+      updateAttributeValueDto,
+    );
     return {
       success: true,
       message: 'Attribute value updated successfully',
@@ -110,8 +115,11 @@ export class AttributeValueController {
   // Utility endpoints
   @Public()
   @Get('attribute/:attributeId')
-  async findByAttribute(@Param('attributeId', ParseUUIDPipe) attributeId: string) {
-    const result = await this.attributeValueService.findByAttribute(attributeId);
+  async findByAttribute(
+    @Param('attributeId', ParseUUIDPipe) attributeId: string,
+  ) {
+    const result =
+      await this.attributeValueService.findByAttribute(attributeId);
     return {
       success: true,
       message: 'Attribute values by attribute retrieved successfully',
@@ -125,7 +133,10 @@ export class AttributeValueController {
     @Param('attributeId', ParseUUIDPipe) attributeId: string,
     @Body('values') values: string[],
   ) {
-    const result = await this.attributeValueService.bulkCreateForAttribute(attributeId, values);
+    const result = await this.attributeValueService.bulkCreateForAttribute(
+      attributeId,
+      values,
+    );
     return {
       success: true,
       message: 'Attribute values created successfully',

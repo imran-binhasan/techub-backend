@@ -1,8 +1,8 @@
-import { 
-  IsEmail, 
-  IsNotEmpty, 
-  IsOptional, 
-  IsString, 
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
   MinLength,
   IsBoolean,
   Length,
@@ -41,4 +41,3 @@ export class CreateCustomerDto {
   @IsBoolean({ message: 'isActive must be a boolean' })
   isActive?: boolean = true;
 }
-

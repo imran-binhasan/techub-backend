@@ -1,10 +1,5 @@
 // src/attribute_value/dto/create-attribute-value.dto.ts
-import {
-  IsString,
-  IsNotEmpty,
-  IsUUID,
-  Length,
-} from 'class-validator';
+import { IsString, IsNotEmpty, IsUUID, Length } from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export class CreateAttributeValueDto {

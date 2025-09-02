@@ -8,10 +8,12 @@ import { TokenResponse } from '../interface/token-response.interface';
 export class TokenService {
   constructor(
     private readonly jwtService: JwtService,
-    private readonly configService: ConfigService
+    private readonly configService: ConfigService,
   ) {}
 
-  generateTokenPair(payload: Omit<JwtPayload, 'iat' | 'exp' | 'tokenType'>): TokenResponse {
+  generateTokenPair(
+    payload: Omit<JwtPayload, 'iat' | 'exp' | 'tokenType'>,
+  ): TokenResponse {
     const accessPayload: JwtPayload = { ...payload, tokenType: 'access' };
     const refreshPayload: JwtPayload = { ...payload, tokenType: 'refresh' };
 

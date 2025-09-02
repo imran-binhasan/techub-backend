@@ -9,9 +9,7 @@ import { Repository } from 'typeorm';
 import { Cart } from '../entity/cart.entity';
 import { Customer } from 'src/customer/entity/customer.entity';
 import { Product } from 'src/product/entity/product.entity';
-import {
-  PaginatedServiceResponse,
-} from 'src/common/interface/api-response.interface';
+import { PaginatedServiceResponse } from 'src/common/interface/api-response.interface';
 import { CreateCartDto } from '../dto/create-cart.dto';
 import { CartQueryDto } from '../dto/query-cart.dto';
 import { UpdateCartDto } from '../dto/update-cart.dto';
@@ -27,14 +25,19 @@ export class CartService {
     private readonly productRepository: Repository<Product>,
   ) {}
 
-  async addToCart(customerId: string, createCartDto: CreateCartDto): Promise<Cart> {
+  async addToCart(
+    customerId: string,
+    createCartDto: CreateCartDto,
+  ): Promise<Cart> {
     // Verify customer exists
     const customer = await this.customerRepository.findOne({
       where: { id: customerId, isActive: true },
     });
 
     if (!customer) {
-      throw new NotFoundException(`Customer with ID ${customerId} not found or inactive`);
+      throw new NotFoundException(
+        `Customer with ID ${customerId} not found or inactive`,
+      );
     }
 
     // Verify product exists and has sufficient stock
@@ -43,13 +46,15 @@ export class CartService {
     });
 
     if (!product) {
-      throw new NotFoundException(`Product with ID ${createCartDto.productId} not found`);
+      throw new NotFoundException(
+        `Product with ID ${createCartDto.productId} not found`,
+      );
     }
 
     const requestedQuantity = createCartDto.quantity || 1;
     if (product.stock < requestedQuantity) {
       throw new BadRequestException(
-        `Insufficient stock. Available: ${product.stock}, Requested: ${requestedQuantity}`
+        `Insufficient stock. Available: ${product.stock}, Requested: ${requestedQuantity}`,
       );
     }
 
@@ -64,10 +69,10 @@ export class CartService {
     if (existingCartItem) {
       // Update quantity if item already exists
       const newQuantity = existingCartItem.quantity + requestedQuantity;
-      
+
       if (product.stock < newQuantity) {
         throw new BadRequestException(
-          `Insufficient stock. Available: ${product.stock}, Total requested: ${newQuantity}`
+          `Insufficient stock. Available: ${product.stock}, Total requested: ${newQuantity}`,
         );
       }
 
@@ -114,7 +119,7 @@ export class CartService {
     if (search?.trim()) {
       queryBuilder.andWhere(
         '(customer.firstName ILIKE :search OR customer.lastName ILIKE :search OR product.name ILIKE :search)',
-        { search: `%${search.trim()}%` }
+        { search: `%${search.trim()}%` },
       );
     }
 
@@ -166,7 +171,10 @@ export class CartService {
     });
   }
 
-  async updateQuantity(id: string, updateCartDto: UpdateCartDto): Promise<Cart> {
+  async updateQuantity(
+    id: string,
+    updateCartDto: UpdateCartDto,
+  ): Promise<Cart> {
     const cartItem = await this.cartRepository.findOne({
       where: { id },
       relations: ['product'],
@@ -179,7 +187,7 @@ export class CartService {
     // Check if product has sufficient stock
     if (cartItem.product.stock < updateCartDto.quantity) {
       throw new BadRequestException(
-        `Insufficient stock. Available: ${cartItem.product.stock}, Requested: ${updateCartDto.quantity}`
+        `Insufficient stock. Available: ${cartItem.product.stock}, Requested: ${updateCartDto.quantity}`,
       );
     }
 
@@ -214,14 +222,16 @@ export class CartService {
   }
 
   // Utility methods
-  async getCartTotal(customerId: string): Promise<{ total: number; items: number }> {
+  async getCartTotal(
+    customerId: string,
+  ): Promise<{ total: number; items: number }> {
     const cartItems = await this.cartRepository.find({
       where: { customerId },
       relations: ['product'],
     });
 
     const total = cartItems.reduce((sum, item) => {
-      return sum + (item.product.price * item.quantity);
+      return sum + item.product.price * item.quantity;
     }, 0);
 
     const items = cartItems.reduce((sum, item) => sum + item.quantity, 0);
@@ -235,7 +245,10 @@ export class CartService {
     });
   }
 
-  async findCartItemByProductAndCustomer(customerId: string, productId: string): Promise<Cart | null> {
+  async findCartItemByProductAndCustomer(
+    customerId: string,
+    productId: string,
+  ): Promise<Cart | null> {
     return this.cartRepository.findOne({
       where: {
         customerId,
@@ -245,23 +258,33 @@ export class CartService {
     });
   }
 
-  async bulkUpdateQuantities(updates: { id: string; quantity: number }[]): Promise<Cart[]> {
+  async bulkUpdateQuantities(
+    updates: { id: string; quantity: number }[],
+  ): Promise<Cart[]> {
     const updatedItems: Cart[] = [];
 
     for (const update of updates) {
       try {
-        const updatedItem = await this.updateQuantity(update.id, { quantity: update.quantity });
+        const updatedItem = await this.updateQuantity(update.id, {
+          quantity: update.quantity,
+        });
         updatedItems.push(updatedItem);
       } catch (error) {
         // Continue with other items if one fails
-        console.error(`Failed to update cart item ${update.id}:`, error.message);
+        console.error(
+          `Failed to update cart item ${update.id}:`,
+          error.message,
+        );
       }
     }
 
     return updatedItems;
   }
 
-  async moveToCart(customerId: string, fromCustomerId: string): Promise<Cart[]> {
+  async moveToCart(
+    customerId: string,
+    fromCustomerId: string,
+  ): Promise<Cart[]> {
     // Verify both customers exist
     const [customer, fromCustomer] = await Promise.all([
       this.customerRepository.findOne({ where: { id: customerId } }),
@@ -273,7 +296,9 @@ export class CartService {
     }
 
     if (!fromCustomer) {
-      throw new NotFoundException(`Source customer with ID ${fromCustomerId} not found`);
+      throw new NotFoundException(
+        `Source customer with ID ${fromCustomerId} not found`,
+      );
     }
 
     // Get cart items from source customer
@@ -295,7 +320,7 @@ export class CartService {
           quantity: item.quantity,
         });
         movedItems.push(newCartItem);
-        
+
         // Remove from source cart
         await this.cartRepository.delete(item.id);
       } catch (error) {

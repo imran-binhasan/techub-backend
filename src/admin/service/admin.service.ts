@@ -10,9 +10,7 @@ import { Admin } from '../entity/admin.entity';
 import { Repository } from 'typeorm';
 import { Role } from 'src/role/entity/role.entity';
 import { CloudinaryService } from 'src/upload/service/cloudinary.service';
-import {
-  PaginatedServiceResponse,
-} from 'src/common/interface/api-response.interface';
+import { PaginatedServiceResponse } from 'src/common/interface/api-response.interface';
 import { CreateAdminDto } from '../dto/create-admin.dto';
 import { UpdateAdminDto } from '../dto/update-admin.dto';
 import { PaginationQuery } from 'src/common/dto/pagination_query.dto';

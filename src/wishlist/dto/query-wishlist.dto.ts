@@ -1,4 +1,3 @@
-
 import { IsOptional, IsUUID } from 'class-validator';
 import { PaginationQuery } from 'src/common/dto/pagination_query.dto';
 

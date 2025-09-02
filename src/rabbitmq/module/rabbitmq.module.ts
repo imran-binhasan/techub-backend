@@ -62,13 +62,16 @@ export class RabbitMQModule {
                 options: { durable: true },
               },
               // Custom exchanges from options
-              ...(options?.exchanges || []).map(exchange => ({
+              ...(options?.exchanges || []).map((exchange) => ({
                 name: exchange.name,
                 type: exchange.type,
                 options: { durable: true },
               })),
             ],
-            uri: configService.get<string>('RABBITMQ_URI', 'amqp://localhost:5672'),
+            uri: configService.get<string>(
+              'RABBITMQ_URI',
+              'amqp://localhost:5672',
+            ),
             connectionInitOptions: {
               wait: false,
               timeout: 30000,
@@ -79,8 +82,14 @@ export class RabbitMQModule {
               heartbeatIntervalInSeconds: 15,
               reconnectTimeInSeconds: 30,
             },
-            prefetchCount: configService.get<number>('RABBITMQ_PREFETCH_COUNT', 10),
-            defaultRpcTimeout: configService.get<number>('RABBITMQ_RPC_TIMEOUT', 30000),
+            prefetchCount: configService.get<number>(
+              'RABBITMQ_PREFETCH_COUNT',
+              10,
+            ),
+            defaultRpcTimeout: configService.get<number>(
+              'RABBITMQ_RPC_TIMEOUT',
+              30000,
+            ),
             defaultExchangeType: 'topic',
           }),
         }),

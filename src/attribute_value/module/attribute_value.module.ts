@@ -8,7 +8,7 @@ import { AttributeValueService } from '../service/attribute_value.service';
 import { AuthModule } from 'src/auth/module/auth.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([AttributeValue, Attribute]),AuthModule],
+  imports: [TypeOrmModule.forFeature([AttributeValue, Attribute]), AuthModule],
   controllers: [AttributeValueController],
   providers: [AttributeValueService],
   exports: [AttributeValueService],

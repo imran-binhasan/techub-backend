@@ -1,11 +1,5 @@
 // src/cart/dto/create-cart.dto.ts
-import {
-  IsUUID,
-  IsNotEmpty,
-  IsNumber,
-  Min,
-  IsOptional,
-} from 'class-validator';
+import { IsUUID, IsNotEmpty, IsNumber, Min, IsOptional } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class CreateCartDto {
@@ -19,4 +13,3 @@ export class CreateCartDto {
   @Type(() => Number)
   quantity?: number = 1;
 }
-

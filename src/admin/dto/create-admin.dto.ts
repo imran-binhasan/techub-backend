@@ -1,8 +1,8 @@
-import { 
-  IsEmail, 
-  IsNotEmpty, 
-  IsOptional, 
-  IsString, 
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
   MinLength,
   IsUUID,
   IsBoolean,
@@ -38,4 +38,3 @@ export class CreateAdminDto {
   @IsBoolean({ message: 'isActive must be a boolean' })
   isActive?: boolean = true;
 }
-

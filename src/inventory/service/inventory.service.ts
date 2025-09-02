@@ -12,10 +12,11 @@ import { CreateInventoryDto } from '../dto/create-inventory.dto';
 import { UpdateInventoryDto } from '../dto/update-inventory.dto';
 import { StockAdjustmentDto } from '../dto/stock-adjustment.dto';
 
+import { PaginatedServiceResponse } from 'src/common/interface/api-response.interface';
 import {
-  PaginatedServiceResponse,
-} from 'src/common/interface/api-response.interface';
-import { InventoryTransaction, TransactionType } from '../entity/inventory-transactuin.entity';
+  InventoryTransaction,
+  TransactionType,
+} from '../entity/inventory-transactuin.entity';
 import { InventoryQueryDto } from '../dto/query-inventory.dto';
 
 @Injectable()
@@ -46,7 +47,9 @@ export class InventoryService {
     });
 
     if (!product) {
-      throw new NotFoundException(`Product with ID ${createInventoryDto.productId} not found`);
+      throw new NotFoundException(
+        `Product with ID ${createInventoryDto.productId} not found`,
+      );
     }
 
     // Create inventory
@@ -70,14 +73,16 @@ export class InventoryService {
     }
 
     // Update product stock
-    await this.productRepository.update(product.id, { 
-      stock: createInventoryDto.initialStock 
+    await this.productRepository.update(product.id, {
+      stock: createInventoryDto.initialStock,
     });
 
     return this.findOne(savedInventory.id);
   }
 
-  async findAll(query: InventoryQueryDto): Promise<PaginatedServiceResponse<Inventory>> {
+  async findAll(
+    query: InventoryQueryDto,
+  ): Promise<PaginatedServiceResponse<Inventory>> {
     const {
       page = 1,
       limit = 10,
@@ -108,8 +113,8 @@ export class InventoryService {
       ]);
 
     if (search?.trim()) {
-      queryBuilder.andWhere('product.name ILIKE :search', { 
-        search: `%${search.trim()}%` 
+      queryBuilder.andWhere('product.name ILIKE :search', {
+        search: `%${search.trim()}%`,
       });
     }
 
@@ -118,16 +123,20 @@ export class InventoryService {
     }
 
     if (location?.trim()) {
-      queryBuilder.andWhere('inventory.location ILIKE :location', { 
-        location: `%${location.trim()}%` 
+      queryBuilder.andWhere('inventory.location ILIKE :location', {
+        location: `%${location.trim()}%`,
       });
     }
 
     if (lowStock !== undefined) {
       if (lowStock) {
-        queryBuilder.andWhere('inventory.currentStock <= inventory.reorderLevel');
+        queryBuilder.andWhere(
+          'inventory.currentStock <= inventory.reorderLevel',
+        );
       } else {
-        queryBuilder.andWhere('inventory.currentStock > inventory.reorderLevel');
+        queryBuilder.andWhere(
+          'inventory.currentStock > inventory.reorderLevel',
+        );
       }
     }
 
@@ -169,13 +178,18 @@ export class InventoryService {
     });
 
     if (!inventory) {
-      throw new NotFoundException(`Inventory for product ID ${productId} not found`);
+      throw new NotFoundException(
+        `Inventory for product ID ${productId} not found`,
+      );
     }
 
     return inventory;
   }
 
-  async update(id: string, updateInventoryDto: UpdateInventoryDto): Promise<Inventory> {
+  async update(
+    id: string,
+    updateInventoryDto: UpdateInventoryDto,
+  ): Promise<Inventory> {
     const inventory = await this.inventoryRepository.findOne({
       where: { id },
       relations: ['product'],
@@ -193,7 +207,10 @@ export class InventoryService {
     return this.findOne(id);
   }
 
-  async adjustStock(id: string, adjustmentDto: StockAdjustmentDto): Promise<Inventory> {
+  async adjustStock(
+    id: string,
+    adjustmentDto: StockAdjustmentDto,
+  ): Promise<Inventory> {
     const inventory = await this.inventoryRepository.findOne({
       where: { id },
       relations: ['product'],
@@ -233,13 +250,20 @@ export class InventoryService {
     });
 
     // Update product stock
-    await this.productRepository.update(inventory.product.id, { stock: newStock });
+    await this.productRepository.update(inventory.product.id, {
+      stock: newStock,
+    });
 
     // Create transaction
-    await this.createTransaction(inventory, {
-      ...adjustmentDto,
-      quantity: Math.abs(adjustmentDto.quantity),
-    }, previousStock, newStock);
+    await this.createTransaction(
+      inventory,
+      {
+        ...adjustmentDto,
+        quantity: Math.abs(adjustmentDto.quantity),
+      },
+      previousStock,
+      newStock,
+    );
 
     return this.findOne(id);
   }
@@ -255,7 +279,9 @@ export class InventoryService {
     }
 
     if (inventory.currentStock > 0) {
-      throw new BadRequestException('Cannot delete inventory with stock. Adjust stock to zero first.');
+      throw new BadRequestException(
+        'Cannot delete inventory with stock. Adjust stock to zero first.',
+      );
     }
 
     await this.inventoryRepository.softDelete(id);
@@ -269,12 +295,12 @@ export class InventoryService {
       .where('inventory.currentStock <= inventory.reorderLevel');
 
     if (threshold !== undefined) {
-      queryBuilder.andWhere('inventory.currentStock <= :threshold', { threshold });
+      queryBuilder.andWhere('inventory.currentStock <= :threshold', {
+        threshold,
+      });
     }
 
-    return queryBuilder
-      .orderBy('inventory.currentStock', 'ASC')
-      .getMany();
+    return queryBuilder.orderBy('inventory.currentStock', 'ASC').getMany();
   }
 
   async getInventoryStats(): Promise<{

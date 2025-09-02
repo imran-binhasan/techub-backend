@@ -139,7 +139,9 @@ export class CartController {
     for (const update of updates) {
       const cartItem = await this.cartService.findOne(update.id);
       if (cartItem.customerId !== user.id) {
-        throw new BadRequestException('You can only update your own cart items');
+        throw new BadRequestException(
+          'You can only update your own cart items',
+        );
       }
     }
 
@@ -213,7 +215,9 @@ export class CartController {
   @RequireResource('cart', 'manage')
   @Delete('customer/:customerId/clear')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async clearCustomerCart(@Param('customerId', ParseUUIDPipe) customerId: string) {
+  async clearCustomerCart(
+    @Param('customerId', ParseUUIDPipe) customerId: string,
+  ) {
     await this.cartService.clearCart(customerId);
     return {
       success: true,
@@ -224,7 +228,9 @@ export class CartController {
   // Utility endpoints
   @RequireResource('cart', 'read')
   @Get('customer/:customerId/total')
-  async getCustomerCartTotal(@Param('customerId', ParseUUIDPipe) customerId: string) {
+  async getCustomerCartTotal(
+    @Param('customerId', ParseUUIDPipe) customerId: string,
+  ) {
     const result = await this.cartService.getCartTotal(customerId);
     return {
       success: true,
@@ -239,7 +245,10 @@ export class CartController {
     @Param('fromCustomerId', ParseUUIDPipe) fromCustomerId: string,
     @Param('toCustomerId', ParseUUIDPipe) toCustomerId: string,
   ) {
-    const result = await this.cartService.moveToCart(toCustomerId, fromCustomerId);
+    const result = await this.cartService.moveToCart(
+      toCustomerId,
+      fromCustomerId,
+    );
     return {
       success: true,
       message: 'Cart items moved successfully',

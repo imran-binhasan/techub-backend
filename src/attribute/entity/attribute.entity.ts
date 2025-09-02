@@ -1,6 +1,6 @@
-import { AttributeValue } from "src/attribute_value/entity/attribute_value.entity";
-import { Base } from "src/common/entity/base.entity";
-import { Column, Entity, OneToMany } from "typeorm";
+import { AttributeValue } from 'src/attribute_value/entity/attribute_value.entity';
+import { Base } from 'src/common/entity/base.entity';
+import { Column, Entity, OneToMany } from 'typeorm';
 
 export enum AttributeType {
   TEXT = 'text',
@@ -23,7 +23,7 @@ export class Attribute extends Base {
   })
   type: AttributeType;
 
-  @OneToMany(() => AttributeValue, value => value.attribute, {
+  @OneToMany(() => AttributeValue, (value) => value.attribute, {
     cascade: true,
     onDelete: 'CASCADE',
   })

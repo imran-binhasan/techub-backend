@@ -1,4 +1,3 @@
-
 // src/inventory/controller/inventory.controller.ts
 import {
   Controller,

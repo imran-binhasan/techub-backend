@@ -49,7 +49,7 @@ import { RedisModule } from './redis/module/redis.module';
     AttributeModule,
     AttributeValueModule,
     BrandModule,
-    RedisModule
+    RedisModule,
   ],
   controllers: [AppController],
   providers: [

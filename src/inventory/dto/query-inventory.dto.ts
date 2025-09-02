@@ -1,9 +1,4 @@
-import { 
-  IsOptional, 
-  IsString, 
-  IsUUID, 
-  IsBoolean 
-} from 'class-validator';
+import { IsOptional, IsString, IsUUID, IsBoolean } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { PaginationQuery } from 'src/common/dto/pagination_query.dto';
 

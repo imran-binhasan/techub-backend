@@ -1,10 +1,10 @@
-import { 
-  IsString, 
-  IsNumber, 
-  IsOptional, 
-  IsUUID, 
+import {
+  IsString,
+  IsNumber,
+  IsOptional,
+  IsUUID,
   Min,
-  IsNotEmpty 
+  IsNotEmpty,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 

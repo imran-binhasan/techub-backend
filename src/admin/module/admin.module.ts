@@ -8,14 +8,9 @@ import { AdminService } from '../service/admin.service';
 import { AuthModule } from 'src/auth/module/auth.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Admin, Role]),AuthModule
-  ],
+  imports: [TypeOrmModule.forFeature([Admin, Role]), AuthModule],
   controllers: [AdminController],
-  providers: [
-    AdminService,
-    CloudinaryService,
-  ],
+  providers: [AdminService, CloudinaryService],
   exports: [AdminService],
 })
 export class AdminModule {}

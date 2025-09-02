@@ -25,7 +25,6 @@ import {
 } from 'src/auth/decorator/auth.decorator';
 import { PaginationQuery } from 'src/common/dto/pagination_query.dto';
 
-
 @Controller('brand')
 export class BrandController {
   constructor(private readonly brandService: BrandService) {}

@@ -1,6 +1,10 @@
-
 // src/rabbitmq/service/rabbitmq.service.ts
-import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  OnModuleInit,
+  OnModuleDestroy,
+} from '@nestjs/common';
 import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
@@ -53,34 +57,106 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
   private async setupDefaultQueues() {
     const queues = [
       // User events
-      { name: 'user.registration', exchange: 'ecommerce.events', routingKey: 'user.registered' },
-      { name: 'user.profile.updated', exchange: 'ecommerce.events', routingKey: 'user.profile.updated' },
-      
+      {
+        name: 'user.registration',
+        exchange: 'ecommerce.events',
+        routingKey: 'user.registered',
+      },
+      {
+        name: 'user.profile.updated',
+        exchange: 'ecommerce.events',
+        routingKey: 'user.profile.updated',
+      },
+
       // Order events
-      { name: 'order.created', exchange: 'ecommerce.orders', routingKey: 'order.created' },
-      { name: 'order.confirmed', exchange: 'ecommerce.orders', routingKey: 'order.confirmed' },
-      { name: 'order.shipped', exchange: 'ecommerce.orders', routingKey: 'order.shipped' },
-      { name: 'order.delivered', exchange: 'ecommerce.orders', routingKey: 'order.delivered' },
-      { name: 'order.cancelled', exchange: 'ecommerce.orders', routingKey: 'order.cancelled' },
-      
+      {
+        name: 'order.created',
+        exchange: 'ecommerce.orders',
+        routingKey: 'order.created',
+      },
+      {
+        name: 'order.confirmed',
+        exchange: 'ecommerce.orders',
+        routingKey: 'order.confirmed',
+      },
+      {
+        name: 'order.shipped',
+        exchange: 'ecommerce.orders',
+        routingKey: 'order.shipped',
+      },
+      {
+        name: 'order.delivered',
+        exchange: 'ecommerce.orders',
+        routingKey: 'order.delivered',
+      },
+      {
+        name: 'order.cancelled',
+        exchange: 'ecommerce.orders',
+        routingKey: 'order.cancelled',
+      },
+
       // Payment events
-      { name: 'payment.pending', exchange: 'ecommerce.payments', routingKey: 'payment.pending' },
-      { name: 'payment.completed', exchange: 'ecommerce.payments', routingKey: 'payment.completed' },
-      { name: 'payment.failed', exchange: 'ecommerce.payments', routingKey: 'payment.failed' },
-      { name: 'payment.refunded', exchange: 'ecommerce.payments', routingKey: 'payment.refunded' },
-      
+      {
+        name: 'payment.pending',
+        exchange: 'ecommerce.payments',
+        routingKey: 'payment.pending',
+      },
+      {
+        name: 'payment.completed',
+        exchange: 'ecommerce.payments',
+        routingKey: 'payment.completed',
+      },
+      {
+        name: 'payment.failed',
+        exchange: 'ecommerce.payments',
+        routingKey: 'payment.failed',
+      },
+      {
+        name: 'payment.refunded',
+        exchange: 'ecommerce.payments',
+        routingKey: 'payment.refunded',
+      },
+
       // Inventory events
-      { name: 'inventory.updated', exchange: 'ecommerce.inventory', routingKey: 'inventory.updated' },
-      { name: 'inventory.low.stock', exchange: 'ecommerce.inventory', routingKey: 'inventory.low.stock' },
-      { name: 'inventory.out.of.stock', exchange: 'ecommerce.inventory', routingKey: 'inventory.out.of.stock' },
-      
+      {
+        name: 'inventory.updated',
+        exchange: 'ecommerce.inventory',
+        routingKey: 'inventory.updated',
+      },
+      {
+        name: 'inventory.low.stock',
+        exchange: 'ecommerce.inventory',
+        routingKey: 'inventory.low.stock',
+      },
+      {
+        name: 'inventory.out.of.stock',
+        exchange: 'ecommerce.inventory',
+        routingKey: 'inventory.out.of.stock',
+      },
+
       // Notification queues
-      { name: 'notifications.email', exchange: 'ecommerce.notifications', routingKey: 'email' },
-      { name: 'notifications.sms', exchange: 'ecommerce.notifications', routingKey: 'sms' },
-      { name: 'notifications.push', exchange: 'ecommerce.notifications', routingKey: 'push' },
-      
+      {
+        name: 'notifications.email',
+        exchange: 'ecommerce.notifications',
+        routingKey: 'email',
+      },
+      {
+        name: 'notifications.sms',
+        exchange: 'ecommerce.notifications',
+        routingKey: 'sms',
+      },
+      {
+        name: 'notifications.push',
+        exchange: 'ecommerce.notifications',
+        routingKey: 'push',
+      },
+
       // Dead letter queue
-      { name: 'deadletter.queue', exchange: 'ecommerce.deadletter', routingKey: 'deadletter' },
+      {
+        name: 'deadletter.queue',
+        exchange: 'ecommerce.deadletter',
+        routingKey: 'deadletter',
+      },
     ];
 
     for (const queue of queues) {
@@ -124,12 +200,20 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
         },
       };
 
-      await this.amqpConnection.publish(exchange, routingKey, message, publishOptions);
-      
+      await this.amqpConnection.publish(
+        exchange,
+        routingKey,
+        message,
+        publishOptions,
+      );
+
       this.logger.debug(`📤 Message published to ${exchange}/${routingKey}`);
       return true;
     } catch (error) {
-      this.logger.error(`❌ Failed to publish message to ${exchange}/${routingKey}:`, error);
+      this.logger.error(
+        `❌ Failed to publish message to ${exchange}/${routingKey}:`,
+        error,
+      );
       return false;
     }
   }
@@ -143,15 +227,17 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
     options?: MessageOptions,
   ): Promise<string> {
     const messageId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    
+
     const timeout = setTimeout(async () => {
       await this.publish(exchange, routingKey, message, options);
       this.scheduledMessages.delete(messageId);
     }, delay);
 
     this.scheduledMessages.set(messageId, timeout);
-    
-    this.logger.debug(`⏰ Message scheduled for ${new Date(Date.now() + delay).toISOString()}`);
+
+    this.logger.debug(
+      `⏰ Message scheduled for ${new Date(Date.now() + delay).toISOString()}`,
+    );
     return messageId;
   }
 
@@ -187,34 +273,38 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
 
   // User events
   async publishUserEvent(event: string, userId: string, data: any) {
-    return this.publishEvent(`user.${event}`, { userId, ...data }, `user.${event}`);
+    return this.publishEvent(
+      `user.${event}`,
+      { userId, ...data },
+      `user.${event}`,
+    );
   }
 
-  // Order events  
+  // Order events
   async publishOrderEvent(event: string, orderId: string, data: any) {
-    return this.publish(
-      'ecommerce.orders',
-      `order.${event}`,
-      { orderId, ...data, timestamp: new Date().toISOString() },
-    );
+    return this.publish('ecommerce.orders', `order.${event}`, {
+      orderId,
+      ...data,
+      timestamp: new Date().toISOString(),
+    });
   }
 
   // Payment events
   async publishPaymentEvent(event: string, paymentId: string, data: any) {
-    return this.publish(
-      'ecommerce.payments',
-      `payment.${event}`,
-      { paymentId, ...data, timestamp: new Date().toISOString() },
-    );
+    return this.publish('ecommerce.payments', `payment.${event}`, {
+      paymentId,
+      ...data,
+      timestamp: new Date().toISOString(),
+    });
   }
 
   // Inventory events
   async publishInventoryEvent(event: string, productId: string, data: any) {
-    return this.publish(
-      'ecommerce.inventory',
-      `inventory.${event}`,
-      { productId, ...data, timestamp: new Date().toISOString() },
-    );
+    return this.publish('ecommerce.inventory', `inventory.${event}`, {
+      productId,
+      ...data,
+      timestamp: new Date().toISOString(),
+    });
   }
 
   // Notification methods
@@ -236,7 +326,12 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
     });
   }
 
-  async sendPushNotification(userId: string, title: string, body: string, data?: any) {
+  async sendPushNotification(
+    userId: string,
+    title: string,
+    body: string,
+    data?: any,
+  ) {
     return this.publish('ecommerce.notifications', 'push', {
       userId,
       title,
@@ -249,10 +344,14 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
   // Bulk operations
   async publishBatch<T = any>(
     exchange: string,
-    messages: Array<{ routingKey: string; message: T; options?: MessageOptions }>,
+    messages: Array<{
+      routingKey: string;
+      message: T;
+      options?: MessageOptions;
+    }>,
   ): Promise<boolean[]> {
     const results: boolean[] = [];
-    
+
     for (const { routingKey, message, options } of messages) {
       const result = await this.publish(exchange, routingKey, message, options);
       results.push(result);

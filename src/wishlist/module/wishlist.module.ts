@@ -8,7 +8,10 @@ import { WishlistService } from '../service/wishlist.service';
 import { AuthModule } from 'src/auth/module/auth.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Wishlist, Customer, Product]), AuthModule],
+  imports: [
+    TypeOrmModule.forFeature([Wishlist, Customer, Product]),
+    AuthModule,
+  ],
   controllers: [WishlistController],
   providers: [WishlistService],
   exports: [WishlistService],

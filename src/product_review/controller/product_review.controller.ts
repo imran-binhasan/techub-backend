@@ -29,7 +29,9 @@ export class ProductReviewController {
   @RequireResource('product-review', 'create')
   @Post()
   async create(@Body() createProductReviewDto: CreateProductReviewDto) {
-    const result = await this.productReviewService.create(createProductReviewDto);
+    const result = await this.productReviewService.create(
+      createProductReviewDto,
+    );
     return {
       success: true,
       message: 'Product review created successfully',
@@ -65,7 +67,10 @@ export class ProductReviewController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateProductReviewDto: UpdateProductReviewDto,
   ) {
-    const result = await this.productReviewService.update(id, updateProductReviewDto);
+    const result = await this.productReviewService.update(
+      id,
+      updateProductReviewDto,
+    );
     return {
       success: true,
       message: 'Product review updated successfully',
@@ -99,8 +104,14 @@ export class ProductReviewController {
   // Utility endpoints
   @Public()
   @Get('product/:productId')
-  async findByProduct(@Param('productId', ParseUUIDPipe) productId: string, @Query() query: ProductReviewQueryDto) {
-    const result = await this.productReviewService.findByProduct(productId, query);
+  async findByProduct(
+    @Param('productId', ParseUUIDPipe) productId: string,
+    @Query() query: ProductReviewQueryDto,
+  ) {
+    const result = await this.productReviewService.findByProduct(
+      productId,
+      query,
+    );
     return {
       success: true,
       message: 'Product reviews by product retrieved successfully',

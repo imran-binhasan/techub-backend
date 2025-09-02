@@ -10,9 +10,7 @@ import { Repository } from 'typeorm';
 import { Attribute } from '../entity/attribute.entity';
 import { CreateAttributeDto } from '../dto/create-attribute.dto';
 import { UpdateAttributeDto } from '../dto/update-attribute.dto';
-import {
-  PaginatedServiceResponse,
-} from 'src/common/interface/api-response.interface';
+import { PaginatedServiceResponse } from 'src/common/interface/api-response.interface';
 import { PaginationQuery } from 'src/common/dto/pagination_query.dto';
 
 @Injectable()
@@ -60,10 +58,9 @@ export class AttributeService {
 
     // Apply search filter
     if (search?.trim()) {
-      queryBuilder.where(
-        'attribute.name ILIKE :search',
-        { search: `%${search.trim().toLowerCase()}%` },
-      );
+      queryBuilder.where('attribute.name ILIKE :search', {
+        search: `%${search.trim().toLowerCase()}%`,
+      });
     }
 
     // Apply pagination and ordering
@@ -108,7 +105,10 @@ export class AttributeService {
     });
   }
 
-  async update(id: string, updateAttributeDto: UpdateAttributeDto): Promise<Attribute> {
+  async update(
+    id: string,
+    updateAttributeDto: UpdateAttributeDto,
+  ): Promise<Attribute> {
     const existingAttribute = await this.attributeRepository.findOne({
       where: { id },
     });
@@ -118,7 +118,10 @@ export class AttributeService {
     }
 
     // Check name uniqueness if name is being updated
-    if (updateAttributeDto.name && updateAttributeDto.name.toLowerCase() !== existingAttribute.name) {
+    if (
+      updateAttributeDto.name &&
+      updateAttributeDto.name.toLowerCase() !== existingAttribute.name
+    ) {
       const attributeWithName = await this.attributeRepository.findOne({
         where: { name: updateAttributeDto.name.toLowerCase() },
         withDeleted: true,
@@ -134,7 +137,9 @@ export class AttributeService {
     // Prepare update data
     const updateData: Partial<Attribute> = {
       ...updateAttributeDto,
-      ...(updateAttributeDto.name && { name: updateAttributeDto.name.toLowerCase() }),
+      ...(updateAttributeDto.name && {
+        name: updateAttributeDto.name.toLowerCase(),
+      }),
     };
 
     // Update attribute
@@ -155,7 +160,8 @@ export class AttributeService {
 
     // Check if attribute has associated product attribute values
     const hasProductAssociations = attribute.values.some(
-      value => value.productAttributeValues && value.productAttributeValues.length > 0
+      (value) =>
+        value.productAttributeValues && value.productAttributeValues.length > 0,
     );
 
     if (hasProductAssociations) {

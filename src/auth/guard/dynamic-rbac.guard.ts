@@ -34,29 +34,29 @@ export class DynamicRbacGuard implements CanActivate {
   constructor(
     private readonly reflector: Reflector,
     private readonly permissionService: PermissionService,
-    private readonly permissionCacheService: PermissionCacheService
+    private readonly permissionCacheService: PermissionCacheService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const permissions = this.reflector.getAllAndOverride<string[]>(PERMISSIONS_KEY, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
+    const permissions = this.reflector.getAllAndOverride<string[]>(
+      PERMISSIONS_KEY,
+      [context.getHandler(), context.getClass()],
+    );
 
-    const resourceAction = this.reflector.getAllAndOverride<ResourceAction>(RESOURCE_KEY, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
+    const resourceAction = this.reflector.getAllAndOverride<ResourceAction>(
+      RESOURCE_KEY,
+      [context.getHandler(), context.getClass()],
+    );
 
     const allPermissions = this.reflector.getAllAndOverride<string[]>(
       REQUIRE_ALL_PERMISSIONS_KEY,
-      [context.getHandler(), context.getClass()]
+      [context.getHandler(), context.getClass()],
     );
 
-    const minimumLevel = this.reflector.getAllAndOverride<MinimumLevel>(MINIMUM_LEVEL_KEY, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
+    const minimumLevel = this.reflector.getAllAndOverride<MinimumLevel>(
+      MINIMUM_LEVEL_KEY,
+      [context.getHandler(), context.getClass()],
+    );
 
     // If no RBAC requirements, allow access
     if (!permissions && !resourceAction && !allPermissions && !minimumLevel) {
@@ -89,7 +89,9 @@ export class DynamicRbacGuard implements CanActivate {
         return this.checkMinimumLevel(userPermissions, minimumLevel);
       }
     } catch (error) {
-      this.logger.error(`RBAC check failed for user ${user.id}: ${error.message}`);
+      this.logger.error(
+        `RBAC check failed for user ${user.id}: ${error.message}`,
+      );
       throw error;
     }
 
@@ -99,7 +101,7 @@ export class DynamicRbacGuard implements CanActivate {
   private async getUserPermissions(roleId: string): Promise<string[]> {
     // Try cache first
     let permissions = await this.permissionCacheService.getPermissions(roleId);
-    
+
     if (!permissions) {
       // Fallback to database
       permissions = await this.permissionService.getUserPermissions(roleId);
@@ -112,48 +114,59 @@ export class DynamicRbacGuard implements CanActivate {
 
   private checkResourcePermission(
     userPermissions: string[],
-    resourceAction: ResourceAction
+    resourceAction: ResourceAction,
   ): boolean {
     const requiredPermission = `${resourceAction.action}:${resourceAction.resource}`;
-    
+
     if (!this.hasPermission(userPermissions, requiredPermission)) {
-      throw new ForbiddenException(`Access denied. Required permission: ${requiredPermission}`);
+      throw new ForbiddenException(
+        `Access denied. Required permission: ${requiredPermission}`,
+      );
     }
 
     return true;
   }
 
-  private checkOrPermissions(userPermissions: string[], requiredPermissions: string[]): boolean {
-    const hasAnyPermission = requiredPermissions.some(permission =>
-      this.hasPermission(userPermissions, permission)
+  private checkOrPermissions(
+    userPermissions: string[],
+    requiredPermissions: string[],
+  ): boolean {
+    const hasAnyPermission = requiredPermissions.some((permission) =>
+      this.hasPermission(userPermissions, permission),
     );
 
     if (!hasAnyPermission) {
       throw new ForbiddenException(
-        `Access denied. Required permissions: ${requiredPermissions.join(' OR ')}`
+        `Access denied. Required permissions: ${requiredPermissions.join(' OR ')}`,
       );
     }
 
     return true;
   }
 
-  private checkAndPermissions(userPermissions: string[], requiredPermissions: string[]): boolean {
+  private checkAndPermissions(
+    userPermissions: string[],
+    requiredPermissions: string[],
+  ): boolean {
     const missingPermissions = requiredPermissions.filter(
-      permission => !this.hasPermission(userPermissions, permission)
+      (permission) => !this.hasPermission(userPermissions, permission),
     );
 
     if (missingPermissions.length > 0) {
       throw new ForbiddenException(
-        `Access denied. Missing permissions: ${missingPermissions.join(', ')}`
+        `Access denied. Missing permissions: ${missingPermissions.join(', ')}`,
       );
     }
 
     return true;
   }
 
-  private checkMinimumLevel(userPermissions: string[], minimumLevel: MinimumLevel): boolean {
+  private checkMinimumLevel(
+    userPermissions: string[],
+    minimumLevel: MinimumLevel,
+  ): boolean {
     const requiredLevelIndex = this.levelHierarchy.indexOf(minimumLevel.level);
-    
+
     if (requiredLevelIndex === -1) {
       throw new ForbiddenException('Invalid permission level specified');
     }
@@ -167,11 +180,14 @@ export class DynamicRbacGuard implements CanActivate {
     }
 
     throw new ForbiddenException(
-      `Access denied. Minimum ${minimumLevel.level} level required for ${minimumLevel.resource}`
+      `Access denied. Minimum ${minimumLevel.level} level required for ${minimumLevel.resource}`,
     );
   }
 
-  private hasPermission(userPermissions: string[], requiredPermission: string): boolean {
+  private hasPermission(
+    userPermissions: string[],
+    requiredPermission: string,
+  ): boolean {
     // Super admin wildcard
     if (userPermissions.includes('*:*')) {
       return true;
@@ -190,7 +206,7 @@ export class DynamicRbacGuard implements CanActivate {
     // Wildcard matches
     return (
       userPermissions.includes(`*:${resource}`) || // Resource wildcard
-      userPermissions.includes(`${action}:*`)      // Action wildcard
+      userPermissions.includes(`${action}:*`) // Action wildcard
     );
   }
 }

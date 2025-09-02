@@ -17,7 +17,7 @@ export class JwtAuthGuard implements CanActivate {
   constructor(
     private readonly tokenService: TokenService,
     private readonly authService: AuthService,
-    private readonly reflector: Reflector
+    private readonly reflector: Reflector,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -39,7 +39,7 @@ export class JwtAuthGuard implements CanActivate {
 
     try {
       const payload = this.tokenService.verifyAccessToken(token);
-      
+
       if (payload.tokenType !== 'access') {
         throw new UnauthorizedException('Invalid token type');
       }

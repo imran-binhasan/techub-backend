@@ -12,14 +12,11 @@ import { AuthModule } from 'src/auth/module/auth.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Customer,Address,Cart,Wishlist,Notification]),
+    TypeOrmModule.forFeature([Customer, Address, Cart, Wishlist, Notification]),
     AuthModule,
   ],
   controllers: [CustomerController],
-  providers: [
-    CustomerService,
-    CloudinaryService,
-  ],
+  providers: [CustomerService, CloudinaryService],
   exports: [CustomerService],
 })
 export class CustomerModule {}

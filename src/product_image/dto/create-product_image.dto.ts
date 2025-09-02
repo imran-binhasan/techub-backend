@@ -1,26 +1,34 @@
-import { IsString, IsNotEmpty, IsOptional, IsUUID, IsBoolean, IsNumber, Min } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsOptional,
+  IsUUID,
+  IsBoolean,
+  IsNumber,
+  Min,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class CreateProductImageDto {
-    @IsUUID()
-    @IsNotEmpty()
-    productId: string;
+  @IsUUID()
+  @IsNotEmpty()
+  productId: string;
 
-    @IsString()
-    @IsNotEmpty()
-    url: string;
+  @IsString()
+  @IsNotEmpty()
+  url: string;
 
-    @IsOptional()
-    @IsString()
-    altText?: string;
+  @IsOptional()
+  @IsString()
+  altText?: string;
 
-    @IsOptional()
-    @IsBoolean()
-    isPrimary?: boolean;
+  @IsOptional()
+  @IsBoolean()
+  isPrimary?: boolean;
 
-    @IsOptional()
-    @IsNumber()
-    @Min(0)
-    @Type(() => Number)
-    sortOrder?: number;
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  @Type(() => Number)
+  sortOrder?: number;
 }

@@ -25,8 +25,10 @@ import { UploadModule } from 'src/upload/module/upload.module';
       AttributeValue,
       Cart,
       Wishlist,
-      ProductReview
-    ]),AuthModule,UploadModule
+      ProductReview,
+    ]),
+    AuthModule,
+    UploadModule,
   ],
   controllers: [ProductController],
   providers: [ProductService],

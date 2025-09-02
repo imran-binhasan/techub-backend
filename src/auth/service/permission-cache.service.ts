@@ -18,10 +18,10 @@ export class PermissionCacheService {
 
   async setPermissions(roleId: string, permissions: string[]): Promise<void> {
     const success = await this.cacheService.set(
-      'permissions', 
-      `role:${roleId}`, 
+      'permissions',
+      `role:${roleId}`,
       permissions,
-      { ttl: 3600, tags: [`role:${roleId}`, 'permissions'] }
+      { ttl: 3600, tags: [`role:${roleId}`, 'permissions'] },
     );
 
     if (success) {
@@ -36,7 +36,7 @@ export class PermissionCacheService {
 
   async invalidatePermissions(roleId: string): Promise<void> {
     await this.cacheService.del('permissions', `role:${roleId}`);
-    
+
     // Notify about invalidation
     await this.rabbitMQService.publishEvent('permissions.invalidated', {
       roleId,
@@ -56,13 +56,15 @@ export class PermissionCacheService {
     return this.cacheService.get('sessions', `user:${userId}`);
   }
 
-  async setUserSession(userId: string, sessionData: any, ttlSeconds?: number): Promise<void> {
-    await this.cacheService.set(
-      'sessions', 
-      `user:${userId}`, 
-      sessionData,
-      { ttl: ttlSeconds || 86400, tags: [`user:${userId}`, 'sessions'] }
-    );
+  async setUserSession(
+    userId: string,
+    sessionData: any,
+    ttlSeconds?: number,
+  ): Promise<void> {
+    await this.cacheService.set('sessions', `user:${userId}`, sessionData, {
+      ttl: ttlSeconds || 86400,
+      tags: [`user:${userId}`, 'sessions'],
+    });
   }
 
   async invalidateUserSession(userId: string): Promise<void> {
@@ -70,8 +72,10 @@ export class PermissionCacheService {
   }
 
   // Batch operations
-  async getUserPermissions(userIds: string[]): Promise<Record<string, string[]>> {
-    const keys = userIds.map(id => `user:${id}`);
+  async getUserPermissions(
+    userIds: string[],
+  ): Promise<Record<string, string[]>> {
+    const keys = userIds.map((id) => `user:${id}`);
     const result = await this.cacheService.mget<string[]>('permissions', keys);
     // Remove or replace nulls with empty arrays to satisfy the return type
     const filtered: Record<string, string[]> = {};
@@ -90,29 +94,34 @@ export class PermissionCacheService {
   }
 
   // Permission hierarchy caching
-  async getEffectivePermissions(roleId: string, includeInherited = true): Promise<string[] | null> {
-    const cacheKey = includeInherited ? `effective:${roleId}` : `direct:${roleId}`;
+  async getEffectivePermissions(
+    roleId: string,
+    includeInherited = true,
+  ): Promise<string[] | null> {
+    const cacheKey = includeInherited
+      ? `effective:${roleId}`
+      : `direct:${roleId}`;
     return this.cacheService.get<string[]>('permissions', cacheKey);
   }
 
   async setEffectivePermissions(
-    roleId: string, 
-    permissions: string[], 
-    includeInherited = true
+    roleId: string,
+    permissions: string[],
+    includeInherited = true,
   ): Promise<void> {
-    const cacheKey = includeInherited ? `effective:${roleId}` : `direct:${roleId}`;
-    await this.cacheService.set(
-      'permissions', 
-      cacheKey, 
-      permissions,
-      { ttl: 3600, tags: [`role:${roleId}`, 'permissions', 'effective'] }
-    );
+    const cacheKey = includeInherited
+      ? `effective:${roleId}`
+      : `direct:${roleId}`;
+    await this.cacheService.set('permissions', cacheKey, permissions, {
+      ttl: 3600,
+      tags: [`role:${roleId}`, 'permissions', 'effective'],
+    });
   }
 
   // Cache warming for critical roles
   async warmCriticalPermissions(criticalRoles: string[]): Promise<void> {
     this.logger.log(`Warming cache for ${criticalRoles.length} critical roles`);
-    
+
     // This would typically fetch from database and warm the cache
     // Implementation depends on your permission service
     for (const roleId of criticalRoles) {
@@ -120,10 +129,13 @@ export class PermissionCacheService {
         // Fetch from database (implement based on your PermissionService)
         // const permissions = await this.permissionService.getUserPermissions(roleId);
         // await this.setPermissions(roleId, permissions);
-        
+
         this.logger.debug(`Warmed permissions for role: ${roleId}`);
       } catch (error) {
-        this.logger.error(`Failed to warm permissions for role ${roleId}:`, error);
+        this.logger.error(
+          `Failed to warm permissions for role ${roleId}:`,
+          error,
+        );
       }
     }
   }

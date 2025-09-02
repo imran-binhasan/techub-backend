@@ -9,9 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Brand } from '../entity/brand.entity';
 import { CloudinaryService } from 'src/upload/service/cloudinary.service';
-import {
-  PaginatedServiceResponse,
-} from 'src/common/interface/api-response.interface';
+import { PaginatedServiceResponse } from 'src/common/interface/api-response.interface';
 import { CreateBrandDto } from '../dto/create-brand.dto';
 import { UpdateBrandDto } from '../dto/update-brand.dto';
 import { PaginationQuery } from 'src/common/dto/pagination_query.dto';
@@ -111,14 +109,7 @@ export class BrandService {
   async findOne(id: string): Promise<Brand> {
     const brand = await this.brandRepository.findOne({
       where: { id },
-      select: [
-        'id',
-        'name',
-        'description',
-        'logo',
-        'createdAt',
-        'updatedAt',
-      ],
+      select: ['id', 'name', 'description', 'logo', 'createdAt', 'updatedAt'],
     });
 
     if (!brand) {

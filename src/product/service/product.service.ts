@@ -15,9 +15,7 @@ import { AttributeValue } from 'src/attribute_value/entity/attribute_value.entit
 import { CreateProductDto } from '../dto/create-product.dto';
 import { UpdateProductDto } from '../dto/update-product.dto';
 import { ProductQueryDto } from '../dto/query-product.dto';
-import {
-  PaginatedServiceResponse,
-} from 'src/common/interface/api-response.interface';
+import { PaginatedServiceResponse } from 'src/common/interface/api-response.interface';
 
 @Injectable()
 export class ProductService {
@@ -86,14 +84,22 @@ export class ProductService {
     const savedProduct = await this.productRepository.save(product);
 
     // Handle attribute values if provided
-    if (createProductDto.attributeValueIds?.length && createProductDto.attributeValueIds.length > 0) {
-      await this.handleAttributeValues(savedProduct.id, createProductDto.attributeValueIds);
+    if (
+      createProductDto.attributeValueIds?.length &&
+      createProductDto.attributeValueIds.length > 0
+    ) {
+      await this.handleAttributeValues(
+        savedProduct.id,
+        createProductDto.attributeValueIds,
+      );
     }
 
     return this.findOne(savedProduct.id);
   }
 
-  async findAll(query: ProductQueryDto): Promise<PaginatedServiceResponse<Product>> {
+  async findAll(
+    query: ProductQueryDto,
+  ): Promise<PaginatedServiceResponse<Product>> {
     const {
       page = 1,
       limit = 10,
@@ -209,7 +215,10 @@ export class ProductService {
     });
   }
 
-  async update(id: string, updateProductDto: UpdateProductDto): Promise<Product> {
+  async update(
+    id: string,
+    updateProductDto: UpdateProductDto,
+  ): Promise<Product> {
     const existingProduct = await this.productRepository.findOne({
       where: { id },
       relations: ['category', 'brand', 'attributeValues'],
@@ -220,7 +229,10 @@ export class ProductService {
     }
 
     // Check name uniqueness if name is being updated
-    if (updateProductDto.name && updateProductDto.name !== existingProduct.name) {
+    if (
+      updateProductDto.name &&
+      updateProductDto.name !== existingProduct.name
+    ) {
       const productWithName = await this.productRepository.findOne({
         where: { name: updateProductDto.name },
         withDeleted: true,
@@ -271,27 +283,27 @@ export class ProductService {
 
     // Prepare update data - handle null values properly
     const updateData: any = {};
-    
+
     if (updateProductDto.name) {
       updateData.name = updateProductDto.name;
     }
-    
+
     if (updateProductDto.description) {
       updateData.description = updateProductDto.description;
     }
-    
+
     if (updateProductDto.stock !== undefined) {
       updateData.stock = updateProductDto.stock;
     }
-    
+
     if (updateProductDto.price !== undefined) {
       updateData.price = updateProductDto.price;
     }
-    
+
     if (updateProductDto.categoryId !== undefined) {
       updateData.category = category;
     }
-    
+
     if (updateProductDto.brandId !== undefined) {
       updateData.brand = brand;
     }
@@ -392,7 +404,10 @@ export class ProductService {
     });
   }
 
-  async findProductsInPriceRange(minPrice: number, maxPrice: number): Promise<Product[]> {
+  async findProductsInPriceRange(
+    minPrice: number,
+    maxPrice: number,
+  ): Promise<Product[]> {
     if (minPrice < 0 || maxPrice < 0 || minPrice > maxPrice) {
       throw new BadRequestException('Invalid price range');
     }
@@ -410,30 +425,43 @@ export class ProductService {
   }
 
   // Private helper methods
-  private async handleAttributeValues(productId: string, attributeValueIds: string[]): Promise<void> {
+  private async handleAttributeValues(
+    productId: string,
+    attributeValueIds: string[],
+  ): Promise<void> {
     // Validate all attribute values exist
-    const attributeValues = await this.attributeValueRepository.findByIds(attributeValueIds);
-    
+    const attributeValues =
+      await this.attributeValueRepository.findByIds(attributeValueIds);
+
     if (attributeValues.length !== attributeValueIds.length) {
-      const foundIds = attributeValues.map(av => av.id);
-      const missingIds = attributeValueIds.filter(id => !foundIds.includes(id));
-      throw new NotFoundException(`Attribute values not found: ${missingIds.join(', ')}`);
+      const foundIds = attributeValues.map((av) => av.id);
+      const missingIds = attributeValueIds.filter(
+        (id) => !foundIds.includes(id),
+      );
+      throw new NotFoundException(
+        `Attribute values not found: ${missingIds.join(', ')}`,
+      );
     }
 
     // Create product attribute value associations
-    const productAttributeValues = attributeValues.map(attributeValue => 
+    const productAttributeValues = attributeValues.map((attributeValue) =>
       this.productAttributeValueRepository.create({
         product: { id: productId } as Product,
         attributeValue,
-      })
+      }),
     );
 
     await this.productAttributeValueRepository.save(productAttributeValues);
   }
 
-  private async updateAttributeValues(productId: string, attributeValueIds: string[]): Promise<void> {
+  private async updateAttributeValues(
+    productId: string,
+    attributeValueIds: string[],
+  ): Promise<void> {
     // Remove existing attribute values
-    await this.productAttributeValueRepository.delete({ product: { id: productId } });
+    await this.productAttributeValueRepository.delete({
+      product: { id: productId },
+    });
 
     // Add new attribute values if provided
     if (attributeValueIds && attributeValueIds.length > 0) {

@@ -12,7 +12,7 @@ export class PermissionService {
     @InjectRepository(Permission)
     private readonly permissionRepository: Repository<Permission>,
     @InjectRepository(Role)
-    private readonly roleRepository: Repository<Role>
+    private readonly roleRepository: Repository<Role>,
   ) {}
 
   async getUserPermissions(roleId: string): Promise<string[]> {
@@ -28,11 +28,11 @@ export class PermissionService {
       }
 
       const permissions = role.permissions.map(
-        permission => `${permission.action}:${permission.resource}`
+        (permission) => `${permission.action}:${permission.resource}`,
       );
 
       this.logger.debug(
-        `Retrieved ${permissions.length} permissions for role ${roleId}: ${permissions.join(', ')}`
+        `Retrieved ${permissions.length} permissions for role ${roleId}: ${permissions.join(', ')}`,
       );
 
       return permissions;
@@ -42,7 +42,10 @@ export class PermissionService {
     }
   }
 
-  async createPermission(resource: string, action: string): Promise<Permission> {
+  async createPermission(
+    resource: string,
+    action: string,
+  ): Promise<Permission> {
     const permission = this.permissionRepository.create({ resource, action });
     return await this.permissionRepository.save(permission);
   }
@@ -53,7 +56,10 @@ export class PermissionService {
     });
   }
 
-  async findByResourceAndAction(resource: string, action: string): Promise<Permission | null> {
+  async findByResourceAndAction(
+    resource: string,
+    action: string,
+  ): Promise<Permission | null> {
     return await this.permissionRepository.findOne({
       where: { resource, action },
     });
@@ -66,7 +72,9 @@ export class PermissionService {
   // Utility method to check if a permission string is valid
   validatePermissionFormat(permission: string): boolean {
     const parts = permission.split(':');
-    return parts.length === 2 && parts[0].trim() !== '' && parts[1].trim() !== '';
+    return (
+      parts.length === 2 && parts[0].trim() !== '' && parts[1].trim() !== ''
+    );
   }
 
   // Get all unique resources
@@ -75,8 +83,8 @@ export class PermissionService {
       .createQueryBuilder('permission')
       .select('DISTINCT permission.resource', 'resource')
       .getRawMany();
-    
-    return result.map(r => r.resource);
+
+    return result.map((r) => r.resource);
   }
 
   // Get all unique actions
@@ -85,7 +93,7 @@ export class PermissionService {
       .createQueryBuilder('permission')
       .select('DISTINCT permission.action', 'action')
       .getRawMany();
-    
-    return result.map(r => r.action);
+
+    return result.map((r) => r.action);
   }
 }

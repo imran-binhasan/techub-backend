@@ -1,10 +1,5 @@
 import { Base } from 'src/common/entity/base.entity';
-import { 
-  Column, 
-  Entity, 
-  ManyToOne,
-  Index,
-} from 'typeorm';
+import { Column, Entity, ManyToOne, Index } from 'typeorm';
 import { Inventory } from './inventory.entity';
 
 export enum TransactionType {
@@ -17,14 +12,14 @@ export enum TransactionType {
 @Index(['inventory'])
 @Index(['createdAt'])
 export class InventoryTransaction extends Base {
-  @ManyToOne(() => Inventory, inventory => inventory.transactions, { 
-    onDelete: 'CASCADE' 
+  @ManyToOne(() => Inventory, (inventory) => inventory.transactions, {
+    onDelete: 'CASCADE',
   })
   inventory: Inventory;
 
-  @Column({ 
-    type: 'enum', 
-    enum: TransactionType 
+  @Column({
+    type: 'enum',
+    enum: TransactionType,
   })
   type: TransactionType;
 

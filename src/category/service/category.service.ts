@@ -10,9 +10,7 @@ import { Repository, IsNull } from 'typeorm';
 import { Category } from '../entity/category.entity';
 import { CreateCategoryDto } from '../dto/create-category.dto';
 import { UpdateCategoryDto } from '../dto/update-category.dto';
-import {
-  PaginatedServiceResponse,
-} from 'src/common/interface/api-response.interface';
+import { PaginatedServiceResponse } from 'src/common/interface/api-response.interface';
 import { CategoryQueryDto } from '../dto/query-category.dto';
 
 @Injectable()
@@ -41,7 +39,9 @@ export class CategoryService {
       });
 
       if (!parentCategory) {
-        throw new NotFoundException(`Parent category with ID ${createCategoryDto.parentId} not found`);
+        throw new NotFoundException(
+          `Parent category with ID ${createCategoryDto.parentId} not found`,
+        );
       }
 
       // Check for circular dependency (prevent category from being its own parent)
@@ -63,7 +63,14 @@ export class CategoryService {
   async findAll(
     query: CategoryQueryDto,
   ): Promise<PaginatedServiceResponse<Category>> {
-    const { page = 1, limit = 10, search, parentId, rootOnly, includeChildren } = query;
+    const {
+      page = 1,
+      limit = 10,
+      search,
+      parentId,
+      rootOnly,
+      includeChildren,
+    } = query;
 
     // Validate pagination parameters
     if (page < 1 || limit < 1 || limit > 100) {
@@ -89,10 +96,9 @@ export class CategoryService {
     // Apply search filter
     if (search?.trim()) {
       const searchCondition = rootOnly || parentId ? 'AND' : 'WHERE';
-      queryBuilder.andWhere(
-        'category.name ILIKE :search',
-        { search: `%${search.trim()}%` },
-      );
+      queryBuilder.andWhere('category.name ILIKE :search', {
+        search: `%${search.trim()}%`,
+      });
     }
 
     // Apply pagination and ordering
@@ -133,7 +139,10 @@ export class CategoryService {
     });
   }
 
-  async update(id: string, updateCategoryDto: UpdateCategoryDto): Promise<Category> {
+  async update(
+    id: string,
+    updateCategoryDto: UpdateCategoryDto,
+  ): Promise<Category> {
     const existingCategory = await this.categoryRepository.findOne({
       where: { id },
       relations: ['parent', 'children'],
@@ -144,7 +153,10 @@ export class CategoryService {
     }
 
     // Check name uniqueness if name is being updated
-    if (updateCategoryDto.name && updateCategoryDto.name !== existingCategory.name) {
+    if (
+      updateCategoryDto.name &&
+      updateCategoryDto.name !== existingCategory.name
+    ) {
       const categoryWithName = await this.categoryRepository.findOne({
         where: { name: updateCategoryDto.name },
         withDeleted: true,
@@ -176,7 +188,9 @@ export class CategoryService {
         });
 
         if (!parentCategory) {
-          throw new NotFoundException(`Parent category with ID ${updateCategoryDto.parentId} not found`);
+          throw new NotFoundException(
+            `Parent category with ID ${updateCategoryDto.parentId} not found`,
+          );
         }
       }
     }
@@ -184,8 +198,10 @@ export class CategoryService {
     // Prepare update data
     const updateData: Partial<Category> = {
       ...(updateCategoryDto.name && { name: updateCategoryDto.name }),
-      ...(updateCategoryDto.parentId !== undefined && parentCategory !== null && { parent: parentCategory }),
-      ...(updateCategoryDto.parentId !== undefined && parentCategory === null && { parent: undefined }),
+      ...(updateCategoryDto.parentId !== undefined &&
+        parentCategory !== null && { parent: parentCategory }),
+      ...(updateCategoryDto.parentId !== undefined &&
+        parentCategory === null && { parent: undefined }),
     };
 
     // Update category
@@ -265,7 +281,9 @@ export class CategoryService {
     });
 
     if (!parent) {
-      throw new NotFoundException(`Parent category with ID ${parentId} not found`);
+      throw new NotFoundException(
+        `Parent category with ID ${parentId} not found`,
+      );
     }
 
     return this.categoryRepository.find({
@@ -299,7 +317,10 @@ export class CategoryService {
     return category;
   }
 
-  private async checkCircularDependency(categoryId: string, parentId: string): Promise<void> {
+  private async checkCircularDependency(
+    categoryId: string,
+    parentId: string,
+  ): Promise<void> {
     let currentCategory = await this.categoryRepository.findOne({
       where: { id: parentId },
       relations: ['parent'],
@@ -307,7 +328,9 @@ export class CategoryService {
 
     while (currentCategory && currentCategory.parent) {
       if (currentCategory.parent.id === categoryId) {
-        throw new BadRequestException('Circular dependency detected. Category cannot be a parent of its ancestor.');
+        throw new BadRequestException(
+          'Circular dependency detected. Category cannot be a parent of its ancestor.',
+        );
       }
       currentCategory = await this.categoryRepository.findOne({
         where: { id: currentCategory.parent.id },

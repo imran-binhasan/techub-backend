@@ -14,11 +14,13 @@ export class Cart extends Base {
   @Column({ type: 'int', default: 1 })
   quantity: number;
 
-  @ManyToOne(() => Customer, customer => customer.carts, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Customer, (customer) => customer.carts, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'customerId' })
   customer: Customer;
 
-  @ManyToOne(() => Product, product => product.carts, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Product, (product) => product.carts, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'productId' })
   product: Product;
 }

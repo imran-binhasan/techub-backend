@@ -1,16 +1,22 @@
-import { Base } from "src/common/entity/base.entity";
-import { Customer } from "src/customer/entity/customer.entity";
-import { Column, Entity, ManyToMany, ManyToOne } from "typeorm";
-
+import { Base } from 'src/common/entity/base.entity';
+import { Column, Entity, OneToMany } from 'typeorm';
+import { CustomerNotification } from './customer-notification';
 
 @Entity('notification')
 export class Notification extends Base {
-    @Column()
-    title:string;
+  @Column({ type: 'varchar', length: 200 })
+  title: string;
 
-    @Column()
-    description:string;
+  @Column({ type: 'text' })
+  description: string;
 
-    @ManyToMany(()=> Customer, customer => customer.notifications)
-    customers:Customer[];
+  // Remove the ManyToMany - only use the junction table approach
+  @OneToMany(
+    () => CustomerNotification,
+    (customerNotification) => customerNotification.notification,
+    {
+      cascade: true,
+    },
+  )
+  customerNotifications: CustomerNotification[];
 }

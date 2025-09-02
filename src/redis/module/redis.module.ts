@@ -15,7 +15,8 @@ import Redis from 'ioredis';
           port: configService.get<number>('REDIS_PORT'),
           username: configService.get<string>('REDIS_USERNAME') ?? 'default',
           password: configService.get<string>('REDIS_PASSWORD'),
-          tls: configService.get<string>('REDIS_TLS') === 'true' ? {} : undefined,
+          tls:
+            configService.get<string>('REDIS_TLS') === 'true' ? {} : undefined,
         });
 
         client.on('connect', () => console.log('Redis connected'));

@@ -1,14 +1,7 @@
 import { Base } from 'src/common/entity/base.entity';
 import { Product } from 'src/product/entity/product.entity';
-import { 
-  Column, 
-  Entity, 
-  ManyToOne,
-  OneToMany,
-  Index,
-} from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany, Index } from 'typeorm';
 import { InventoryTransaction } from './inventory-transactuin.entity';
-
 
 @Entity('inventory')
 @Index(['product'])
@@ -28,8 +21,12 @@ export class Inventory extends Base {
   @Column({ type: 'timestamptz', nullable: true })
   lastStockUpdate: Date;
 
-  @OneToMany(() => InventoryTransaction, transaction => transaction.inventory, {
-    cascade: true
-  })
+  @OneToMany(
+    () => InventoryTransaction,
+    (transaction) => transaction.inventory,
+    {
+      cascade: true,
+    },
+  )
   transactions: InventoryTransaction[];
 }

@@ -16,7 +16,6 @@ import { JwtPayload } from '../interface/jwt-payload.interface';
 import { RefreshTokenDto } from '../dto/refresh-token.dto';
 import { PermissionCacheService } from './permission-cache.service';
 
-
 @Injectable()
 export class AuthService {
   constructor(
@@ -25,10 +24,13 @@ export class AuthService {
     @InjectRepository(Customer)
     private readonly customerRepository: Repository<Customer>,
     private readonly tokenService: TokenService,
-    private readonly permissionCacheService: PermissionCacheService
+    private readonly permissionCacheService: PermissionCacheService,
   ) {}
 
-  async login(loginDto: LoginDto, userType: 'admin' | 'customer'): Promise<AuthResponse> {
+  async login(
+    loginDto: LoginDto,
+    userType: 'admin' | 'customer',
+  ): Promise<AuthResponse> {
     if (userType === 'admin') {
       return this.adminLogin(loginDto);
     }
@@ -39,7 +41,16 @@ export class AuthService {
     const admin = await this.adminRepository.findOne({
       where: { email: loginDto.email, isActive: true },
       relations: ['role', 'role.permissions'],
-      select: ['id', 'firstName', 'lastName', 'email', 'password', 'isActive', 'roleId', 'image'],
+      select: [
+        'id',
+        'firstName',
+        'lastName',
+        'email',
+        'password',
+        'isActive',
+        'roleId',
+        'image',
+      ],
     });
 
     if (!admin) {
@@ -52,10 +63,15 @@ export class AuthService {
       throw new UnauthorizedException('Admin role not configured');
     }
 
-    const permissions = admin.role.permissions.map(p => `${p.action}:${p.resource}`);
-    
+    const permissions = admin.role.permissions.map(
+      (p) => `${p.action}:${p.resource}`,
+    );
+
     // Cache permissions for future use
-    await this.permissionCacheService.setPermissions(admin.role.id, permissions);
+    await this.permissionCacheService.setPermissions(
+      admin.role.id,
+      permissions,
+    );
 
     const tokenPayload: Omit<JwtPayload, 'iat' | 'exp' | 'tokenType'> = {
       sub: admin.id,
@@ -79,7 +95,16 @@ export class AuthService {
   private async customerLogin(loginDto: LoginDto): Promise<AuthResponse> {
     const customer = await this.customerRepository.findOne({
       where: { email: loginDto.email, isActive: true },
-      select: ['id', 'firstName', 'lastName', 'email', 'password', 'phone', 'isActive', 'image'],
+      select: [
+        'id',
+        'firstName',
+        'lastName',
+        'email',
+        'password',
+        'phone',
+        'isActive',
+        'image',
+      ],
     });
 
     if (!customer) {
@@ -117,17 +142,30 @@ export class AuthService {
     const admin = await this.adminRepository.findOne({
       where: { id: adminId, isActive: true },
       relations: ['role', 'role.permissions'],
-      select: ['id', 'firstName', 'lastName', 'email', 'isActive', 'roleId', 'image'],
+      select: [
+        'id',
+        'firstName',
+        'lastName',
+        'email',
+        'isActive',
+        'roleId',
+        'image',
+      ],
     });
 
     if (!admin || !admin.role) {
       throw new NotFoundException('Admin not found or role not configured');
     }
 
-    const permissions = admin.role.permissions.map(p => `${p.action}:${p.resource}`);
-    
+    const permissions = admin.role.permissions.map(
+      (p) => `${p.action}:${p.resource}`,
+    );
+
     // Update cache with fresh permissions
-    await this.permissionCacheService.setPermissions(admin.role.id, permissions);
+    await this.permissionCacheService.setPermissions(
+      admin.role.id,
+      permissions,
+    );
 
     const tokenPayload: Omit<JwtPayload, 'iat' | 'exp' | 'tokenType'> = {
       sub: admin.id,
@@ -147,10 +185,20 @@ export class AuthService {
     };
   }
 
-  private async refreshCustomerToken(customerId: string): Promise<AuthResponse> {
+  private async refreshCustomerToken(
+    customerId: string,
+  ): Promise<AuthResponse> {
     const customer = await this.customerRepository.findOne({
       where: { id: customerId, isActive: true },
-      select: ['id', 'firstName', 'lastName', 'email', 'phone', 'isActive', 'image'],
+      select: [
+        'id',
+        'firstName',
+        'lastName',
+        'email',
+        'phone',
+        'isActive',
+        'image',
+      ],
     });
 
     if (!customer) {
@@ -198,7 +246,10 @@ export class AuthService {
     });
   }
 
-  private async verifyPassword(hashedPassword: string, plainPassword: string): Promise<void> {
+  private async verifyPassword(
+    hashedPassword: string,
+    plainPassword: string,
+  ): Promise<void> {
     const isValid = await argon2.verify(hashedPassword, plainPassword);
     if (!isValid) {
       throw new UnauthorizedException('Invalid credentials');

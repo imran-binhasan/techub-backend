@@ -1,6 +1,9 @@
-
 // src/product-review/service/product-review.service.ts
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
 import { Product } from 'src/product/entity/product.entity';
@@ -18,7 +21,9 @@ export class ProductReviewService {
     private readonly productRepository: Repository<Product>,
   ) {}
 
-  async create(createProductReviewDto: CreateProductReviewDto): Promise<ProductReview> {
+  async create(
+    createProductReviewDto: CreateProductReviewDto,
+  ): Promise<ProductReview> {
     const { productId, ...reviewData } = createProductReviewDto;
 
     // Verify product exists
@@ -60,7 +65,7 @@ export class ProductReviewService {
     if (search) {
       queryBuilder.andWhere(
         '(review.name ILIKE :search OR review.comment ILIKE :search)',
-        { search: `%${search}%` }
+        { search: `%${search}%` },
       );
     }
 
@@ -121,9 +126,12 @@ export class ProductReviewService {
     return review;
   }
 
-  async update(id: string, updateProductReviewDto: UpdateProductReviewDto): Promise<ProductReview> {
+  async update(
+    id: string,
+    updateProductReviewDto: UpdateProductReviewDto,
+  ): Promise<ProductReview> {
     const review = await this.findOne(id);
-    
+
     const { productId, ...updateData } = updateProductReviewDto;
 
     // If productId is being updated, verify the new product exists
@@ -150,7 +158,7 @@ export class ProductReviewService {
 
   async restore(id: string): Promise<ProductReview> {
     const result = await this.productReviewRepository.restore(id);
-    
+
     if (result.affected === 0) {
       throw new NotFoundException('Product review not found or not deleted');
     }
@@ -205,7 +213,7 @@ export class ProductReviewService {
       .orderBy('review.rating', 'ASC')
       .getRawMany();
 
-    return result.map(item => ({
+    return result.map((item) => ({
       rating: parseInt(item.rating),
       count: parseInt(item.count),
     }));

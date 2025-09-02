@@ -1,10 +1,5 @@
-
 // src/cart/dto/update-cart.dto.ts
-import {
-  IsNumber,
-  IsNotEmpty,
-  Min,
-} from 'class-validator';
+import { IsNumber, IsNotEmpty, Min } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class UpdateCartDto {

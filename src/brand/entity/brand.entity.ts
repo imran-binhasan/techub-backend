@@ -1,6 +1,6 @@
-import { Base } from "src/common/entity/base.entity";
-import { Product } from "src/product/entity/product.entity";
-import { Column, Entity, OneToMany } from "typeorm";
+import { Base } from 'src/common/entity/base.entity';
+import { Product } from 'src/product/entity/product.entity';
+import { Column, Entity, OneToMany } from 'typeorm';
 
 @Entity('brand')
 export class Brand extends Base {
@@ -13,6 +13,6 @@ export class Brand extends Base {
   @Column({ nullable: true })
   logo?: string;
 
-  @OneToMany(() => Product, product => product.brand)
+  @OneToMany(() => Product, (product) => product.brand)
   products: Product[];
 }

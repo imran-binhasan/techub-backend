@@ -11,9 +11,7 @@ import { Repository } from 'typeorm';
 import { CloudinaryService } from 'src/upload/service/cloudinary.service';
 import { CreateCustomerDto } from '../dto/create-customer.dto';
 import { UpdateCustomerDto } from '../dto/update-customer.dto';
-import {
-  PaginatedServiceResponse,
-} from 'src/common/interface/api-response.interface';
+import { PaginatedServiceResponse } from 'src/common/interface/api-response.interface';
 import { PaginationQuery } from 'src/common/dto/pagination_query.dto';
 
 @Injectable()

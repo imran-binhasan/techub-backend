@@ -19,9 +19,9 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AdminService } from '../service/admin.service';
 import { CreateAdminDto } from '../dto/create-admin.dto';
-import { 
-  AdminOnly, 
-  RequirePermissions, 
+import {
+  AdminOnly,
+  RequirePermissions,
   RequireResource,
 } from 'src/auth/decorator/auth.decorator';
 import type { AuthenticatedUser } from 'src/auth/interface/auth-user.interface';
@@ -51,7 +51,9 @@ export class AdminController {
 
   @RequirePermissions('read:admin', 'list:admin')
   @Get()
-  async findAll(@Query() query: PaginationQuery & { isActive?: boolean; roleId?: string }) {
+  async findAll(
+    @Query() query: PaginationQuery & { isActive?: boolean; roleId?: string },
+  ) {
     const result = await this.adminService.findAll(query);
     return {
       success: true,
@@ -93,7 +95,10 @@ export class AdminController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateAdminRoleDto: UpdateAdminRoleDto,
   ) {
-    const result = await this.adminService.updateRole(id, updateAdminRoleDto.roleId);
+    const result = await this.adminService.updateRole(
+      id,
+      updateAdminRoleDto.roleId,
+    );
     return {
       success: true,
       message: 'Admin role updated successfully',
@@ -156,7 +161,11 @@ export class AdminController {
     @Body() updateAdminDto: Omit<UpdateAdminDto, 'isActive'>,
     @UploadedFile() image?: Express.Multer.File,
   ) {
-    const result = await this.adminService.update(user.id, updateAdminDto, image);
+    const result = await this.adminService.update(
+      user.id,
+      updateAdminDto,
+      image,
+    );
     return {
       success: true,
       message: 'Profile updated successfully',

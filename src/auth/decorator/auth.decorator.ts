@@ -20,36 +20,39 @@ export const Public = () => SetMetadata(IS_PUBLIC_KEY, true);
 export const AdminOnly = () =>
   applyDecorators(
     UseGuards(JwtAuthGuard, UserTypeGuard),
-    SetMetadata(USER_TYPE_KEY, 'admin')
+    SetMetadata(USER_TYPE_KEY, 'admin'),
   );
 
 export const CustomerOnly = () =>
   applyDecorators(
     UseGuards(JwtAuthGuard, UserTypeGuard),
-    SetMetadata(USER_TYPE_KEY, 'customer')
+    SetMetadata(USER_TYPE_KEY, 'customer'),
   );
 
 // RBAC decorators
 export const RequirePermissions = (...permissions: string[]) =>
   applyDecorators(
     UseGuards(JwtAuthGuard, UserTypeGuard, DynamicRbacGuard),
-    SetMetadata(PERMISSIONS_KEY, permissions)
+    SetMetadata(PERMISSIONS_KEY, permissions),
   );
 
 export const RequireResource = (resource: string, action: string) =>
   applyDecorators(
     UseGuards(JwtAuthGuard, UserTypeGuard, DynamicRbacGuard),
-    SetMetadata(RESOURCE_KEY, { resource, action })
+    SetMetadata(RESOURCE_KEY, { resource, action }),
   );
 
 export const RequireAllPermissions = (...permissions: string[]) =>
   applyDecorators(
     UseGuards(JwtAuthGuard, UserTypeGuard, DynamicRbacGuard),
-    SetMetadata(REQUIRE_ALL_PERMISSIONS_KEY, permissions)
+    SetMetadata(REQUIRE_ALL_PERMISSIONS_KEY, permissions),
   );
 
-export const RequireMinimumLevel = (resource: string, level: 'read' | 'write' | 'admin') =>
+export const RequireMinimumLevel = (
+  resource: string,
+  level: 'read' | 'write' | 'admin',
+) =>
   applyDecorators(
     UseGuards(JwtAuthGuard, UserTypeGuard, DynamicRbacGuard),
-    SetMetadata(MINIMUM_LEVEL_KEY, { resource, level })
+    SetMetadata(MINIMUM_LEVEL_KEY, { resource, level }),
   );

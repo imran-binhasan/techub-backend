@@ -1,6 +1,14 @@
-
 // src/product/dto/product-query.dto.ts
-import { IsOptional, IsString, IsUUID, IsNumber, Min, Max, IsArray, IsBoolean } from 'class-validator';
+import {
+  IsOptional,
+  IsString,
+  IsUUID,
+  IsNumber,
+  Min,
+  Max,
+  IsArray,
+  IsBoolean,
+} from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 import { PaginationQuery } from 'src/common/dto/pagination_query.dto';
 

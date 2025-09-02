@@ -1,14 +1,13 @@
-
 // admin/entity/admin.entity.ts
 import { Base } from 'src/common/entity/base.entity';
 import { Role } from 'src/role/entity/role.entity';
-import { 
-  Column, 
-  Entity, 
-  JoinColumn, 
-  ManyToOne, 
-  RelationId, 
-  Index 
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  RelationId,
+  Index,
 } from 'typeorm';
 
 @Entity('admin')
@@ -31,10 +30,10 @@ export class Admin extends Base {
   @Column({ type: 'boolean', default: true })
   isActive: boolean;
 
-  @ManyToOne(() => Role, role => role.admins, { 
-    eager: false, 
+  @ManyToOne(() => Role, (role) => role.admins, {
+    eager: false,
     onDelete: 'RESTRICT',
-    onUpdate: 'CASCADE'
+    onUpdate: 'CASCADE',
   })
   @JoinColumn({ name: 'roleId' })
   role: Role;
@@ -42,5 +41,4 @@ export class Admin extends Base {
   @RelationId((admin: Admin) => admin.role)
   @Column({ type: 'uuid' })
   roleId: string;
-
 }

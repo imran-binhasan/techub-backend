@@ -12,9 +12,7 @@ import { Product } from 'src/product/entity/product.entity';
 import { CreateWishlistDto } from '../dto/create-wishlist.dto';
 import { UpdateWishlistDto } from '../dto/update-wishlist.dto';
 import { WishlistQueryDto } from '../dto/query-wishlist.dto';
-import {
-  PaginatedServiceResponse,
-} from 'src/common/interface/api-response.interface';
+import { PaginatedServiceResponse } from 'src/common/interface/api-response.interface';
 
 @Injectable()
 export class WishlistService {
@@ -67,14 +65,10 @@ export class WishlistService {
     return this.findOne(savedWishlist.id);
   }
 
-  async findAll(query: WishlistQueryDto): Promise<PaginatedServiceResponse<Wishlist>> {
-    const {
-      page = 1,
-      limit = 10,
-      search,
-      customerId,
-      productId,
-    } = query;
+  async findAll(
+    query: WishlistQueryDto,
+  ): Promise<PaginatedServiceResponse<Wishlist>> {
+    const { page = 1, limit = 10, search, customerId, productId } = query;
 
     // Validate pagination parameters
     if (page < 1 || limit < 1 || limit > 100) {
@@ -163,7 +157,10 @@ export class WishlistService {
     return wishlist;
   }
 
-  async update(id: string, updateWishlistDto: UpdateWishlistDto): Promise<Wishlist> {
+  async update(
+    id: string,
+    updateWishlistDto: UpdateWishlistDto,
+  ): Promise<Wishlist> {
     const existingWishlist = await this.wishlistRepository.findOne({
       where: { id },
       relations: ['customer', 'product'],
@@ -181,7 +178,9 @@ export class WishlistService {
       });
 
       if (!foundCustomer) {
-        throw new NotFoundException(`Customer with ID ${updateWishlistDto.customerId} not found`);
+        throw new NotFoundException(
+          `Customer with ID ${updateWishlistDto.customerId} not found`,
+        );
       }
       customer = foundCustomer;
     }
@@ -194,21 +193,27 @@ export class WishlistService {
       });
 
       if (!foundProduct) {
-        throw new NotFoundException(`Product with ID ${updateWishlistDto.productId} not found`);
+        throw new NotFoundException(
+          `Product with ID ${updateWishlistDto.productId} not found`,
+        );
       }
       product = foundProduct;
 
       // Check if this combination already exists
       if (updateWishlistDto.customerId || updateWishlistDto.productId) {
-        const customerId = updateWishlistDto.customerId || existingWishlist.customer.id;
-        const productId = updateWishlistDto.productId || existingWishlist.product.id;
-        
+        const customerId =
+          updateWishlistDto.customerId || existingWishlist.customer.id;
+        const productId =
+          updateWishlistDto.productId || existingWishlist.product.id;
+
         const duplicate = await this.wishlistRepository.findOne({
           where: { customer: { id: customerId }, product: { id: productId } },
         });
 
         if (duplicate && duplicate.id !== id) {
-          throw new ConflictException('This product is already in the customer\'s wishlist');
+          throw new ConflictException(
+            "This product is already in the customer's wishlist",
+          );
         }
       }
     }
@@ -228,7 +233,12 @@ export class WishlistService {
   async findByCustomerId(customerId: string): Promise<Wishlist[]> {
     return this.wishlistRepository.find({
       where: { customer: { id: customerId } },
-      relations: ['product', 'product.category', 'product.brand', 'product.images'],
+      relations: [
+        'product',
+        'product.category',
+        'product.brand',
+        'product.images',
+      ],
       order: { createdAt: 'DESC' },
     });
   }
@@ -265,7 +275,10 @@ export class WishlistService {
     return this.findOne(id);
   }
 
-  async removeByCustomerAndProduct(customerId: string, productId: string): Promise<void> {
+  async removeByCustomerAndProduct(
+    customerId: string,
+    productId: string,
+  ): Promise<void> {
     const wishlist = await this.wishlistRepository.findOne({
       where: { customer: { id: customerId }, product: { id: productId } },
     });
@@ -287,7 +300,10 @@ export class WishlistService {
     });
   }
 
-  async isProductInWishlist(customerId: string, productId: string): Promise<boolean> {
+  async isProductInWishlist(
+    customerId: string,
+    productId: string,
+  ): Promise<boolean> {
     const count = await this.wishlistRepository.count({
       where: { customer: { id: customerId }, product: { id: productId } },
     });

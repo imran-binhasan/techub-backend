@@ -1,4 +1,11 @@
-import { IsString, IsNumber, IsUUID, Min, Max, IsOptional } from 'class-validator';
+import {
+  IsString,
+  IsNumber,
+  IsUUID,
+  Min,
+  Max,
+  IsOptional,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class UpdateProductReviewDto {

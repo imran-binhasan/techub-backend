@@ -10,9 +10,7 @@ export interface CacheOptions {
 export class RedisService {
   private readonly logger = new Logger(RedisService.name);
 
-  constructor(
-    @Inject('REDIS_CLIENT') private readonly redis: Redis,
-  ) {}
+  constructor(@Inject('REDIS_CLIENT') private readonly redis: Redis) {}
 
   // Basic operations
   async get<T = any>(key: string): Promise<T | null> {
@@ -25,13 +23,23 @@ export class RedisService {
     }
   }
 
-  async set<T = any>(key: string, value: T, options?: CacheOptions): Promise<boolean> {
+  async set<T = any>(
+    key: string,
+    value: T,
+    options?: CacheOptions,
+  ): Promise<boolean> {
     try {
       const serialized = JSON.stringify(value);
-      
+
       if (options?.ttl) {
         if (options.nx) {
-          const result = await this.redis.set(key, serialized, 'EX', options.ttl, 'NX');
+          const result = await this.redis.set(
+            key,
+            serialized,
+            'EX',
+            options.ttl,
+            'NX',
+          );
           return result === 'OK';
         }
         await this.redis.setex(key, options.ttl, serialized);
@@ -42,7 +50,7 @@ export class RedisService {
         }
         await this.redis.set(key, serialized);
       }
-      
+
       return true;
     } catch (error) {
       this.logger.error(`Failed to set key ${key}:`, error);
@@ -63,7 +71,10 @@ export class RedisService {
     try {
       return await this.redis.exists(...keys);
     } catch (error) {
-      this.logger.error(`Failed to check existence of keys ${keys.join(', ')}:`, error);
+      this.logger.error(
+        `Failed to check existence of keys ${keys.join(', ')}:`,
+        error,
+      );
       return 0;
     }
   }
@@ -112,7 +123,7 @@ export class RedisService {
     try {
       const hash = await this.redis.hgetall(key);
       if (!hash || Object.keys(hash).length === 0) return null;
-      
+
       const result: Record<string, T> = {};
       for (const [field, value] of Object.entries(hash)) {
         result[field] = JSON.parse(value);
@@ -128,7 +139,10 @@ export class RedisService {
     try {
       return await this.redis.hdel(key, ...fields);
     } catch (error) {
-      this.logger.error(`Failed to hdel ${key} fields ${fields.join(', ')}:`, error);
+      this.logger.error(
+        `Failed to hdel ${key} fields ${fields.join(', ')}:`,
+        error,
+      );
       return 0;
     }
   }
@@ -136,7 +150,7 @@ export class RedisService {
   // List operations
   async lpush<T = any>(key: string, ...values: T[]): Promise<number> {
     try {
-      const serialized = values.map(v => JSON.stringify(v));
+      const serialized = values.map((v) => JSON.stringify(v));
       return await this.redis.lpush(key, ...serialized);
     } catch (error) {
       this.logger.error(`Failed to lpush to ${key}:`, error);
@@ -154,10 +168,14 @@ export class RedisService {
     }
   }
 
-  async lrange<T = any>(key: string, start: number, stop: number): Promise<T[]> {
+  async lrange<T = any>(
+    key: string,
+    start: number,
+    stop: number,
+  ): Promise<T[]> {
     try {
       const values = await this.redis.lrange(key, start, stop);
-      return values.map(v => JSON.parse(v));
+      return values.map((v) => JSON.parse(v));
     } catch (error) {
       this.logger.error(`Failed to lrange ${key}:`, error);
       return [];
@@ -167,7 +185,7 @@ export class RedisService {
   // Set operations
   async sadd<T = any>(key: string, ...members: T[]): Promise<number> {
     try {
-      const serialized = members.map(m => JSON.stringify(m));
+      const serialized = members.map((m) => JSON.stringify(m));
       return await this.redis.sadd(key, ...serialized);
     } catch (error) {
       this.logger.error(`Failed to sadd to ${key}:`, error);
@@ -178,7 +196,7 @@ export class RedisService {
   async smembers<T = any>(key: string): Promise<T[]> {
     try {
       const members = await this.redis.smembers(key);
-      return members.map(m => JSON.parse(m));
+      return members.map((m) => JSON.parse(m));
     } catch (error) {
       this.logger.error(`Failed to smembers ${key}:`, error);
       return [];
@@ -187,7 +205,7 @@ export class RedisService {
 
   async srem<T = any>(key: string, ...members: T[]): Promise<number> {
     try {
-      const serialized = members.map(m => JSON.stringify(m));
+      const serialized = members.map((m) => JSON.stringify(m));
       return await this.redis.srem(key, ...serialized);
     } catch (error) {
       this.logger.error(`Failed to srem from ${key}:`, error);
@@ -211,16 +229,29 @@ export class RedisService {
       if (keys.length === 0) return 0;
       return await this.redis.del(...keys);
     } catch (error) {
-      this.logger.error(`Failed to delete keys with pattern ${pattern}:`, error);
+      this.logger.error(
+        `Failed to delete keys with pattern ${pattern}:`,
+        error,
+      );
       return 0;
     }
   }
 
   // Lock mechanism for distributed systems
-  async acquireLock(key: string, ttl: number = 30, identifier?: string): Promise<string | null> {
+  async acquireLock(
+    key: string,
+    ttl: number = 30,
+    identifier?: string,
+  ): Promise<string | null> {
     try {
       const lockId = identifier || Math.random().toString(36).substring(2, 15);
-      const result = await this.redis.set(`lock:${key}`, lockId, 'EX', ttl, 'NX');
+      const result = await this.redis.set(
+        `lock:${key}`,
+        lockId,
+        'EX',
+        ttl,
+        'NX',
+      );
       return result === 'OK' ? lockId : null;
     } catch (error) {
       this.logger.error(`Failed to acquire lock ${key}:`, error);

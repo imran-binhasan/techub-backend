@@ -1,4 +1,9 @@
-import { Injectable, Logger, NotFoundException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Role } from '../entity/role.entity';
@@ -14,10 +19,14 @@ export class RoleService {
     private readonly roleRepository: Repository<Role>,
     @InjectRepository(Permission)
     private readonly permissionRepository: Repository<Permission>,
-    private readonly permissionCacheService: PermissionCacheService
+    private readonly permissionCacheService: PermissionCacheService,
   ) {}
 
-  async createRole(resource: string, action: string, permissionIds: string[]): Promise<Role> {
+  async createRole(
+    resource: string,
+    action: string,
+    permissionIds: string[],
+  ): Promise<Role> {
     // Check if role already exists
     const existingRole = await this.roleRepository.findOne({
       where: { resource, action },
@@ -28,8 +37,9 @@ export class RoleService {
     }
 
     // Fetch permissions
-    const permissions = await this.permissionRepository.findByIds(permissionIds);
-    
+    const permissions =
+      await this.permissionRepository.findByIds(permissionIds);
+
     if (permissions.length !== permissionIds.length) {
       throw new NotFoundException('One or more permissions not found');
     }
@@ -42,7 +52,9 @@ export class RoleService {
     });
 
     const savedRole = await this.roleRepository.save(role);
-    this.logger.log(`Created role: ${resource}:${action} with ${permissions.length} permissions`);
+    this.logger.log(
+      `Created role: ${resource}:${action} with ${permissions.length} permissions`,
+    );
 
     return savedRole;
   }
@@ -67,12 +79,16 @@ export class RoleService {
     return role;
   }
 
-  async updateRolePermissions(roleId: string, permissionIds: string[]): Promise<Role> {
+  async updateRolePermissions(
+    roleId: string,
+    permissionIds: string[],
+  ): Promise<Role> {
     const role = await this.findById(roleId);
-    
+
     // Fetch new permissions
-    const permissions = await this.permissionRepository.findByIds(permissionIds);
-    
+    const permissions =
+      await this.permissionRepository.findByIds(permissionIds);
+
     if (permissions.length !== permissionIds.length) {
       throw new NotFoundException('One or more permissions not found');
     }
@@ -84,14 +100,16 @@ export class RoleService {
     // Invalidate cache for this role
     await this.permissionCacheService.invalidatePermissions(roleId);
 
-    this.logger.log(`Updated permissions for role ${roleId}: ${permissions.length} permissions`);
+    this.logger.log(
+      `Updated permissions for role ${roleId}: ${permissions.length} permissions`,
+    );
 
     return updatedRole;
   }
 
   async deleteRole(id: string): Promise<void> {
     const role = await this.findById(id);
-    
+
     // Check if role has any admins
     const adminCount = await this.roleRepository
       .createQueryBuilder('role')
@@ -100,29 +118,36 @@ export class RoleService {
       .getCount();
 
     if (adminCount > 0) {
-      throw new ConflictException('Cannot delete role that has assigned admins');
+      throw new ConflictException(
+        'Cannot delete role that has assigned admins',
+      );
     }
 
     await this.roleRepository.remove(role);
-    
+
     // Invalidate cache for this role
     await this.permissionCacheService.invalidatePermissions(id);
 
     this.logger.log(`Deleted role ${id}`);
   }
 
-  async addPermissionToRole(roleId: string, permissionId: string): Promise<Role> {
+  async addPermissionToRole(
+    roleId: string,
+    permissionId: string,
+  ): Promise<Role> {
     const role = await this.findById(roleId);
     const permission = await this.permissionRepository.findOne({
       where: { id: permissionId },
     });
 
     if (!permission) {
-      throw new NotFoundException(`Permission with ID ${permissionId} not found`);
+      throw new NotFoundException(
+        `Permission with ID ${permissionId} not found`,
+      );
     }
 
     // Check if permission already exists
-    const hasPermission = role.permissions.some(p => p.id === permissionId);
+    const hasPermission = role.permissions.some((p) => p.id === permissionId);
     if (hasPermission) {
       throw new ConflictException('Permission already assigned to role');
     }
@@ -136,10 +161,13 @@ export class RoleService {
     return updatedRole;
   }
 
-  async removePermissionFromRole(roleId: string, permissionId: string): Promise<Role> {
+  async removePermissionFromRole(
+    roleId: string,
+    permissionId: string,
+  ): Promise<Role> {
     const role = await this.findById(roleId);
-    
-    role.permissions = role.permissions.filter(p => p.id !== permissionId);
+
+    role.permissions = role.permissions.filter((p) => p.id !== permissionId);
     const updatedRole = await this.roleRepository.save(role);
 
     // Invalidate cache
@@ -148,4 +176,3 @@ export class RoleService {
     return updatedRole;
   }
 }
-

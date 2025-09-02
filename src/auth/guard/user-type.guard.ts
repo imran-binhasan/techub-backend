@@ -7,7 +7,11 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { USER_TYPE_KEY } from '../decorator/auth.decorator';
-import { AuthenticatedUser, isAdmin, isCustomer } from '../interface/auth-user.interface';
+import {
+  AuthenticatedUser,
+  isAdmin,
+  isCustomer,
+} from '../interface/auth-user.interface';
 
 @Injectable()
 export class UserTypeGuard implements CanActivate {
@@ -16,10 +20,9 @@ export class UserTypeGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
-    const requiredUserType = this.reflector.getAllAndOverride<'admin' | 'customer'>(
-      USER_TYPE_KEY,
-      [context.getHandler(), context.getClass()]
-    );
+    const requiredUserType = this.reflector.getAllAndOverride<
+      'admin' | 'customer'
+    >(USER_TYPE_KEY, [context.getHandler(), context.getClass()]);
 
     if (!requiredUserType) {
       return true;
@@ -36,9 +39,11 @@ export class UserTypeGuard implements CanActivate {
 
     if (!hasAccess) {
       this.logger.warn(
-        `Access denied: User ${user.id} (${user.type}) tried to access ${requiredUserType}-only resource`
+        `Access denied: User ${user.id} (${user.type}) tried to access ${requiredUserType}-only resource`,
       );
-      throw new ForbiddenException(`Access denied. ${requiredUserType} privileges required.`);
+      throw new ForbiddenException(
+        `Access denied. ${requiredUserType} privileges required.`,
+      );
     }
 
     return true;

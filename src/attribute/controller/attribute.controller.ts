@@ -22,7 +22,6 @@ import {
 } from 'src/auth/decorator/auth.decorator';
 import { PaginationQuery } from 'src/common/dto/pagination_query.dto';
 
-
 @Controller('attribute')
 export class AttributeController {
   constructor(private readonly attributeService: AttributeService) {}

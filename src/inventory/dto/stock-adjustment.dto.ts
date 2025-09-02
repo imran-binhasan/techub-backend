@@ -1,13 +1,12 @@
-import { 
-  IsString, 
-  IsNumber, 
-  IsOptional, 
+import {
+  IsString,
+  IsNumber,
+  IsOptional,
   IsEnum,
-  IsNotEmpty 
+  IsNotEmpty,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { TransactionType } from '../entity/inventory-transactuin.entity';
-
 
 export class StockAdjustmentDto {
   @IsEnum(TransactionType)

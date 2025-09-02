@@ -7,7 +7,7 @@ import { CloudinaryService } from 'src/upload/service/cloudinary.service';
 import { AuthModule } from 'src/auth/module/auth.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Brand]),AuthModule],
+  imports: [TypeOrmModule.forFeature([Brand]), AuthModule],
   controllers: [BrandController],
   providers: [BrandService, CloudinaryService],
   exports: [BrandService],

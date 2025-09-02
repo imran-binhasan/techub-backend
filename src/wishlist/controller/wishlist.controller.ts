@@ -14,10 +14,7 @@ import {
 import { WishlistService } from '../service/wishlist.service';
 import { CreateWishlistDto } from '../dto/create-wishlist.dto';
 import { UpdateWishlistDto } from '../dto/update-wishlist.dto';
-import {
-  RequireResource,
-  Public,
-} from 'src/auth/decorator/auth.decorator';
+import { RequireResource, Public } from 'src/auth/decorator/auth.decorator';
 import { WishlistQueryDto } from '../dto/query-wishlist.dto';
 
 @Controller('wishlist')
@@ -113,7 +110,10 @@ export class WishlistController {
     @Param('customerId', ParseUUIDPipe) customerId: string,
     @Param('productId', ParseUUIDPipe) productId: string,
   ) {
-    await this.wishlistService.removeByCustomerAndProduct(customerId, productId);
+    await this.wishlistService.removeByCustomerAndProduct(
+      customerId,
+      productId,
+    );
     return {
       success: true,
       message: 'Item removed from wishlist successfully',
@@ -123,7 +123,9 @@ export class WishlistController {
   @RequireResource('wishlist', 'delete')
   @Delete('customer/:customerId/clear')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async clearCustomerWishlist(@Param('customerId', ParseUUIDPipe) customerId: string) {
+  async clearCustomerWishlist(
+    @Param('customerId', ParseUUIDPipe) customerId: string,
+  ) {
     await this.wishlistService.clearCustomerWishlist(customerId);
     return {
       success: true,
@@ -134,7 +136,9 @@ export class WishlistController {
   // Utility endpoints
   @RequireResource('wishlist', 'read')
   @Get('customer/:customerId/count')
-  async getWishlistCount(@Param('customerId', ParseUUIDPipe) customerId: string) {
+  async getWishlistCount(
+    @Param('customerId', ParseUUIDPipe) customerId: string,
+  ) {
     const result = await this.wishlistService.getWishlistCount(customerId);
     return {
       success: true,
@@ -149,7 +153,10 @@ export class WishlistController {
     @Param('customerId', ParseUUIDPipe) customerId: string,
     @Param('productId', ParseUUIDPipe) productId: string,
   ) {
-    const result = await this.wishlistService.isProductInWishlist(customerId, productId);
+    const result = await this.wishlistService.isProductInWishlist(
+      customerId,
+      productId,
+    );
     return {
       success: true,
       message: 'Product wishlist status retrieved successfully',
@@ -157,4 +164,3 @@ export class WishlistController {
     };
   }
 }
-

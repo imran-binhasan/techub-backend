@@ -10,9 +10,7 @@ import { Repository } from 'typeorm';
 import { AttributeValue } from '../entity/attribute_value.entity';
 import { Attribute } from 'src/attribute/entity/attribute.entity';
 
-import {
-  PaginatedServiceResponse,
-} from 'src/common/interface/api-response.interface';
+import { PaginatedServiceResponse } from 'src/common/interface/api-response.interface';
 import { CreateAttributeValueDto } from '../dto/create-attribute_value.dto';
 import { AttributeValueQueryDto } from '../dto/query-attribute_value.dto';
 import { UpdateAttributeValueDto } from '../dto/update-attribute_value.dto';
@@ -26,14 +24,18 @@ export class AttributeValueService {
     private readonly attributeRepository: Repository<Attribute>,
   ) {}
 
-  async create(createAttributeValueDto: CreateAttributeValueDto): Promise<AttributeValue> {
+  async create(
+    createAttributeValueDto: CreateAttributeValueDto,
+  ): Promise<AttributeValue> {
     // Verify attribute exists
     const attribute = await this.attributeRepository.findOne({
       where: { id: createAttributeValueDto.attributeId },
     });
 
     if (!attribute) {
-      throw new NotFoundException(`Attribute with ID ${createAttributeValueDto.attributeId} not found`);
+      throw new NotFoundException(
+        `Attribute with ID ${createAttributeValueDto.attributeId} not found`,
+      );
     }
 
     // Check if attribute value already exists for this attribute
@@ -57,7 +59,8 @@ export class AttributeValueService {
       attribute,
     });
 
-    const savedAttributeValue = await this.attributeValueRepository.save(attributeValue);
+    const savedAttributeValue =
+      await this.attributeValueRepository.save(attributeValue);
     return this.findOne(savedAttributeValue.id);
   }
 
@@ -77,15 +80,16 @@ export class AttributeValueService {
 
     // Apply attribute filter
     if (attributeId) {
-      queryBuilder.where('attributeValue.attribute.id = :attributeId', { attributeId });
+      queryBuilder.where('attributeValue.attribute.id = :attributeId', {
+        attributeId,
+      });
     }
 
     // Apply search filter
     if (search?.trim()) {
-      queryBuilder.andWhere(
-        'attributeValue.value ILIKE :search',
-        { search: `%${search.trim().toLowerCase()}%` },
-      );
+      queryBuilder.andWhere('attributeValue.value ILIKE :search', {
+        search: `%${search.trim().toLowerCase()}%`,
+      });
     }
 
     // Apply pagination and ordering
@@ -151,33 +155,42 @@ export class AttributeValueService {
 
     // Verify new attribute exists if attributeId is being updated
     let attribute = existingAttributeValue.attribute;
-    if (updateAttributeValueDto.attributeId && updateAttributeValueDto.attributeId !== attribute.id) {
+    if (
+      updateAttributeValueDto.attributeId &&
+      updateAttributeValueDto.attributeId !== attribute.id
+    ) {
       const foundAttribute = await this.attributeRepository.findOne({
         where: { id: updateAttributeValueDto.attributeId },
       });
 
       if (!foundAttribute) {
-        throw new NotFoundException(`Attribute with ID ${updateAttributeValueDto.attributeId} not found`);
+        throw new NotFoundException(
+          `Attribute with ID ${updateAttributeValueDto.attributeId} not found`,
+        );
       }
       attribute = foundAttribute;
     }
 
     // Check value uniqueness within the attribute if value is being updated
-    const targetAttributeId = updateAttributeValueDto.attributeId || attribute.id;
-    const targetValue = updateAttributeValueDto.value || existingAttributeValue.value;
+    const targetAttributeId =
+      updateAttributeValueDto.attributeId || attribute.id;
+    const targetValue =
+      updateAttributeValueDto.value || existingAttributeValue.value;
 
     if (
       updateAttributeValueDto.value &&
-      (updateAttributeValueDto.value.toLowerCase() !== existingAttributeValue.value ||
-       updateAttributeValueDto.attributeId !== attribute.id)
+      (updateAttributeValueDto.value.toLowerCase() !==
+        existingAttributeValue.value ||
+        updateAttributeValueDto.attributeId !== attribute.id)
     ) {
-      const attributeValueWithValue = await this.attributeValueRepository.findOne({
-        where: {
-          value: targetValue.toLowerCase(),
-          attribute: { id: targetAttributeId },
-        },
-        withDeleted: true,
-      });
+      const attributeValueWithValue =
+        await this.attributeValueRepository.findOne({
+          where: {
+            value: targetValue.toLowerCase(),
+            attribute: { id: targetAttributeId },
+          },
+          withDeleted: true,
+        });
 
       if (attributeValueWithValue && attributeValueWithValue.id !== id) {
         throw new ConflictException(
@@ -188,7 +201,9 @@ export class AttributeValueService {
 
     // Prepare update data
     const updateData: Partial<AttributeValue> = {
-      ...(updateAttributeValueDto.value && { value: updateAttributeValueDto.value.toLowerCase() }),
+      ...(updateAttributeValueDto.value && {
+        value: updateAttributeValueDto.value.toLowerCase(),
+      }),
       ...(updateAttributeValueDto.attributeId && { attribute }),
     };
 
@@ -209,7 +224,10 @@ export class AttributeValueService {
     }
 
     // Check if attribute value has associated products
-    if (attributeValue.productAttributeValues && attributeValue.productAttributeValues.length > 0) {
+    if (
+      attributeValue.productAttributeValues &&
+      attributeValue.productAttributeValues.length > 0
+    ) {
       throw new BadRequestException(
         'Cannot delete attribute value that is associated with products. Remove product associations first.',
       );
@@ -270,30 +288,33 @@ export class AttributeValueService {
       withDeleted: true,
     });
 
-    const existingValueSet = new Set(existingValues.map(v => v.value.toLowerCase()));
-    
+    const existingValueSet = new Set(
+      existingValues.map((v) => v.value.toLowerCase()),
+    );
+
     // Filter out values that already exist
     const newValues = values
-      .map(v => v.trim().toLowerCase())
-      .filter(v => v && !existingValueSet.has(v));
+      .map((v) => v.trim().toLowerCase())
+      .filter((v) => v && !existingValueSet.has(v));
 
     if (newValues.length === 0) {
-      throw new BadRequestException('All provided values already exist for this attribute');
+      throw new BadRequestException(
+        'All provided values already exist for this attribute',
+      );
     }
 
     // Create new attribute values
-    const attributeValues = newValues.map(value =>
+    const attributeValues = newValues.map((value) =>
       this.attributeValueRepository.create({
         value,
         attribute,
-      })
+      }),
     );
 
-    const savedAttributeValues = await this.attributeValueRepository.save(attributeValues);
-    
+    const savedAttributeValues =
+      await this.attributeValueRepository.save(attributeValues);
+
     // Return with relations
-    return Promise.all(
-      savedAttributeValues.map(av => this.findOne(av.id))
-    );
+    return Promise.all(savedAttributeValues.map((av) => this.findOne(av.id)));
   }
 }
