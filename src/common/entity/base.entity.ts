@@ -6,7 +6,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-export abstract class Base {
+export abstract class BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -15,7 +15,4 @@ export abstract class Base {
 
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
-
-  @DeleteDateColumn({ type: 'timestamptz' })
-  deletedAt: Date;
 }
