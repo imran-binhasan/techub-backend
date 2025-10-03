@@ -1,4 +1,4 @@
-import { Base } from 'src/common/entity/base.entity';
+import { BaseEntity } from 'src/common/entity/base.entity';
 import { Attribute } from 'src/attribute/entity/attribute.entity';
 import { Column, Entity, ManyToOne, OneToMany, Unique } from 'typeorm';
 import { ProductAttributeValue } from 'src/product/entity/product_attribute_value.entity';

@@ -1,7 +1,7 @@
 
 
 // src/sms/entity/sms-log.entity.ts
-import { Base } from 'src/common/entity/base.entity';
+import { BaseEntity } from 'src/common/entity/base.entity';
 import { Entity, Column } from 'typeorm';
 
 @Entity('sms_log')

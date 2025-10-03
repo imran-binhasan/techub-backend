@@ -1,4 +1,4 @@
-import { Base } from 'src/common/entity/base.entity';
+import { BaseEntity } from 'src/common/entity/base.entity';
 import { Column, Entity } from 'typeorm';
 
 export enum PaymentMethod {

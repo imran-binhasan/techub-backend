@@ -1,4 +1,4 @@
-import { Base } from 'src/common/entity/base.entity';
+import { BaseEntity } from 'src/common/entity/base.entity';
 import { Column, Entity, Index } from 'typeorm';
 
 export enum CouponType {

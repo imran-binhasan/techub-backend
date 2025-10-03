@@ -1,4 +1,4 @@
-import { Base } from 'src/common/entity/base.entity';
+import { BaseEntity } from 'src/common/entity/base.entity';
 import { Customer } from 'src/customer/entity/customer.entity';
 import { Address } from 'src/address/entity/address.entity';
 import { Coupon } from 'src/coupon/entity/coupon.entity';

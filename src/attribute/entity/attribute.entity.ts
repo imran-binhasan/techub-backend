@@ -1,5 +1,5 @@
 import { AttributeValue } from 'src/attribute_value/entity/attribute_value.entity';
-import { Base } from 'src/common/entity/base.entity';
+import { BaseEntity } from 'src/common/entity/base.entity';
 import { Column, Entity, OneToMany } from 'typeorm';
 
 export enum AttributeType {

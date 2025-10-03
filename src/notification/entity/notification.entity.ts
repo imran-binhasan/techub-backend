@@ -1,4 +1,4 @@
-import { Base } from 'src/common/entity/base.entity';
+import { BaseEntity } from 'src/common/entity/base.entity';
 import { Column, Entity, OneToMany } from 'typeorm';
 import { CustomerNotification } from './customer-notification';
 

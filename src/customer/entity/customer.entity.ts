@@ -1,4 +1,4 @@
-import { Base } from 'src/common/entity/base.entity';
+import { BaseEntity } from 'src/common/entity/base.entity';
 import { Address } from 'src/address/entity/address.entity';
 import { Cart } from 'src/cart/entity/cart.entity';
 import { Notification } from 'src/notification/entity/notification.entity';

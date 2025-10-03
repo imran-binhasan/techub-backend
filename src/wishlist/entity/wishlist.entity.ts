@@ -1,5 +1,5 @@
 // src/wishlist/entity/wishlist.entity.ts
-import { Base } from 'src/common/entity/base.entity';
+import { BaseEntity } from 'src/common/entity/base.entity';
 import { Customer } from 'src/customer/entity/customer.entity';
 import { Product } from 'src/product/entity/product.entity';
 import { Entity, ManyToOne, Unique } from 'typeorm';

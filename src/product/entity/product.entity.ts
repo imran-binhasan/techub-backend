@@ -1,7 +1,7 @@
 import { Brand } from 'src/brand/entity/brand.entity';
 import { Cart } from 'src/cart/entity/cart.entity';
 import { Category } from 'src/category/entity/category.entity';
-import { Base } from 'src/common/entity/base.entity';
+import { BaseEntity } from 'src/common/entity/base.entity';
 import { ProductImage } from 'src/product_image/entity/product_image.entity';
 import { ProductReview } from 'src/product_review/entity/product_review.entity';
 import { Column, Entity, ManyToMany, ManyToOne, OneToMany } from 'typeorm';

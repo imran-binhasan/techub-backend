@@ -1,5 +1,5 @@
 // admin/entity/admin.entity.ts
-import { Base } from 'src/common/entity/base.entity';
+import { BaseEntity } from 'src/common/entity/base.entity';
 import { Role } from 'src/role/entity/role.entity';
 import {
   Column,
