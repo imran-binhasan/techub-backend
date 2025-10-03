@@ -6,12 +6,8 @@ import { HttpExceptionFilter } from './src/shared/filter/http-exception.filter';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ResponseInterceptor } from './shared/common/interceptor/response.interceptor';
-import { AdminModule } from './user-management/admin/module/admin.module';
-import { RoleModule } from './user-management/role/module/role.module';
-import { PermissionModule } from './user-management/permission/module/permission.module';
 import { JwtAuthGuard } from './src/core/auth/guard/jwt-auth-guard';
 import { RequestIdMiddleware } from './src/shared/middleware/request-id.middleware';
-import { CustomerModule } from './user-management/customer/module/customer.module';
 import { ProductModule } from './product-management/product/module/product.module';
 import { AttributeModule } from './product-management/attribute/module/attribute.module';
 import { AttributeValueModule } from './product-management/attribute_value/module/attribute_value.module';
@@ -30,6 +26,7 @@ import { OrderModule } from './src/modules/order-management/order/module/order.m
 import { PaymentModule } from './payment/module/payment.module';
 import { PaymentGatewayModule } from './src/modules/order-management/payment-gateway/payment-gateway.module';
 import { CoreModule } from 'src/core/core.module';
+import { PersonnelManagementModule } from 'src/modules/personnel-management/personnel-management.module';
 
 @Module({
   imports: [
@@ -53,10 +50,7 @@ import { CoreModule } from 'src/core/core.module';
       }),
     }),
     CoreModule,
-    AdminModule,
-    RoleModule,
-    PermissionModule,
-    CustomerModule,
+    PersonnelManagementModule,
     ProductModule,
     AttributeModule,
     AttributeValueModule,
