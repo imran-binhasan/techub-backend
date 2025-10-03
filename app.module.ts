@@ -5,13 +5,12 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtAuthGuard } from './src/core/auth/guard/jwt-auth-guard';
 import { RequestIdMiddleware } from './src/shared/middleware/request-id.middleware';
-import { NotificationModule } from './src/modules/notification-management/notification/module/notification.module';
-import { SmsModule } from './src/modules/notification-management/sms/module/sms.module';
 import { CoreModule } from 'src/core/core.module';
 import { PersonnelManagementModule } from 'src/modules/personnel-management/personnel-management.module';
 import { ProductManagementModule } from 'src/modules/product-management/product-management.module';
 import { OrderManagementModule } from 'src/modules/order-management/order-management.module';
 import { ResponseInterceptor } from 'src/shared/interceptor/response.interceptor';
+import { NotificationManagementModule } from 'src/modules/notification-management/notification-management.module';
 
 @Module({
   imports: [
@@ -38,8 +37,7 @@ import { ResponseInterceptor } from 'src/shared/interceptor/response.interceptor
     PersonnelManagementModule,
     ProductManagementModule,
     OrderManagementModule,
-    NotificationModule,
-    SmsModule,
+    NotificationManagementModule
   ],
   controllers: [],
   providers: [
