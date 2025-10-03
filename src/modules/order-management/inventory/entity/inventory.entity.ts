@@ -1,7 +1,7 @@
 import { BaseEntity } from 'src/shared/entity/base.entity';
-import { Product } from 'src/product-management/product/entity/product.entity';
 import { Column, Entity, ManyToOne, OneToMany, Index } from 'typeorm';
 import { InventoryTransaction } from './inventory-transaction.entity';
+import { Product } from 'src/modules/product-management/product/entity/product.entity';
 
 @Entity('inventory')
 @Index(['product'])
