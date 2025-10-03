@@ -10,7 +10,7 @@ import {
 import { Type } from 'class-transformer';
 
 export class CreateProductImageDto {
-  @IsUUID()
+  
   @IsNotEmpty()
   productId: string;
 

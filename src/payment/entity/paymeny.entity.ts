@@ -8,7 +8,7 @@ export enum PaymentMethod {
 }
 
 @Entity('payment')
-export class Payment extends Base {
+export class Payment extends BaseEntity {
   @Column()
   totalAmount: number;
 

@@ -10,7 +10,7 @@ import { Wishlist } from 'src/wishlist/entity/wishlist.entity';
 import { Inventory } from 'src/inventory/entity/inventory.entity';
 
 @Entity('product')
-export class Product extends Base {
+export class Product extends BaseEntity {
   @Column()
   name: string;
 

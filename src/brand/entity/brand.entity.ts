@@ -3,7 +3,7 @@ import { Product } from 'src/product/entity/product.entity';
 import { Column, Entity, OneToMany } from 'typeorm';
 
 @Entity('brand')
-export class Brand extends Base {
+export class Brand extends BaseEntity {
   @Column({ unique: true })
   name: string;
 

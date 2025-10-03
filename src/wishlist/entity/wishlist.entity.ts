@@ -6,7 +6,7 @@ import { Entity, ManyToOne, Unique } from 'typeorm';
 
 @Entity('wishlist')
 @Unique(['customer', 'product'])
-export class Wishlist extends Base {
+export class Wishlist extends BaseEntity {
   @ManyToOne(() => Customer, (customer) => customer.wishlists, {
     onDelete: 'CASCADE',
   })

@@ -4,7 +4,7 @@ import { PaginationQuery } from 'src/common/dto/pagination_query.dto';
 
 export class ProductImageQueryDto extends PaginationQuery {
   @IsOptional()
-  @IsUUID()
+  
   productId?: string;
 
   @IsOptional()

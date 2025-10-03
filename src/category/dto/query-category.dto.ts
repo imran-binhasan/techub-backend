@@ -5,7 +5,6 @@ import { PaginationQuery } from 'src/common/dto/pagination_query.dto';
 
 export class CategoryQueryDto extends PaginationQuery {
   @IsOptional()
-  @IsUUID(4, { message: 'Parent category ID must be a valid UUID' })
   parentId?: string;
 
   @IsOptional()

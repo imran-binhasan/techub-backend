@@ -25,6 +25,6 @@ export class UpdateProductReviewDto {
   comment?: string;
 
   @IsOptional()
-  @IsUUID()
+  
   productId?: string;
 }

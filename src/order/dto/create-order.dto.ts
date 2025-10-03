@@ -12,7 +12,7 @@ import {
 import { Type } from 'class-transformer';
 
 export class OrderItemDto {
-  @IsUUID()
+  
   productId: string;
 
   @IsNumber()
@@ -26,7 +26,7 @@ export class OrderItemDto {
 }
 
 export class CreateOrderDto {
-  @IsUUID()
+  
   customerId: string;
 
   @IsArray()
@@ -34,15 +34,15 @@ export class CreateOrderDto {
   @Type(() => OrderItemDto)
   items: OrderItemDto[];
 
-  @IsUUID()
+  
   billingAddressId: string;
 
   @IsOptional()
-  @IsUUID()
+  
   shippingAddressId?: string;
 
   @IsOptional()
-  @IsUUID()
+  
   couponId?: string;
 
   @IsOptional()

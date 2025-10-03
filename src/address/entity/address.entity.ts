@@ -15,7 +15,7 @@ export enum AddressType {
 }
 
 @Entity('address')
-export class Address extends Base {
+export class Address extends BaseEntity {
   @Column()
   street: string;
 

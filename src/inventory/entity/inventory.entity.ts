@@ -5,7 +5,7 @@ import { InventoryTransaction } from './inventory-transaction.entity';
 
 @Entity('inventory')
 @Index(['product'])
-export class Inventory extends Base {
+export class Inventory extends BaseEntity {
   @ManyToOne(() => Product, { onDelete: 'CASCADE' })
   product: Product;
 

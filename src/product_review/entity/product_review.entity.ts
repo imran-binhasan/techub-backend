@@ -3,7 +3,7 @@ import { Product } from 'src/product/entity/product.entity';
 import { Column, Entity, ManyToOne, JoinColumn } from 'typeorm';
 
 @Entity('product_review')
-export class ProductReview extends Base {
+export class ProductReview extends BaseEntity {
   @Column({ type: 'int', width: 1 })
   rating: number;
 

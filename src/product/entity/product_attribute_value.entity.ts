@@ -4,7 +4,7 @@ import { AttributeValue } from 'src/attribute_value/entity/attribute_value.entit
 import { Entity, ManyToOne, Unique } from 'typeorm';
 
 @Entity('product_attribute_value')
-export class ProductAttributeValue extends Base {
+export class ProductAttributeValue extends BaseEntity {
   @ManyToOne(() => Product, (product) => product.attributeValues, {
     onDelete: 'CASCADE',
   })

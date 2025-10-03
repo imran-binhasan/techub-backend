@@ -12,7 +12,7 @@ export enum AttributeType {
 }
 
 @Entity('attribute')
-export class Attribute extends Base {
+export class Attribute extends BaseEntity {
   @Column({ length: 255, unique: true })
   name: string; // e.g. "Color", "Size", "Material"
 

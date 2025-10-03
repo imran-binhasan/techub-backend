@@ -4,7 +4,7 @@ import { Product } from 'src/product/entity/product.entity';
 import { Entity, ManyToOne, Column, JoinColumn, Unique } from 'typeorm';
 
 @Entity('cart')
-export class Cart extends Base {
+export class Cart extends BaseEntity {
   @Column()
   customerId: string;
 

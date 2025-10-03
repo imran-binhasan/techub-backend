@@ -11,7 +11,7 @@ export enum TransactionType {
 @Entity('inventory_transaction')
 @Index(['inventory'])
 @Index(['createdAt'])
-export class InventoryTransaction extends Base {
+export class InventoryTransaction extends BaseEntity {
   @ManyToOne(() => Inventory, (inventory) => inventory.transactions, {
     onDelete: 'CASCADE',
   })

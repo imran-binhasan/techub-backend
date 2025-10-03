@@ -7,7 +7,7 @@ import { Column, Entity, OneToMany } from 'typeorm';
 import { CustomerNotification } from 'src/notification/entity/customer-notification';
 
 @Entity('customer')
-export class Customer extends Base {
+export class Customer extends BaseEntity {
   @Column({ type: 'varchar', length: 100 })
   firstName: string;
 

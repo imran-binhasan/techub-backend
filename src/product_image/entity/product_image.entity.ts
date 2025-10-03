@@ -3,7 +3,7 @@ import { Product } from 'src/product/entity/product.entity';
 import { Column, Entity, ManyToOne } from 'typeorm';
 
 @Entity('product_image')
-export class ProductImage extends Base {
+export class ProductImage extends BaseEntity {
   @Column()
   url: string;
 

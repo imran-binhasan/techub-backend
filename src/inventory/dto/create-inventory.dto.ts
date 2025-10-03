@@ -9,7 +9,7 @@ import {
 import { Type } from 'class-transformer';
 
 export class CreateInventoryDto {
-  @IsUUID()
+  
   @IsNotEmpty()
   productId: string;
 

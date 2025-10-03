@@ -10,7 +10,7 @@ import {
 import { AddressType, CountryList } from '../entity/address.entity';
 
 export class CreateAddressDto {
-  @IsUUID()
+  
   @IsNotEmpty()
   customerId: string;
 

@@ -8,7 +8,7 @@ export enum CouponType {
 
 @Entity('coupon')
 @Index(['startDate', 'endDate'])
-export class Coupon extends Base {
+export class Coupon extends BaseEntity {
   @Column({ type: 'varchar', length: 255 })
   name: string;
 

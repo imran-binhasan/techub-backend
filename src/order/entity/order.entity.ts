@@ -21,7 +21,7 @@ export enum PaymentStatus {
 }
 
 @Entity('order')
-export class Order extends Base {
+export class Order extends BaseEntity {
   @Column({ unique: true })
   orderNumber: string;
 

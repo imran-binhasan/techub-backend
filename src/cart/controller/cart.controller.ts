@@ -10,7 +10,6 @@ import {
   Query,
   HttpCode,
   HttpStatus,
-  ParseUUIDPipe,
   BadRequestException,
 } from '@nestjs/common';
 import {
@@ -81,7 +80,7 @@ export class CartController {
   @Patch(':id/quantity')
   async updateMyCartItemQuantity(
     @CurrentUser() user: AuthenticatedUser,
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id') id: string,
     @Body() updateCartDto: UpdateCartDto,
   ) {
     // First verify the cart item belongs to the current user
@@ -103,7 +102,7 @@ export class CartController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async removeFromMyCart(
     @CurrentUser() user: AuthenticatedUser,
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id') id: string,
   ) {
     // First verify the cart item belongs to the current user
     const cartItem = await this.cartService.findOne(id);
@@ -167,7 +166,7 @@ export class CartController {
 
   @RequireResource('cart', 'read')
   @Get(':id')
-  async findOne(@Param('id', ParseUUIDPipe) id: string) {
+  async findOne(@Param('id') id: string) {
     const result = await this.cartService.findOne(id);
     return {
       success: true,
@@ -178,7 +177,7 @@ export class CartController {
 
   @RequireResource('cart', 'read')
   @Get('customer/:customerId')
-  async findByCustomer(@Param('customerId', ParseUUIDPipe) customerId: string) {
+  async findByCustomer(@Param('customerId') customerId: string) {
     const result = await this.cartService.findByCustomer(customerId);
     return {
       success: true,
@@ -190,7 +189,7 @@ export class CartController {
   @RequireResource('cart', 'update')
   @Patch(':id')
   async update(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id') id: string,
     @Body() updateCartDto: UpdateCartDto,
   ) {
     const result = await this.cartService.updateQuantity(id, updateCartDto);
@@ -204,7 +203,7 @@ export class CartController {
   @RequireResource('cart', 'delete')
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Param('id', ParseUUIDPipe) id: string) {
+  async remove(@Param('id') id: string) {
     await this.cartService.remove(id);
     return {
       success: true,
@@ -216,7 +215,7 @@ export class CartController {
   @Delete('customer/:customerId/clear')
   @HttpCode(HttpStatus.NO_CONTENT)
   async clearCustomerCart(
-    @Param('customerId', ParseUUIDPipe) customerId: string,
+    @Param('customerId') customerId: string,
   ) {
     await this.cartService.clearCart(customerId);
     return {
@@ -229,7 +228,7 @@ export class CartController {
   @RequireResource('cart', 'read')
   @Get('customer/:customerId/total')
   async getCustomerCartTotal(
-    @Param('customerId', ParseUUIDPipe) customerId: string,
+    @Param('customerId') customerId: string,
   ) {
     const result = await this.cartService.getCartTotal(customerId);
     return {
@@ -242,8 +241,8 @@ export class CartController {
   @RequireResource('cart', 'manage')
   @Post('move/:fromCustomerId/to/:toCustomerId')
   async moveCart(
-    @Param('fromCustomerId', ParseUUIDPipe) fromCustomerId: string,
-    @Param('toCustomerId', ParseUUIDPipe) toCustomerId: string,
+    @Param('fromCustomerId') fromCustomerId: string,
+    @Param('toCustomerId') toCustomerId: string,
   ) {
     const result = await this.cartService.moveToCart(
       toCustomerId,

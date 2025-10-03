@@ -1,4 +1,3 @@
-import { Base } from 'src/common/entity/base.entity';
 import { Admin } from 'src/admin/entity/admin.entity';
 import { Permission } from 'src/permission/entity/permission.entity';
 import {
@@ -8,15 +7,17 @@ import {
   ManyToMany,
   JoinTable,
   Index,
+  BaseEntity,
 } from 'typeorm';
 
 @Entity('role')
-export class Role extends Base {
+export class Role extends BaseEntity {
   @Column()
   resource: string; // e.g., 'admin', 'manager', 'user'
 
   @Column()
   action: string; // e.g., 'super', 'limited', 'read-only'
+
   @OneToMany(() => Admin, (admin) => admin.role)
   admins: Admin[];
 

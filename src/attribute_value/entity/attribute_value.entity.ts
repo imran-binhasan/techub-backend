@@ -4,7 +4,7 @@ import { Column, Entity, ManyToOne, OneToMany, Unique } from 'typeorm';
 import { ProductAttributeValue } from 'src/product/entity/product_attribute_value.entity';
 
 @Entity('attribute_value')
-export class AttributeValue extends Base {
+export class AttributeValue extends BaseEntity {
   @Column({ length: 255 })
   value: string; // e.g. "Red", "XL", "Cotton"
 

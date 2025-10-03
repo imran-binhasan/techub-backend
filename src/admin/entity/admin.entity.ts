@@ -11,7 +11,7 @@ import {
 } from 'typeorm';
 
 @Entity('admin')
-export class Admin extends Base {
+export class Admin extends BaseEntity {
   @Column({ type: 'varchar', length: 100 })
   firstName: string;
 

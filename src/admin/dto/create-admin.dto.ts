@@ -30,7 +30,7 @@ export class CreateAdminDto {
   @MinLength(6, { message: 'Password must be at least 6 characters long' })
   password: string;
 
-  @IsUUID(4, { message: 'Role ID must be a valid UUID' })
+
   @IsNotEmpty({ message: 'Role ID is required' })
   roleId: string;
 

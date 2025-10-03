@@ -30,15 +30,14 @@ export class UpdateProductDto {
   price?: number;
 
   @IsOptional()
-  @IsUUID()
+  
   categoryId?: string | null;
 
   @IsOptional()
-  @IsUUID()
+  
   brandId?: string | null;
 
   @IsOptional()
   @IsArray()
-  @IsUUID('4', { each: true })
   attributeValueIds?: string[];
 }

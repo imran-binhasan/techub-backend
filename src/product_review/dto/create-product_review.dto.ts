@@ -23,6 +23,6 @@ export class CreateProductReviewDto {
   @IsNotEmpty()
   comment: string;
 
-  @IsUUID()
+  
   productId: string;
 }

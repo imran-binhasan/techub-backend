@@ -3,7 +3,7 @@ import { Role } from 'src/role/entity/role.entity';
 import { Column, Entity, Index, ManyToMany } from 'typeorm';
 
 @Entity('permission')
-export class Permission extends Base {
+export class Permission extends BaseEntity {
   @Column()
   resource: string; // e.g., 'admin', 'role', 'permission', 'dashboard'
 

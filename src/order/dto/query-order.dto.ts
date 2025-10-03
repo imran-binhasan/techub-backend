@@ -4,7 +4,7 @@ import { OrderStatus, PaymentStatus } from '../entity/order.entity';
 
 export class QueryOrderDto {
   @IsOptional()
-  @IsUUID()
+  
   customerId?: string;
 
   @IsOptional()

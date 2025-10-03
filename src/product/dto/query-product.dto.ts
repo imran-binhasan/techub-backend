@@ -14,11 +14,11 @@ import { PaginationQuery } from 'src/common/dto/pagination_query.dto';
 
 export class ProductQueryDto extends PaginationQuery {
   @IsOptional()
-  @IsUUID()
+  
   categoryId?: string;
 
   @IsOptional()
-  @IsUUID()
+  
   brandId?: string;
 
   @IsOptional()

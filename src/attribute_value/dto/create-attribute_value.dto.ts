@@ -9,7 +9,7 @@ export class CreateAttributeValueDto {
   @Transform(({ value }) => value?.trim())
   value: string;
 
-  @IsUUID(4, { message: 'Attribute ID must be a valid UUID' })
+
   @IsNotEmpty({ message: 'Attribute ID is required' })
   attributeId: string;
 }

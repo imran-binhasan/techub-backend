@@ -4,7 +4,7 @@ import { Notification } from './notification.entity';
 import { Column, Entity, ManyToOne, JoinColumn } from 'typeorm';
 
 @Entity('customer_notification')
-export class CustomerNotification extends Base {
+export class CustomerNotification extends BaseEntity {
   @Column({ type: 'boolean', default: false })
   isRead: boolean;
 

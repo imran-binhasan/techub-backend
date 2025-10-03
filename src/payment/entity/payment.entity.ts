@@ -29,7 +29,7 @@ export enum PaymentType {
 @Index(['order'])
 @Index(['status'])
 @Index(['gateway'])
-export class Payment extends Base {
+export class Payment extends BaseEntity {
   @Column()
   orderId: string;
 

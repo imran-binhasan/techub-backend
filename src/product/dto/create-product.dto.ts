@@ -29,15 +29,13 @@ export class CreateProductDto {
   price: number;
 
   @IsOptional()
-  @IsUUID()
+  
   categoryId?: string;
 
   @IsOptional()
-  @IsUUID()
+  
   brandId?: string;
 
   @IsOptional()
-  @IsArray()
-  @IsUUID('4', { each: true })
   attributeValueIds?: string[];
 }

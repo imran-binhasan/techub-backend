@@ -4,7 +4,7 @@ import { Column, Entity, ManyToOne, JoinColumn } from 'typeorm';
 import { Order } from './order.entity';
 
 @Entity('order_item')
-export class OrderItem extends Base {
+export class OrderItem extends BaseEntity {
   @Column()
   orderId: string;
 

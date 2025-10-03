@@ -5,7 +5,7 @@ import { Base } from 'src/common/entity/base.entity';
 import { Entity, Column } from 'typeorm';
 
 @Entity('sms_log')
-export class SmsLog extends Base {
+export class SmsLog extends BaseEntity {
   @Column({ type: 'varchar', length: 20 })
   recipient: string;
 

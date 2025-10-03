@@ -3,7 +3,7 @@ import { Base } from 'src/common/entity/base.entity';
 import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 
 @Entity('category')
-export class Category extends Base {
+export class Category extends BaseEntity {
   @Column()
   name: string;
 

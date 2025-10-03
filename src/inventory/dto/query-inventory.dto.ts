@@ -4,7 +4,7 @@ import { PaginationQuery } from 'src/common/dto/pagination_query.dto';
 
 export class InventoryQueryDto extends PaginationQuery {
   @IsOptional()
-  @IsUUID()
+  
   productId?: string;
 
   @IsOptional()

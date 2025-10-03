@@ -4,6 +4,5 @@ import { PaginationQuery } from 'src/common/dto/pagination_query.dto';
 
 export class AttributeValueQueryDto extends PaginationQuery {
   @IsOptional()
-  @IsUUID(4, { message: 'Attribute ID must be a valid UUID' })
   attributeId?: string;
 }
