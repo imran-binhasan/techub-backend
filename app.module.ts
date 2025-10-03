@@ -8,25 +8,15 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ResponseInterceptor } from './shared/common/interceptor/response.interceptor';
 import { JwtAuthGuard } from './src/core/auth/guard/jwt-auth-guard';
 import { RequestIdMiddleware } from './src/shared/middleware/request-id.middleware';
-import { ProductModule } from './product-management/product/module/product.module';
-import { AttributeModule } from './product-management/attribute/module/attribute.module';
-import { AttributeValueModule } from './product-management/attribute_value/module/attribute_value.module';
-import { BrandModule } from './product-management/brand/module/brand.module';
-import { CategoryModule } from './product-management/category/module/category.module';
-import { CartModule } from './product-management/cart/module/cart.module';
-import { CouponModule } from './product-management/coupon/module/coupon.module';
 import { InventoryModule } from './src/modules/order-management/inventory/module/inventory.module';
 import { NotificationModule } from './src/modules/notification-management/notification/module/notification.module';
-import { ProductImageModule } from './product-management/product_image/module/product_image.module';
-import { ProductReviewModule } from './product-management/product_review/module/product_review.module';
-import { WishlistModule } from './product-management/wishlist/module/wishlist.module';
 import { SmsModule } from './src/modules/notification-management/sms/module/sms.module';
-import { AddressModule } from './user-management/address/module/address.module';
 import { OrderModule } from './src/modules/order-management/order/module/order.module';
 import { PaymentModule } from './payment/module/payment.module';
 import { PaymentGatewayModule } from './src/modules/order-management/payment-gateway/payment-gateway.module';
 import { CoreModule } from 'src/core/core.module';
 import { PersonnelManagementModule } from 'src/modules/personnel-management/personnel-management.module';
+import { ProductManagementModule } from 'src/modules/product-management/product-management.module';
 
 @Module({
   imports: [
@@ -51,20 +41,10 @@ import { PersonnelManagementModule } from 'src/modules/personnel-management/pers
     }),
     CoreModule,
     PersonnelManagementModule,
-    ProductModule,
-    AttributeModule,
-    AttributeValueModule,
-    BrandModule,
-    CategoryModule,
-    CartModule,
-    CouponModule,
+    ProductManagementModule,
     InventoryModule,
     NotificationModule,
-    ProductImageModule,
-    ProductReviewModule,
-    WishlistModule,
     SmsModule,
-    AddressModule,
     OrderModule,
     PaymentModule,
     PaymentGatewayModule,
