@@ -1,5 +1,4 @@
-import { Admin } from 'src/user-management/admin/entity/admin.entity';
-import { Permission } from 'src/user-management/permission/entity/permission.entity';
+
 import {
   Column,
   Entity,
@@ -9,6 +8,8 @@ import {
   Index,
   BaseEntity,
 } from 'typeorm';
+import { User } from '../../user/entity/user.entity';
+import { Permission } from '../../permission/entity/permission.entity';
 
 @Entity('role')
 export class Role extends BaseEntity {
@@ -18,8 +19,8 @@ export class Role extends BaseEntity {
   @Column()
   action: string; // e.g., 'super', 'limited', 'read-only'
 
-  @OneToMany(() => Admin, (admin) => admin.role)
-  admins: Admin[];
+  @OneToMany(() => User, (user) => user.role)
+  users: User[];
 
   @ManyToMany(() => Permission, (permission) => permission.roles, {
     eager: false,

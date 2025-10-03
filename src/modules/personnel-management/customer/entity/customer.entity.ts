@@ -1,10 +1,9 @@
 import { BaseEntity } from 'src/shared/entity/base.entity';
-import { Address } from 'src/user-management/address/entity/address.entity';
-import { Cart } from 'src/product-management/cart/entity/cart.entity';
-import { Notification } from 'src/modules/notification-management/notification/entity/notification.entity';
-import { Wishlist } from 'src/product-management/wishlist/entity/wishlist.entity';
 import { Column, Entity, OneToMany } from 'typeorm';
 import { CustomerNotification } from 'src/modules/notification-management/notification/entity/customer-notification';
+import { Address } from '../../address/entity/address.entity';
+import { Cart } from 'src/modules/product-management/cart/entity/cart.entity';
+import { Wishlist } from 'src/modules/product-management/wishlist/entity/wishlist.entity';
 
 @Entity('customer')
 export class Customer extends BaseEntity {
