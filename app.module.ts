@@ -12,15 +12,10 @@ import { PermissionModule } from './user-management/permission/module/permission
 import { JwtAuthGuard } from './src/core/auth/guard/jwt-auth-guard';
 import { RequestIdMiddleware } from './src/shared/middleware/request-id.middleware';
 import { CustomerModule } from './user-management/customer/module/customer.module';
-import { AuthModule } from './src/core/auth/module/auth.module';
 import { ProductModule } from './product-management/product/module/product.module';
 import { AttributeModule } from './product-management/attribute/module/attribute.module';
 import { AttributeValueModule } from './product-management/attribute_value/module/attribute_value.module';
 import { BrandModule } from './product-management/brand/module/brand.module';
-import { RedisModule } from './src/core/redis/module/redis.module';
-import { CacheModule } from './src/core/cache/module/cache.module';
-import { RabbitMQModule } from './src/core/rabbitmq/module/rabbitmq.module';
-import { UploadModule } from './src/core/upload/module/upload.module';
 import { CategoryModule } from './product-management/category/module/category.module';
 import { CartModule } from './product-management/cart/module/cart.module';
 import { CouponModule } from './product-management/coupon/module/coupon.module';
@@ -34,6 +29,7 @@ import { AddressModule } from './user-management/address/module/address.module';
 import { OrderModule } from './src/modules/order-management/order/module/order.module';
 import { PaymentModule } from './payment/module/payment.module';
 import { PaymentGatewayModule } from './src/modules/order-management/payment-gateway/payment-gateway.module';
+import { CoreModule } from 'src/core/core.module';
 
 @Module({
   imports: [
@@ -56,11 +52,7 @@ import { PaymentGatewayModule } from './src/modules/order-management/payment-gat
         ssl: { rejectUnauthorized: false },
       }),
     }),
-    RedisModule,
-    CacheModule,
-    RabbitMQModule.forRootAsync(),
-    UploadModule,
-    AuthModule,
+    CoreModule,
     AdminModule,
     RoleModule,
     PermissionModule,
