@@ -7,7 +7,7 @@ import { AddressType, CountryList } from '../entity/address.entity';
 export class AddressQueryDto extends PaginationQuery {
   @IsOptional()
   
-  customerId?: string;
+  customerId?: number;
 
   @IsOptional()
   @IsEnum(AddressType)

@@ -132,7 +132,7 @@ export class AddressService {
     };
   }
 
-  async findOne(id: string): Promise<Address> {
+  async findOne(id: number): Promise<Address> {
     const address = await this.addressRepository.findOne({
       where: { id },
       relations: ['customer'],
@@ -145,7 +145,7 @@ export class AddressService {
     return address;
   }
 
-  async findByCustomer(customerId: string): Promise<Address[]> {
+  async findByCustomer(customerId: number): Promise<Address[]> {
     return this.addressRepository.find({
       where: { customer: { id: customerId } },
       relations: ['customer'],
@@ -153,7 +153,7 @@ export class AddressService {
     });
   }
 
-  async findDefaultAddress(customerId: string): Promise<Address | null> {
+  async findDefaultAddress(customerId: number): Promise<Address | null> {
     return this.addressRepository.findOne({
       where: { customer: { id: customerId }, isDefault: true },
       relations: ['customer'],
@@ -161,7 +161,7 @@ export class AddressService {
   }
 
   async update(
-    id: string,
+    id: number,
     updateAddressDto: UpdateAddressDto,
   ): Promise<Address> {
     const existingAddress = await this.addressRepository.findOne({
@@ -183,7 +183,7 @@ export class AddressService {
     return this.findOne(id);
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: number): Promise<void> {
     const address = await this.addressRepository.findOne({
       where: { id },
     });
@@ -195,7 +195,7 @@ export class AddressService {
     await this.addressRepository.remove(address);
   }
 
-  async setAsDefault(id: string): Promise<Address> {
+  async setAsDefault(id: number): Promise<Address> {
     const address = await this.addressRepository.findOne({
       where: { id },
       relations: ['customer'],
@@ -213,7 +213,7 @@ export class AddressService {
     return this.findOne(id);
   }
 
-  async restore(id: string): Promise<Address> {
+  async restore(id: number): Promise<Address> {
     const address = await this.addressRepository.findOne({
       where: { id },
       withDeleted: true,
@@ -231,14 +231,14 @@ export class AddressService {
     return this.findOne(id);
   }
 
-  async getAddressesCount(customerId: string): Promise<number> {
+  async getAddressesCount(customerId: number): Promise<number> {
     return this.addressRepository.count({
       where: { customer: { id: customerId } },
     });
   }
 
   // Private helper methods
-  private async unsetDefaultAddresses(customerId: string): Promise<void> {
+  private async unsetDefaultAddresses(customerId: number): Promise<void> {
     await this.addressRepository.update(
       { customer: { id: customerId } },
       { isDefault: false },

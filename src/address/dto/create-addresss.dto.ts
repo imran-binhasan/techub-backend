@@ -12,7 +12,7 @@ import { AddressType, CountryList } from '../entity/address.entity';
 export class CreateAddressDto {
   
   @IsNotEmpty()
-  customerId: string;
+  customerId: number;
 
   @IsString()
   @IsNotEmpty()

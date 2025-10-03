@@ -1,6 +1,6 @@
 import { BaseEntity } from 'src/common/entity/base.entity';
 import { Customer } from 'src/customer/entity/customer.entity';
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { Column, DeleteDateColumn, Entity, ManyToOne } from 'typeorm';
 
 export enum CountryList {
   BANGLADESH = 'bangladesh',
@@ -44,4 +44,7 @@ export class Address extends BaseEntity {
     onDelete: 'CASCADE',
   })
   customer: Customer;
+  
+  @DeleteDateColumn({ type: 'timestamptz' })
+  deletedAt: Date;
 }
