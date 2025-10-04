@@ -1,6 +1,6 @@
 import { BaseEntity } from 'src/shared/entity/base.entity';
-import { Customer } from 'src/user-management/customer/entity/customer.entity';
 import { Column, DeleteDateColumn, Entity, ManyToOne } from 'typeorm';
+import { Customer } from '../../customer/entity/customer.entity';
 
 export enum CountryList {
   BANGLADESH = 'bangladesh',

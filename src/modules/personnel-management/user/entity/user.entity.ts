@@ -1,10 +1,5 @@
 import { BaseEntity } from 'src/shared/entity/base.entity';
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-} from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { Role } from '../../role/entity/role.entity';
 
 @Entity('users')
@@ -27,7 +22,7 @@ export class User extends BaseEntity {
   @Column({ type: 'varchar', length: 500, nullable: true })
   image?: string;
 
-    @ManyToOne(() => Role, (role) => role.users{
+  @ManyToOne(() => Role, (role) => role.users, {
     eager: false,
     onDelete: 'RESTRICT',
     onUpdate: 'CASCADE',
@@ -35,5 +30,9 @@ export class User extends BaseEntity {
   @JoinColumn({ name: 'roleId' })
   role: Role;
 
+  @Column({ name: 'last_login_at', type: 'timestamptz', nullable: true })
+  lastLoginAt: Date;
 
+  @Column({ type: 'integer' })
+  failedLoginAttempts: number;
 }
