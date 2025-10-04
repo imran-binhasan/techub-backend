@@ -2,7 +2,7 @@ import { BaseEntity } from 'src/shared/entity/base.entity';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { Role } from '../../role/entity/role.entity';
 
-@Entity('users')
+@Entity('user')
 export class User extends BaseEntity {
   @Column({ type: 'varchar', length: 100 })
   firstName: string;
