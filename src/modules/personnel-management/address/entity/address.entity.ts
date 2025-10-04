@@ -48,3 +48,4 @@ export class Address extends BaseEntity {
   @DeleteDateColumn({ type: 'timestamptz' })
   deletedAt: Date;
 }
+

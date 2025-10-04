@@ -1,9 +1,9 @@
 import { BaseEntity } from 'src/shared/entity/base.entity';
-import { Customer } from 'src/user-management/customer/entity/customer.entity';
-import { Address } from 'src/user-management/address/entity/address.entity';
-import { Coupon } from 'src/product-management/coupon/entity/coupon.entity';
 import { Column, Entity, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 import { OrderItem } from './order-item.entity';
+import { Customer } from 'src/modules/personnel-management/customer/entity/customer.entity';
+import { Coupon } from 'src/modules/product-management/coupon/entity/coupon.entity';
+import { Address } from 'src/modules/personnel-management/address/entity/address.entity';
 
 
 export enum OrderStatus {
