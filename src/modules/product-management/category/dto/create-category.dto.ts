@@ -3,7 +3,7 @@ import {
   IsString,
   IsNotEmpty,
   IsOptional,
-  IsUUID,
+  IsNumber,
   Length,
 } from 'class-validator';
 import { Transform } from 'class-transformer';
@@ -18,5 +18,6 @@ export class CreateCategoryDto {
   name: string;
 
   @IsOptional()
-  parentId?: string;
+  @IsNumber()
+  parentId?: number;
 }

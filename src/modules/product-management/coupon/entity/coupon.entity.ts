@@ -1,5 +1,5 @@
 import { BaseEntity } from 'src/shared/entity/base.entity';
-import { Column, Entity, Index } from 'typeorm';
+import { Column, Entity, Index, DeleteDateColumn } from 'typeorm';
 
 export enum CouponType {
   PERCENTAGE = 'percentage',
@@ -47,4 +47,7 @@ export class Coupon extends BaseEntity {
 
   @Column({ type: 'boolean', default: true })
   isActive: boolean;
+
+  @DeleteDateColumn({ type: 'timestamptz' })
+  deletedAt: Date;
 }

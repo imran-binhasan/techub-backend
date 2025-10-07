@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Customer } from '../entity/customer.entity';
+import { User, UserType } from '../../user/entity/user.entity';
 import { Repository } from 'typeorm';
 import { CloudinaryService } from 'src/core/upload/service/cloudinary.service';
 import { CreateCustomerDto } from '../dto/create-customer.dto';
@@ -19,21 +20,23 @@ export class CustomerService {
   constructor(
     @InjectRepository(Customer)
     private readonly customerRepository: Repository<Customer>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
     private readonly uploadService: CloudinaryService,
   ) {}
 
   async create(
     createCustomerDto: CreateCustomerDto,
     image?: Express.Multer.File,
-  ): Promise<Omit<Customer, 'password'>> {
+  ): Promise<Customer> {
     // Check if email already exists
-    const existingCustomer = await this.customerRepository.findOne({
+    const existingUser = await this.userRepository.findOne({
       where: { email: createCustomerDto.email },
       withDeleted: true,
     });
 
-    if (existingCustomer) {
-      throw new ConflictException('Customer with this email already exists');
+    if (existingUser) {
+      throw new ConflictException('User with this email already exists');
     }
 
     // Hash password
@@ -44,33 +47,44 @@ export class CustomerService {
       parallelism: 1,
     });
 
-    // Create customer
-    const customer = this.customerRepository.create({
-      ...createCustomerDto,
+    // Create User entity
+    const userData = {
+      firstName: createCustomerDto.firstName,
+      lastName: createCustomerDto.lastName,
+      email: createCustomerDto.email,
       password: hashedPassword,
-    });
+      phone: createCustomerDto.phone,
+      userType: UserType.CUSTOMER,
+      isActive: createCustomerDto.isActive ?? true,
+      failedLoginAttempts: 0,
+    };
 
-    const savedCustomer = await this.customerRepository.save(customer);
+    const user = this.userRepository.create(userData);
+    const savedUser = await this.userRepository.save(user);
 
-    // Handle image upload
-    if (image) {
-      try {
+    try {
+      // Handle image upload if provided
+      if (image) {
         const uploadedImage = await this.uploadService.uploadCustomerImage(
           image,
-          savedCustomer.id,
+          savedUser.id,
         );
-        savedCustomer.image = uploadedImage;
-        await this.customerRepository.save(savedCustomer);
-      } catch (error) {
-        // Rollback customer creation if image upload fails
-        await this.customerRepository.delete(savedCustomer.id);
-        throw error;
+        savedUser.image = uploadedImage;
+        await this.userRepository.save(savedUser);
       }
-    }
 
-    // Return customer without password
-    const { password, ...result } = savedCustomer;
-    return result;
+      // Create Customer entity
+      const customer = this.customerRepository.create({
+        user: savedUser,
+      });
+      
+      return await this.customerRepository.save(customer);
+
+    } catch (error) {
+      // Cleanup: delete user if customer creation fails
+      await this.userRepository.delete(savedUser.id);
+      throw error;
+    }
   }
 
   async findAll(
@@ -85,29 +99,33 @@ export class CustomerService {
 
     const queryBuilder = this.customerRepository
       .createQueryBuilder('customer')
+      .leftJoinAndSelect('customer.user', 'user')
       .select([
         'customer.id',
-        'customer.firstName',
-        'customer.lastName',
-        'customer.email',
-        'customer.phone',
-        'customer.image',
-        'customer.isActive',
         'customer.createdAt',
+        'customer.updatedAt',
+        'user.id',
+        'user.firstName',
+        'user.lastName',
+        'user.email',
+        'user.phone',
+        'user.image',
+        'user.isActive',
+        'user.createdAt',
         'customer.updatedAt',
       ]);
 
     // Apply search filter
     if (search?.trim()) {
       queryBuilder.where(
-        '(customer.firstName ILIKE :search OR customer.lastName ILIKE :search OR customer.email ILIKE :search OR customer.phone ILIKE :search)',
+        '(user.firstName ILIKE :search OR user.lastName ILIKE :search OR user.email ILIKE :search OR user.phone ILIKE :search)',
         { search: `%${search.trim()}%` },
       );
     }
 
     // Apply status filter
     if (isActive !== undefined) {
-      queryBuilder.andWhere('customer.isActive = :isActive', { isActive });
+      queryBuilder.andWhere('user.isActive = :isActive', { isActive });
     }
 
     // Apply pagination
@@ -168,7 +186,7 @@ export class CustomerService {
   }
 
   async update(
-    id: string,
+    id: number,
     updateCustomerDto: UpdateCustomerDto,
     image?: Express.Multer.File,
   ): Promise<Customer> {
@@ -265,7 +283,7 @@ export class CustomerService {
 
   // Utility methods
   async findWithRelations(
-    id: string,
+    id: number,
     relations: string[] = [],
   ): Promise<Customer> {
     const customer = await this.customerRepository.findOne({

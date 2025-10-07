@@ -3,8 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Payment, PaymentGateway, PaymentStatus, PaymentType } from '../entity/payment.entity';
-import { Order } from '../../order-management/order/entity/order.entity';
-import { OrderService } from '../../order-management/order/service/order.service';
+import { OrderService } from '../../order/service/order.service';
+import { Order } from '../../order/entity/order.entity';
 
 @Injectable()
 export class PaymentService {
@@ -18,7 +18,7 @@ export class PaymentService {
   ) {}
 
   async createPayment(
-    orderId: string,
+    orderId: number,
     gateway: PaymentGateway,
     amount: number,
     gatewayTransactionId: string,
@@ -56,7 +56,7 @@ export class PaymentService {
   }
 
   async updatePaymentStatus(
-    paymentId: string,
+    paymentId: number,
     status: PaymentStatus,
     gatewayResponse?: any,
   ): Promise<Payment> {
@@ -107,7 +107,7 @@ export class PaymentService {
     return updatedPayment;
   }
 
-  async findByOrderId(orderId: string): Promise<Payment[]> {
+  async findByOrderId(orderId: number): Promise<Payment[]> {
     return this.paymentRepository.find({
       where: { orderId: orderId },
       order: { createdAt: 'DESC' },

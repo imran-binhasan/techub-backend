@@ -12,11 +12,11 @@ export class PermissionCacheService {
   ) {}
 
   // Role permissions
-  async getPermissions(roleId: string): Promise<string[] | null> {
+  async getPermissions(roleId: number): Promise<string[] | null> {
     return this.cacheService.get<string[]>('permissions', `role:${roleId}`);
   }
 
-  async setPermissions(roleId: string, permissions: string[]): Promise<void> {
+  async setPermissions(roleId: number, permissions: string[]): Promise<void> {
     const success = await this.cacheService.set(
       'permissions',
       `role:${roleId}`,
@@ -34,7 +34,7 @@ export class PermissionCacheService {
     }
   }
 
-  async invalidatePermissions(roleId: string): Promise<void> {
+  async invalidatePermissions(roleId: number): Promise<void> {
     await this.cacheService.del('permissions', `role:${roleId}`);
 
     // Notify about invalidation
@@ -52,12 +52,12 @@ export class PermissionCacheService {
   }
 
   // User sessions for permission caching
-  async getUserSession(userId: string): Promise<any> {
+  async getUserSession(userId: number): Promise<any> {
     return this.cacheService.get('sessions', `user:${userId}`);
   }
 
   async setUserSession(
-    userId: string,
+    userId: number,
     sessionData: any,
     ttlSeconds?: number,
   ): Promise<void> {
@@ -67,7 +67,7 @@ export class PermissionCacheService {
     });
   }
 
-  async invalidateUserSession(userId: string): Promise<void> {
+  async invalidateUserSession(userId: number): Promise<void> {
     await this.cacheService.del('sessions', `user:${userId}`);
   }
 
@@ -95,7 +95,7 @@ export class PermissionCacheService {
 
   // Permission hierarchy caching
   async getEffectivePermissions(
-    roleId: string,
+    roleId: number,
     includeInherited = true,
   ): Promise<string[] | null> {
     const cacheKey = includeInherited
@@ -105,7 +105,7 @@ export class PermissionCacheService {
   }
 
   async setEffectivePermissions(
-    roleId: string,
+    roleId: number,
     permissions: string[],
     includeInherited = true,
   ): Promise<void> {

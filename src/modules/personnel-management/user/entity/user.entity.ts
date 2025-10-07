@@ -2,6 +2,12 @@ import { BaseEntity } from 'src/shared/entity/base.entity';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { Role } from '../../role/entity/role.entity';
 
+export enum UserType {
+  ADMIN = 'admin',
+  CUSTOMER = 'customer',
+  VENDOR = 'vendor',
+}
+
 @Entity('user')
 export class User extends BaseEntity {
   @Column({ type: 'varchar', length: 100 })
@@ -16,11 +22,17 @@ export class User extends BaseEntity {
   @Column({ type: 'text', select: false })
   password: string;
 
-  @Column({ type: 'integer', default: true })
-  phone: number;
+  @Column({ type: 'varchar', length: 20, nullable: true })
+  phone?: string;
 
   @Column({ type: 'varchar', length: 500, nullable: true })
   image?: string;
+
+  @Column({ type: 'enum', enum: UserType })
+  userType: UserType;
+
+  @Column({ type: 'boolean', default: true })
+  isActive: boolean;
 
   @ManyToOne(() => Role, (role) => role.users, {
     eager: false,
@@ -31,8 +43,8 @@ export class User extends BaseEntity {
   role: Role;
 
   @Column({ name: 'last_login_at', type: 'timestamptz', nullable: true })
-  lastLoginAt: Date;
+  lastLoginAt?: Date;
 
-  @Column({ type: 'integer' })
+  @Column({ type: 'integer', default: 0 })
   failedLoginAttempts: number;
 }

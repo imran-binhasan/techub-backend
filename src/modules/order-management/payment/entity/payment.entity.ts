@@ -31,7 +31,7 @@ export enum PaymentType {
 @Index(['gateway'])
 export class Payment extends BaseEntity {
   @Column()
-  orderId: string;
+  orderId: number;
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   amount: number;

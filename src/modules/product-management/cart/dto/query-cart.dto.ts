@@ -4,9 +4,8 @@ import { PaginationQuery } from 'src/shared/dto/pagination_query.dto';
 
 export class CartQueryDto extends PaginationQuery {
   @IsOptional()
-  customerId?: string;
+  customerId?: number;
 
   @IsOptional()
-
-  productId?: string;
+  productId?: number;
 }

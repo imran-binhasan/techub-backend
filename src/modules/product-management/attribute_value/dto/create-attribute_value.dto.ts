@@ -11,5 +11,5 @@ export class CreateAttributeValueDto {
 
 
   @IsNotEmpty({ message: 'Attribute ID is required' })
-  attributeId: string;
+  attributeId: number;
 }

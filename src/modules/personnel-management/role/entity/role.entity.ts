@@ -6,8 +6,8 @@ import {
   ManyToMany,
   JoinTable,
   Index,
-  BaseEntity,
 } from 'typeorm';
+import { BaseEntity } from 'src/shared/entity/base.entity';
 import { User } from '../../user/entity/user.entity';
 import { Permission } from '../../permission/entity/permission.entity';
 

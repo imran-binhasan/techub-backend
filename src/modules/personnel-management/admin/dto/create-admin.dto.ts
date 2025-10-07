@@ -35,4 +35,8 @@ export class CreateAdminDto {
   @IsOptional()
   @IsBoolean({ message: 'isActive must be a boolean' })
   isActive?: boolean = true;
+
+  @IsOptional()
+  @IsString({ message: 'Department must be a string' })
+  department?: string;
 }

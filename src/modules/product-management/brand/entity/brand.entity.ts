@@ -1,5 +1,5 @@
 import { BaseEntity } from 'src/shared/entity/base.entity';
-import { Column, Entity, OneToMany } from 'typeorm';
+import { Column, Entity, OneToMany, DeleteDateColumn } from 'typeorm';
 import { Product } from '../../product/entity/product.entity';
 
 @Entity('brand')
@@ -15,4 +15,7 @@ export class Brand extends BaseEntity {
 
   @OneToMany(() => Product, (product) => product.brand)
   products: Product[];
+
+  @DeleteDateColumn({ type: 'timestamptz' })
+  deletedAt: Date;
 }

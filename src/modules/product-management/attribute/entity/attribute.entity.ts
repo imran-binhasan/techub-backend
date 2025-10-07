@@ -1,6 +1,7 @@
-import { AttributeValue } from 'src/product-management/attribute_value/entity/attribute_value.entity';
+
 import { BaseEntity } from 'src/shared/entity/base.entity';
-import { Column, Entity, OneToMany } from 'typeorm';
+import { Column, DeleteDateColumn, Entity, OneToMany } from 'typeorm';
+import { AttributeValue } from '../../attribute_value/entity/attribute_value.entity';
 
 export enum AttributeType {
   TEXT = 'text',
@@ -28,4 +29,7 @@ export class Attribute extends BaseEntity {
     onDelete: 'CASCADE',
   })
   values: AttributeValue[];
+
+  @DeleteDateColumn({ type: 'timestamptz' })
+  deletedAt: Date;
 }

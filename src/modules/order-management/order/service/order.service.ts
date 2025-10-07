@@ -5,13 +5,13 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Order, OrderStatus, PaymentStatus } from '../entity/order.entity';
 import { OrderItem } from '../entity/order-item.entity';
 import { CreateOrderDto, UpdateOrderDto, QueryOrderDto, OrderResponse } from '../dto';
-import { CustomerService } from '../../../../../user-management/customer/service/customer.service';
-import { ProductService } from '../../../../../product-management/product/service/product.service';
-import { CartService } from '../../../../../product-management/cart/service/cart.service';
-import { CouponService } from '../../../../../product-management/coupon/service/coupon.service';
-import { AddressService } from '../../../../../user-management/address/service/address.service';
 import { InventoryService } from '../../inventory/service/inventory.service';
 import { TransactionType } from '../../inventory/entity/inventory-transaction.entity';
+import { CustomerService } from 'src/modules/personnel-management/customer/service/customer.service';
+import { ProductService } from 'src/modules/product-management/product/service/product.service';
+import { CartService } from 'src/modules/product-management/cart/service/cart.service';
+import { AddressService } from 'src/modules/personnel-management/address/service/address.service';
+import { CouponService } from 'src/modules/product-management/coupon/service/coupon.service';
 
 @Injectable()
 export class OrderService {
@@ -340,7 +340,7 @@ export class OrderService {
     }
   }
 
-  async updatePaymentStatus(orderId: string, paymentStatus: PaymentStatus, paymentMethod?: string, transactionId?: string): Promise<void> {
+  async updatePaymentStatus(orderId: number, paymentStatus: PaymentStatus, paymentMethod?: string, transactionId?: string): Promise<void> {
     const order = await this.orderRepository.findOne({
       where: { id: orderId },
       relations: ['customer', 'items'],

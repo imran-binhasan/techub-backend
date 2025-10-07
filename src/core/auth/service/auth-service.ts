@@ -7,8 +7,8 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as argon2 from 'argon2';
-import { Admin } from 'src/user-management/admin/entity/admin.entity';
-import { Customer } from 'src/user-management/customer/entity/customer.entity';
+import { Admin } from 'src/modules/personnel-management/admin/entity/admin.entity';
+import { Customer } from 'src/modules/personnel-management/customer/entity/customer.entity';
 import { TokenService } from './token-service';
 import { LoginDto } from '../dto/login.dto';
 import { AuthResponse } from '../interface/token-response.interface';
@@ -138,7 +138,7 @@ export class AuthService {
     return this.refreshCustomerToken(userId);
   }
 
-  private async refreshAdminToken(adminId: string): Promise<AuthResponse> {
+  private async refreshAdminToken(adminId: number): Promise<AuthResponse> {
     const admin = await this.adminRepository.findOne({
       where: { id: adminId, isActive: true },
       relations: ['role', 'role.permissions'],

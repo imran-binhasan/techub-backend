@@ -123,7 +123,7 @@ export class AttributeValueService {
     return attributeValue;
   }
 
-  async findByAttribute(attributeId: string): Promise<AttributeValue[]> {
+  async findByAttribute(attributeId: number): Promise<AttributeValue[]> {
     const attribute = await this.attributeRepository.findOne({
       where: { id: attributeId },
     });
@@ -140,7 +140,7 @@ export class AttributeValueService {
   }
 
   async update(
-    id: string,
+    id: number,
     updateAttributeValueDto: UpdateAttributeValueDto,
   ): Promise<AttributeValue> {
     const existingAttributeValue = await this.attributeValueRepository.findOne({
@@ -269,7 +269,7 @@ export class AttributeValueService {
   }
 
   async bulkCreateForAttribute(
-    attributeId: string,
+    attributeId: number,
     values: string[],
   ): Promise<AttributeValue[]> {
     // Verify attribute exists

@@ -95,7 +95,7 @@ export class NotificationService {
   }
 
   async update(
-    id: string,
+    id: number,
     updateNotificationDto: UpdateNotificationDto,
   ): Promise<Notification> {
     const notification = await this.findOne(id);
@@ -119,7 +119,7 @@ export class NotificationService {
   }
 
   async sendNotification(
-    notificationId: string,
+    notificationId: number,
     sendNotificationDto: SendNotificationDto,
   ): Promise<{ sent: number }> {
     const notification = await this.findOne(notificationId);
@@ -150,7 +150,7 @@ export class NotificationService {
   }
 
   async broadcastNotification(
-    notificationId: string,
+    notificationId: number,
   ): Promise<{ sent: number }> {
     const notification = await this.findOne(notificationId);
 

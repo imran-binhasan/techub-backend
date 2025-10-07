@@ -126,7 +126,7 @@ export class BrandService {
   }
 
   async update(
-    id: string,
+    id: number,
     updateBrandDto: UpdateBrandDto,
     logo?: Express.Multer.File,
   ): Promise<Brand> {

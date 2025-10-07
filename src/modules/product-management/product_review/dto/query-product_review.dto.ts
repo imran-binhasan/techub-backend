@@ -1,4 +1,3 @@
-// src/product-review/dto/query-product-review.dto.ts
 import {
   IsOptional,
   IsUUID,
@@ -8,13 +7,13 @@ import {
   IsString,
   IsIn,
 } from 'class-validator';
-import { Transform, Type } from 'class-transformer';
+import { Type } from 'class-transformer';
 import { PaginationQuery } from 'src/shared/dto/pagination_query.dto';
 
 export class ProductReviewQueryDto extends PaginationQuery {
   @IsOptional()
   
-  productId?: string;
+  productId?: number;
 
   @IsOptional()
   @IsNumber()

@@ -105,9 +105,9 @@ export class StripePaymentIntentDto {
   @IsEnum(StripeCurrency)
   currency: StripeCurrency;
 
-  @IsString()
+  @IsNumber()
   @IsNotEmpty()
-  orderId: string;
+  orderId: number;
 
   @IsOptional()
   @IsString()
@@ -149,9 +149,9 @@ export class StripeCheckoutSessionDto {
   @IsEnum(StripeCurrency)
   currency: StripeCurrency;
 
-  @IsString()
+  @IsNumber()
   @IsNotEmpty()
-  orderId: string;
+  orderId: number;
 
   @IsOptional()
   @ValidateNested()

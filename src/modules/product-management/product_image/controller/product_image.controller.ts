@@ -132,7 +132,7 @@ export class ProductImageController {
   @Patch('product/:productId/reorder')
   async reorderImages(
     @Param('productId', ParseIntPipe) productId: number,
-    @Body('imageIds') imageIds: string[],
+    @Body('imageIds') imageIds: number[],
   ) {
     const result = await this.productImageService.reorderImages(
       productId,

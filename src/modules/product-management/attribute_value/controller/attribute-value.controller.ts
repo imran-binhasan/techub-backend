@@ -116,7 +116,7 @@ export class AttributeValueController {
   @Public()
   @Get('attribute/:attributeId')
   async findByAttribute(
-    @Param('attributeId', ParseIntPipe) attributeId: string,
+    @Param('attributeId', ParseIntPipe) attributeId: number,
   ) {
     const result =
       await this.attributeValueService.findByAttribute(attributeId);
@@ -130,7 +130,7 @@ export class AttributeValueController {
   @RequireResource('attribute_value', 'create')
   @Post('bulk/:attributeId')
   async bulkCreateForAttribute(
-    @Param('attributeId', ParseIntPipe) attributeId: string,
+    @Param('attributeId', ParseIntPipe) attributeId: number,
     @Body('values') values: string[],
   ) {
     const result = await this.attributeValueService.bulkCreateForAttribute(

@@ -14,12 +14,15 @@ import { CreateAdminDto } from '../dto/create-admin.dto';
 import { UpdateAdminDto } from '../dto/update-admin.dto';
 import { PaginationQuery } from 'src/shared/dto/pagination_query.dto';
 import { Role } from '../../role/entity/role.entity';
+import { User, UserType } from '../../user/entity/user.entity';
 
 @Injectable()
 export class AdminService {
   constructor(
     @InjectRepository(Admin)
     private readonly adminRepository: Repository<Admin>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
     @InjectRepository(Role)
     private readonly roleRepository: Repository<Role>,
     private readonly uploadService: CloudinaryService,
@@ -28,15 +31,15 @@ export class AdminService {
   async create(
     createAdminDto: CreateAdminDto,
     image?: Express.Multer.File,
-  ): Promise<Omit<Admin, 'password'>> {
+  ): Promise<Admin> {
     // Check if email already exists
-    const existingAdmin = await this.adminRepository.findOne({
+    const existingUser = await this.userRepository.findOne({
       where: { email: createAdminDto.email },
       withDeleted: true,
     });
 
-    if (existingAdmin) {
-      throw new ConflictException('Admin with this email already exists');
+    if (existingUser) {
+      throw new ConflictException('User with this email already exists');
     }
 
     // Validate role exists
@@ -56,34 +59,45 @@ export class AdminService {
       parallelism: 1,
     });
 
-    // Create admin
-    const admin = this.adminRepository.create({
-      ...createAdminDto,
+    // Create User entity
+    const userData = {
+      firstName: createAdminDto.firstName,
+      lastName: createAdminDto.lastName,
+      email: createAdminDto.email,
       password: hashedPassword,
-      roleId: role.id,
-    });
+      userType: UserType.ADMIN,
+      isActive: createAdminDto.isActive ?? true,
+      role: role,
+      failedLoginAttempts: 0,
+    };
 
-    const savedAdmin = await this.adminRepository.save(admin);
+    const user = this.userRepository.create(userData);
+    const savedUser = await this.userRepository.save(user);
 
-    // Handle image upload
-    if (image) {
-      try {
+    try {
+      // Handle image upload if provided
+      if (image) {
         const uploadedImage = await this.uploadService.uploadAdminImage(
           image,
-          savedAdmin.id,
+          savedUser.id.toString(),
         );
-        savedAdmin.image = uploadedImage;
-        await this.adminRepository.save(savedAdmin);
-      } catch (error) {
-        // Rollback admin creation if image upload fails
-        await this.adminRepository.delete(savedAdmin.id);
-        throw error;
+        savedUser.image = uploadedImage;
+        await this.userRepository.save(savedUser);
       }
-    }
 
-    // Return admin without password
-    const { password, ...result } = savedAdmin;
-    return result;
+      // Create Admin entity
+      const admin = this.adminRepository.create({
+        user: savedUser,
+        department: createAdminDto.department,
+      });
+      
+      return await this.adminRepository.save(admin);
+
+    } catch (error) {
+      // Cleanup: delete user if admin creation fails
+      await this.userRepository.delete(savedUser.id);
+      throw error;
+    }
   }
 
   async findAll(
@@ -173,7 +187,7 @@ export class AdminService {
     return admin;
   }
   async update(
-    id: string,
+    id: number,
     updateAdminDto: UpdateAdminDto,
     image?: Express.Multer.File,
   ): Promise<Admin> {
@@ -226,7 +240,7 @@ export class AdminService {
     return this.findOne(id);
   }
 
-  async updateRole(adminId: string, roleId: string): Promise<Admin> {
+  async updateRole(adminId: number, roleId: number): Promise<Admin> {
     const admin = await this.findOne(adminId);
 
     // Validate role exists
@@ -283,7 +297,7 @@ export class AdminService {
 
   // Utility methods
   async findWithRelations(
-    id: string,
+    id: number,
     relations: string[] = [],
   ): Promise<Admin> {
     const admin = await this.adminRepository.findOne({
@@ -309,7 +323,7 @@ export class AdminService {
     return admin;
   }
 
-  async countByRole(roleId: string): Promise<number> {
+  async countByRole(roleId: number): Promise<number> {
     return this.adminRepository.count({
       where: { roleId, isActive: true },
     });

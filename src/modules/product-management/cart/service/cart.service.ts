@@ -171,7 +171,7 @@ export class CartService {
   }
 
   async updateQuantity(
-    id: string,
+    id: number,
     updateCartDto: UpdateCartDto,
   ): Promise<Cart> {
     const cartItem = await this.cartRepository.findOne({
@@ -246,7 +246,7 @@ export class CartService {
 
   async findCartItemByProductAndCustomer(
     customerId: number,
-    productId: string,
+    productId: number,
   ): Promise<Cart | null> {
     return this.cartRepository.findOne({
       where: {
@@ -258,7 +258,7 @@ export class CartService {
   }
 
   async bulkUpdateQuantities(
-    updates: { id: string; quantity: number }[],
+    updates: { id: number; quantity: number }[],
   ): Promise<Cart[]> {
     const updatedItems: Cart[] = [];
 
@@ -282,7 +282,7 @@ export class CartService {
 
   async moveToCart(
     customerId: number,
-    fromcustomerId: number,
+    fromCustomerId: number,
   ): Promise<Cart[]> {
     // Verify both customers exist
     const [customer, fromCustomer] = await Promise.all([

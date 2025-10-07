@@ -187,7 +187,7 @@ export class InventoryService {
   }
 
   async update(
-    id: string,
+    id: number,
     updateInventoryDto: UpdateInventoryDto,
   ): Promise<Inventory> {
     const inventory = await this.inventoryRepository.findOne({
@@ -208,7 +208,7 @@ export class InventoryService {
   }
 
   async adjustStock(
-    id: string,
+    id: number,
     adjustmentDto: StockAdjustmentDto,
   ): Promise<Inventory> {
     const inventory = await this.inventoryRepository.findOne({

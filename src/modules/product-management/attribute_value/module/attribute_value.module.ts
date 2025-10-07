@@ -3,7 +3,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AttributeValueController } from '../controller/attribute-value.controller';
 import { AttributeValue } from '../entity/attribute_value.entity';
-import { Attribute } from 'src/product-management/attribute/entity/attribute.entity';
+import { Attribute } from '../../attribute/entity/attribute.entity';
 import { AttributeValueService } from '../service/attribute_value.service';
 import { AuthModule } from 'src/core/auth/module/auth.module';
 

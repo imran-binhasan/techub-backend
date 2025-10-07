@@ -106,7 +106,7 @@ export class AttributeService {
   }
 
   async update(
-    id: string,
+    id: number,
     updateAttributeDto: UpdateAttributeDto,
   ): Promise<Attribute> {
     const existingAttribute = await this.attributeRepository.findOne({

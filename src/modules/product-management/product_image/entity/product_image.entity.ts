@@ -1,6 +1,6 @@
 import { BaseEntity } from 'src/shared/entity/base.entity';
-import { Product } from 'src/product-management/product/entity/product.entity';
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { Product } from 'src/modules/product-management/product/entity/product.entity';
+import { Column, Entity, ManyToOne, DeleteDateColumn } from 'typeorm';
 
 @Entity('product_image')
 export class ProductImage extends BaseEntity {
@@ -20,4 +20,7 @@ export class ProductImage extends BaseEntity {
     onDelete: 'CASCADE',
   })
   product: Product;
+
+  @DeleteDateColumn({ type: 'timestamptz' })
+  deletedAt: Date;
 }

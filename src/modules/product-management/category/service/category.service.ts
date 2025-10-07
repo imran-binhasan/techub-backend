@@ -140,7 +140,7 @@ export class CategoryService {
   }
 
   async update(
-    id: string,
+    id: number,
     updateCategoryDto: UpdateCategoryDto,
   ): Promise<Category> {
     const existingCategory = await this.categoryRepository.findOne({
@@ -275,7 +275,7 @@ export class CategoryService {
     });
   }
 
-  async getChildCategories(parentId: string): Promise<Category[]> {
+  async getChildCategories(parentId: number): Promise<Category[]> {
     const parent = await this.categoryRepository.findOne({
       where: { id: parentId },
     });
@@ -318,8 +318,8 @@ export class CategoryService {
   }
 
   private async checkCircularDependency(
-    categoryId: string,
-    parentId: string,
+    categoryId: number,
+    parentId: number,
   ): Promise<void> {
     let currentCategory = await this.categoryRepository.findOne({
       where: { id: parentId },

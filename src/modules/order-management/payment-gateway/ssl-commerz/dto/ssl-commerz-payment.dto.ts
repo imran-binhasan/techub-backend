@@ -27,9 +27,9 @@ export enum SSLCommerzProductCategory {
 }
 
 export class SSLCommerzPaymentDto {
-  @IsString()
+  @IsNumber()
   @IsNotEmpty()
-  orderId: string;
+  orderId: number;
 
   @IsNumber()
   @Min(0.01)

@@ -272,7 +272,7 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
   }
 
   // User events
-  async publishUserEvent(event: string, userId: string, data: any) {
+  async publishUserEvent(event: string, userId: number, data: any) {
     return this.publishEvent(
       `user.${event}`,
       { userId, ...data },
@@ -281,7 +281,7 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
   }
 
   // Order events
-  async publishOrderEvent(event: string, orderId: string, data: any) {
+  async publishOrderEvent(event: string, orderId: number, data: any) {
     return this.publish('ecommerce.orders', `order.${event}`, {
       orderId,
       ...data,
@@ -290,7 +290,7 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
   }
 
   // Payment events
-  async publishPaymentEvent(event: string, paymentId: string, data: any) {
+  async publishPaymentEvent(event: string, paymentId: number, data: any) {
     return this.publish('ecommerce.payments', `payment.${event}`, {
       paymentId,
       ...data,
@@ -299,7 +299,7 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
   }
 
   // Inventory events
-  async publishInventoryEvent(event: string, productId: string, data: any) {
+  async publishInventoryEvent(event: string, productId: number, data: any) {
     return this.publish('ecommerce.inventory', `inventory.${event}`, {
       productId,
       ...data,
@@ -327,7 +327,7 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
   }
 
   async sendPushNotification(
-    userId: string,
+    userId: number,
     title: string,
     body: string,
     data?: any,

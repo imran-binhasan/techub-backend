@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
-import { Product } from 'src/product-management/product/entity/product.entity';
+import { Product } from '../../product/entity/product.entity';
 import { ProductReview } from '../entity/product_review.entity';
 import { CreateProductReviewDto } from '../dto/create-product_review.dto';
 import { ProductReviewQueryDto } from '../dto/query-product_review.dto';
@@ -127,7 +127,7 @@ export class ProductReviewService {
   }
 
   async update(
-    id: string,
+    id: number,
     updateProductReviewDto: UpdateProductReviewDto,
   ): Promise<ProductReview> {
     const review = await this.findOne(id);

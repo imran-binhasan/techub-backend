@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Permission } from '../entity/permission.entity';
-import { Role } from 'src/user-management/role/entity/role.entity';
+import { Role } from 'src/modules/personnel-management/role/entity/role.entity';
 
 @Injectable()
 export class PermissionService {
@@ -15,7 +15,7 @@ export class PermissionService {
     private readonly roleRepository: Repository<Role>,
   ) {}
 
-  async getUserPermissions(roleId: string): Promise<string[]> {
+  async getUserPermissions(roleId: number): Promise<string[]> {
     try {
       const role = await this.roleRepository.findOne({
         where: { id: roleId },

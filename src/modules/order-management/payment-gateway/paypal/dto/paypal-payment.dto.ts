@@ -136,9 +136,9 @@ export class PayPalOrderDto {
   @Type(() => PayPalItemDto)
   items: PayPalItemDto[];
 
-  @IsString()
+  @IsNumber()
   @IsNotEmpty()
-  orderId: string;
+  orderId: number;
 
   @IsString()
   @IsNotEmpty()
@@ -199,9 +199,9 @@ export class PayPalOrderDto {
 }
 
 export class PayPalCaptureDto {
-  @IsString()
+  @IsNumber()
   @IsNotEmpty()
-  orderId: string;
+  orderId: number;
 }
 
 export class PayPalRefundDto {

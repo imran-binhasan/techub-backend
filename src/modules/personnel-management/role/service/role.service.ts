@@ -7,7 +7,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Role } from '../entity/role.entity';
-import { Permission } from 'src/user-management/permission/entity/permission.entity';
+import { Permission } from '../../permission/entity/permission.entity';
 import { PermissionCacheService } from 'src/core/auth/service/permission-cache.service';
 
 @Injectable()
@@ -80,8 +80,8 @@ export class RoleService {
   }
 
   async updateRolePermissions(
-    roleId: string,
-    permissionIds: string[],
+    roleId: number,
+    permissionIds: number[],
   ): Promise<Role> {
     const role = await this.findById(roleId);
 
@@ -132,8 +132,8 @@ export class RoleService {
   }
 
   async addPermissionToRole(
-    roleId: string,
-    permissionId: string,
+    roleId: number,
+    permissionId: number,
   ): Promise<Role> {
     const role = await this.findById(roleId);
     const permission = await this.permissionRepository.findOne({
@@ -162,8 +162,8 @@ export class RoleService {
   }
 
   async removePermissionFromRole(
-    roleId: string,
-    permissionId: string,
+    roleId: number,
+    permissionId: number,
   ): Promise<Role> {
     const role = await this.findById(roleId);
 

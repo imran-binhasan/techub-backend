@@ -13,7 +13,7 @@ import {
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { PaymentService } from '../service/payment.service';
 import { Payment, PaymentGateway, PaymentStatus } from '../entity/payment.entity';
-import { AdminOnly, Auth } from '../../auth/decorator/auth.decorator';
+import { AdminOnly, Auth } from 'src/core/auth/decorator/auth.decorator';
 
 @ApiTags('Payments')
 @Controller('payments')

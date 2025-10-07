@@ -1,6 +1,6 @@
 import { BaseEntity } from 'src/shared/entity/base.entity';
 import { Product } from './product.entity';
-import { AttributeValue } from 'src/product-management/attribute_value/entity/attribute_value.entity';
+import { AttributeValue } from '../../attribute_value/entity/attribute_value.entity';
 import { Entity, ManyToOne, Unique } from 'typeorm';
 
 @Entity('product_attribute_value')

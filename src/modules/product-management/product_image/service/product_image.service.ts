@@ -7,11 +7,11 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ProductImage } from '../entity/product_image.entity';
-import { Product } from 'src/product-management/product/entity/product.entity';
 import { PaginatedServiceResponse } from 'src/shared/interface/api-response.interface';
 import { CreateProductImageDto } from '../dto/create-product_image.dto';
 import { ProductImageQueryDto } from '../dto/query-product_image.dto';
 import { UpdateProductImageDto } from '../dto/update-product_image.dto';
+import { Product } from '../../product/entity/product.entity';
 
 @Injectable()
 export class ProductImageService {
@@ -150,7 +150,7 @@ export class ProductImageService {
   }
 
   async update(
-    id: string,
+    id: number,
     updateProductImageDto: UpdateProductImageDto,
   ): Promise<ProductImage> {
     const existingImage = await this.productImageRepository.findOne({
@@ -223,8 +223,8 @@ export class ProductImageService {
   }
 
   async reorderImages(
-    productId: string,
-    imageIds: string[],
+    productId: number,
+    imageIds: number[],
   ): Promise<ProductImage[]> {
     // Validate that all image IDs belong to the product
     const images = await this.productImageRepository.find({

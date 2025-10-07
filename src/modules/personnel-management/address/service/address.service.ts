@@ -6,12 +6,11 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Address } from '../entity/address.entity';
-import { Customer } from 'src/user-management/customer/entity/customer.entity';
-
 import { UpdateAddressDto } from '../dto/update-address.dto';
 import { AddressQueryDto } from '../dto/query-address.dto';
 import { PaginatedServiceResponse } from 'src/shared/interface/api-response.interface';
 import { CreateAddressDto } from '../dto/create-addresss.dto';
+import { Customer } from '../../customer/entity/customer.entity';
 
 @Injectable()
 export class AddressService {

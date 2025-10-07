@@ -1,15 +1,15 @@
 import { BaseEntity } from 'src/shared/entity/base.entity';
-import { Product } from 'src/product-management/product/entity/product.entity';
+import { Product } from 'src/modules/product-management/product/entity/product.entity';
 import { Column, Entity, ManyToOne, JoinColumn } from 'typeorm';
 import { Order } from './order.entity';
 
 @Entity('order_item')
 export class OrderItem extends BaseEntity {
   @Column()
-  orderId: string;
+  orderId: number;
 
   @Column()
-  productId: string;
+  productId: number;
 
   @Column({ type: 'int' })
   quantity: number;

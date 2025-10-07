@@ -241,8 +241,8 @@ export class CartController {
   @RequireResource('cart', 'manage')
   @Post('move/:fromCustomerId/to/:toCustomerId')
   async moveCart(
-    @Param('fromCustomerId') fromcustomerId: number,
-    @Param('toCustomerId') tocustomerId: number,
+    @Param('fromCustomerId') fromCustomerId: number,
+    @Param('toCustomerId') toCustomerId: number,
   ) {
     const result = await this.cartService.moveToCart(
       toCustomerId,

@@ -5,7 +5,7 @@ import { OrderStatus, PaymentStatus } from '../entity/order.entity';
 export class QueryOrderDto {
   @IsOptional()
   
-  customerId?: string;
+  customerId?: number;
 
   @IsOptional()
   @IsEnum(OrderStatus)
