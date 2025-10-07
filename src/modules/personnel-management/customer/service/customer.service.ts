@@ -128,7 +128,7 @@ export class CustomerService {
     };
   }
 
-  async findOne(id: string): Promise<Customer> {
+  async findOne(id: number): Promise<Customer> {
     const customer = await this.customerRepository.findOne({
       where: { id },
       select: [
@@ -224,7 +224,7 @@ export class CustomerService {
     return this.findOne(id);
   }
 
-  async toggleStatus(id: string): Promise<Customer> {
+  async toggleStatus(id: number): Promise<Customer> {
     const customer = await this.findOne(id);
     const newStatus = !customer.isActive;
 
@@ -232,7 +232,7 @@ export class CustomerService {
     return { ...customer, isActive: newStatus };
   }
 
-  async softDelete(id: string): Promise<void> {
+  async softDelete(id: number): Promise<void> {
     const customer = await this.customerRepository.findOne({
       where: { id },
       withDeleted: true,
@@ -245,7 +245,7 @@ export class CustomerService {
     await this.customerRepository.softDelete(id);
   }
 
-  async restore(id: string): Promise<Customer> {
+  async restore(id: number): Promise<Customer> {
     const customer = await this.customerRepository.findOne({
       where: { id },
       withDeleted: true,

@@ -8,7 +8,7 @@ import {
   Query,
   HttpCode,
   HttpStatus,
-  ParseUUIDPipe,
+  ParseIntPipe,
   Patch,
 } from '@nestjs/common';
 import { WishlistService } from '../service/wishlist.service';
@@ -35,7 +35,7 @@ export class WishlistController {
   @RequireResource('wishlist', 'update')
   @Patch(':id')
   async update(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateWishlistDto: UpdateWishlistDto,
   ) {
     const result = await this.wishlistService.update(id, updateWishlistDto);
@@ -59,7 +59,7 @@ export class WishlistController {
 
   @RequireResource('wishlist', 'read')
   @Get(':id')
-  async findOne(@Param('id', ParseUUIDPipe) id: string) {
+  async findOne(@Param('id', ParseIntPipe) id: number) {
     const result = await this.wishlistService.findOne(id);
     return {
       success: true,
@@ -71,7 +71,7 @@ export class WishlistController {
   @RequireResource('wishlist', 'delete')
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Param('id', ParseUUIDPipe) id: string) {
+  async remove(@Param('id', ParseIntPipe) id: number) {
     await this.wishlistService.remove(id);
     return {
       success: true,
@@ -82,7 +82,7 @@ export class WishlistController {
   @RequireResource('wishlist', 'manage')
   @Patch(':id/restore')
   @HttpCode(HttpStatus.OK)
-  async restore(@Param('id', ParseUUIDPipe) id: string) {
+  async restore(@Param('id', ParseIntPipe) id: number) {
     const result = await this.wishlistService.restore(id);
     return {
       success: true,
@@ -94,7 +94,7 @@ export class WishlistController {
   // Customer-specific endpoints
   @RequireResource('wishlist', 'read')
   @Get('customer/:customerId')
-  async findByCustomer(@Param('customerId', ParseUUIDPipe) customerId: string) {
+  async findByCustomer(@Param('customerId', ParseIntPipe) customerId: number) {
     const result = await this.wishlistService.findByCustomerId(customerId);
     return {
       success: true,
@@ -107,8 +107,8 @@ export class WishlistController {
   @Delete('customer/:customerId/product/:productId')
   @HttpCode(HttpStatus.NO_CONTENT)
   async removeByCustomerAndProduct(
-    @Param('customerId', ParseUUIDPipe) customerId: string,
-    @Param('productId', ParseUUIDPipe) productId: string,
+    @Param('customerId', ParseIntPipe) customerId: number,
+    @Param('productId', ParseIntPipe) productId: number,
   ) {
     await this.wishlistService.removeByCustomerAndProduct(
       customerId,
@@ -124,7 +124,7 @@ export class WishlistController {
   @Delete('customer/:customerId/clear')
   @HttpCode(HttpStatus.NO_CONTENT)
   async clearCustomerWishlist(
-    @Param('customerId', ParseUUIDPipe) customerId: string,
+    @Param('customerId', ParseIntPipe) customerId: number,
   ) {
     await this.wishlistService.clearCustomerWishlist(customerId);
     return {
@@ -137,7 +137,7 @@ export class WishlistController {
   @RequireResource('wishlist', 'read')
   @Get('customer/:customerId/count')
   async getWishlistCount(
-    @Param('customerId', ParseUUIDPipe) customerId: string,
+    @Param('customerId', ParseIntPipe) customerId: number,
   ) {
     const result = await this.wishlistService.getWishlistCount(customerId);
     return {
@@ -150,8 +150,8 @@ export class WishlistController {
   @RequireResource('wishlist', 'read')
   @Get('customer/:customerId/product/:productId/check')
   async isProductInWishlist(
-    @Param('customerId', ParseUUIDPipe) customerId: string,
-    @Param('productId', ParseUUIDPipe) productId: string,
+    @Param('customerId', ParseIntPipe) customerId: number,
+    @Param('productId', ParseIntPipe) productId: number,
   ) {
     const result = await this.wishlistService.isProductInWishlist(
       customerId,

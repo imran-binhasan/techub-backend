@@ -80,7 +80,7 @@ export class CartController {
   @Patch(':id/quantity')
   async updateMyCartItemQuantity(
     @CurrentUser() user: AuthenticatedUser,
-    @Param('id') id: string,
+    @Param('id') id: number,
     @Body() updateCartDto: UpdateCartDto,
   ) {
     // First verify the cart item belongs to the current user
@@ -102,7 +102,7 @@ export class CartController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async removeFromMyCart(
     @CurrentUser() user: AuthenticatedUser,
-    @Param('id') id: string,
+    @Param('id') id: number,
   ) {
     // First verify the cart item belongs to the current user
     const cartItem = await this.cartService.findOne(id);
@@ -132,7 +132,7 @@ export class CartController {
   @Patch('bulk-update')
   async bulkUpdateMyCartQuantities(
     @CurrentUser() user: AuthenticatedUser,
-    @Body('updates') updates: { id: string; quantity: number }[],
+    @Body('updates') updates: { id: number; quantity: number }[],
   ) {
     // Verify all cart items belong to the current user
     for (const update of updates) {
@@ -166,7 +166,7 @@ export class CartController {
 
   @RequireResource('cart', 'read')
   @Get(':id')
-  async findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: number) {
     const result = await this.cartService.findOne(id);
     return {
       success: true,
@@ -177,7 +177,7 @@ export class CartController {
 
   @RequireResource('cart', 'read')
   @Get('customer/:customerId')
-  async findByCustomer(@Param('customerId') customerId: string) {
+  async findByCustomer(@Param('customerId') customerId: number) {
     const result = await this.cartService.findByCustomer(customerId);
     return {
       success: true,
@@ -189,7 +189,7 @@ export class CartController {
   @RequireResource('cart', 'update')
   @Patch(':id')
   async update(
-    @Param('id') id: string,
+    @Param('id') id: number,
     @Body() updateCartDto: UpdateCartDto,
   ) {
     const result = await this.cartService.updateQuantity(id, updateCartDto);
@@ -203,7 +203,7 @@ export class CartController {
   @RequireResource('cart', 'delete')
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Param('id') id: string) {
+  async remove(@Param('id') id: number) {
     await this.cartService.remove(id);
     return {
       success: true,
@@ -215,7 +215,7 @@ export class CartController {
   @Delete('customer/:customerId/clear')
   @HttpCode(HttpStatus.NO_CONTENT)
   async clearCustomerCart(
-    @Param('customerId') customerId: string,
+    @Param('customerId') customerId: number,
   ) {
     await this.cartService.clearCart(customerId);
     return {
@@ -228,7 +228,7 @@ export class CartController {
   @RequireResource('cart', 'read')
   @Get('customer/:customerId/total')
   async getCustomerCartTotal(
-    @Param('customerId') customerId: string,
+    @Param('customerId') customerId: number,
   ) {
     const result = await this.cartService.getCartTotal(customerId);
     return {
@@ -241,8 +241,8 @@ export class CartController {
   @RequireResource('cart', 'manage')
   @Post('move/:fromCustomerId/to/:toCustomerId')
   async moveCart(
-    @Param('fromCustomerId') fromCustomerId: string,
-    @Param('toCustomerId') toCustomerId: string,
+    @Param('fromCustomerId') fromcustomerId: number,
+    @Param('toCustomerId') tocustomerId: number,
   ) {
     const result = await this.cartService.moveToCart(
       toCustomerId,

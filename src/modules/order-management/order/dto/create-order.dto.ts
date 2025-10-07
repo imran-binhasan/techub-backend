@@ -12,8 +12,9 @@ import {
 import { Type } from 'class-transformer';
 
 export class OrderItemDto {
-  
-  productId: string;
+  @IsNumber()
+  @IsNotEmpty()
+  productId: number;
 
   @IsNumber()
   @Min(1)
@@ -26,24 +27,26 @@ export class OrderItemDto {
 }
 
 export class CreateOrderDto {
-  
-  customerId: string;
+  @IsNumber()
+  @IsNotEmpty()
+  customerId: number;
 
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => OrderItemDto)
   items: OrderItemDto[];
 
-  
-  billingAddressId: string;
+  @IsNumber()
+  @IsNotEmpty()
+  billingAddressId: number;
 
   @IsOptional()
-  
-  shippingAddressId?: string;
+  @IsNumber()
+  shippingAddressId?: number;
 
   @IsOptional()
-  
-  couponId?: string;
+  @IsNumber()
+  couponId?: number;
 
   @IsOptional()
   @IsString()
@@ -70,8 +73,8 @@ export class CreateOrderDto {
 }
 
 export class OrderItemResponse {
-  id: string;
-  productId: string;
+  id: number;
+  productId: number;
   productName: string;
   productSku?: string;
   productImage?: string;
@@ -82,9 +85,9 @@ export class OrderItemResponse {
 }
 
 export class OrderResponse {
-  id: string;
+  id: number;
   orderNumber: string;
-  customerId: string;
+  customerId: number;
   subtotal: number;
   taxAmount: number;
   shippingAmount: number;

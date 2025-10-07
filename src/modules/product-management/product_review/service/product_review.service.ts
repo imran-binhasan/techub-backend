@@ -113,7 +113,7 @@ export class ProductReviewService {
     };
   }
 
-  async findOne(id: string): Promise<ProductReview> {
+  async findOne(id: number): Promise<ProductReview> {
     const review = await this.productReviewRepository.findOne({
       where: { id },
       relations: ['product'],
@@ -151,12 +151,12 @@ export class ProductReviewService {
     return await this.productReviewRepository.save(review);
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: number): Promise<void> {
     const review = await this.findOne(id);
     await this.productReviewRepository.softDelete(review.id);
   }
 
-  async restore(id: string): Promise<ProductReview> {
+  async restore(id: number): Promise<ProductReview> {
     const result = await this.productReviewRepository.restore(id);
 
     if (result.affected === 0) {
@@ -166,7 +166,7 @@ export class ProductReviewService {
     return await this.findOne(id);
   }
 
-  async findByProduct(productId: string, query: ProductReviewQueryDto) {
+  async findByProduct(productId: number, query: ProductReviewQueryDto) {
     const product = await this.productRepository.findOne({
       where: { id: productId },
     });
@@ -178,7 +178,7 @@ export class ProductReviewService {
     return await this.findAll({ ...query, productId });
   }
 
-  async getAverageRating(productId: string): Promise<number> {
+  async getAverageRating(productId: number): Promise<number> {
     const product = await this.productRepository.findOne({
       where: { id: productId },
     });

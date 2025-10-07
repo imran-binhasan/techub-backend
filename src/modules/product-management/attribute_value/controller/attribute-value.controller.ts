@@ -9,7 +9,7 @@ import {
   Query,
   HttpCode,
   HttpStatus,
-  ParseUUIDPipe,
+  ParseIntPipe,
 } from '@nestjs/common';
 
 import {
@@ -63,7 +63,7 @@ export class AttributeValueController {
 
   @RequireResource('attribute_value', 'read')
   @Get(':id')
-  async findOne(@Param('id', ParseUUIDPipe) id: string) {
+  async findOne(@Param('id', ParseIntPipe) id: number) {
     const result = await this.attributeValueService.findOne(id);
     return {
       success: true,
@@ -75,7 +75,7 @@ export class AttributeValueController {
   @RequireResource('attribute_value', 'update')
   @Patch(':id')
   async update(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateAttributeValueDto: UpdateAttributeValueDto,
   ) {
     const result = await this.attributeValueService.update(
@@ -92,7 +92,7 @@ export class AttributeValueController {
   @RequireResource('attribute_value', 'delete')
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Param('id', ParseUUIDPipe) id: string) {
+  async remove(@Param('id', ParseIntPipe) id: number) {
     await this.attributeValueService.remove(id);
     return {
       success: true,
@@ -103,7 +103,7 @@ export class AttributeValueController {
   @RequireResource('attribute_value', 'manage')
   @Patch(':id/restore')
   @HttpCode(HttpStatus.OK)
-  async restore(@Param('id', ParseUUIDPipe) id: string) {
+  async restore(@Param('id', ParseIntPipe) id: number) {
     const result = await this.attributeValueService.restore(id);
     return {
       success: true,
@@ -116,7 +116,7 @@ export class AttributeValueController {
   @Public()
   @Get('attribute/:attributeId')
   async findByAttribute(
-    @Param('attributeId', ParseUUIDPipe) attributeId: string,
+    @Param('attributeId', ParseIntPipe) attributeId: string,
   ) {
     const result =
       await this.attributeValueService.findByAttribute(attributeId);
@@ -130,7 +130,7 @@ export class AttributeValueController {
   @RequireResource('attribute_value', 'create')
   @Post('bulk/:attributeId')
   async bulkCreateForAttribute(
-    @Param('attributeId', ParseUUIDPipe) attributeId: string,
+    @Param('attributeId', ParseIntPipe) attributeId: string,
     @Body('values') values: string[],
   ) {
     const result = await this.attributeValueService.bulkCreateForAttribute(

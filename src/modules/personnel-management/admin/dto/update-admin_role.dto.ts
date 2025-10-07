@@ -3,5 +3,5 @@ import { IsUUID, IsNotEmpty } from 'class-validator';
 
 export class UpdateAdminRoleDto {
   @IsNotEmpty({ message: 'Role ID is required' })
-  roleId: string;
+  roleId: number;
 }

@@ -1,7 +1,6 @@
 import {
   IsString,
   IsNumber,
-  IsUUID,
   Min,
   Max,
   IsNotEmpty,
@@ -23,6 +22,7 @@ export class CreateProductReviewDto {
   @IsNotEmpty()
   comment: string;
 
-  
-  productId: string;
+  @IsNumber()
+  @IsNotEmpty()
+  productId: number;
 }

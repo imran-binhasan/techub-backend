@@ -3,7 +3,6 @@ import {
   IsNumber,
   IsOptional,
   IsArray,
-  IsUUID,
   Min,
   IsNotEmpty,
 } from 'class-validator';
@@ -29,13 +28,15 @@ export class CreateProductDto {
   price: number;
 
   @IsOptional()
-  
-  categoryId?: string;
+  @IsNumber()
+  categoryId?: number;
 
   @IsOptional()
-  
-  brandId?: string;
+  @IsNumber()
+  brandId?: number;
 
   @IsOptional()
-  attributeValueIds?: string[];
+  @IsArray()
+  @IsNumber({}, { each: true })
+  attributeValueIds?: number[];
 }

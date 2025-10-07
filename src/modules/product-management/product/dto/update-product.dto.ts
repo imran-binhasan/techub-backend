@@ -3,7 +3,6 @@ import {
   IsNumber,
   IsOptional,
   IsArray,
-  IsUUID,
   Min,
 } from 'class-validator';
 import { Type } from 'class-transformer';
@@ -30,14 +29,15 @@ export class UpdateProductDto {
   price?: number;
 
   @IsOptional()
-  
-  categoryId?: string | null;
+  @IsNumber()
+  categoryId?: number | null;
 
   @IsOptional()
-  
-  brandId?: string | null;
+  @IsNumber()
+  brandId?: number | null;
 
   @IsOptional()
   @IsArray()
-  attributeValueIds?: string[];
+  @IsNumber({}, { each: true })
+  attributeValueIds?: number[];
 }

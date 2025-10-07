@@ -121,7 +121,7 @@ export class ProductImageService {
     };
   }
 
-  async findOne(id: string): Promise<ProductImage> {
+  async findOne(id: number): Promise<ProductImage> {
     const productImage = await this.productImageRepository.findOne({
       where: { id },
       relations: ['product'],
@@ -134,7 +134,7 @@ export class ProductImageService {
     return productImage;
   }
 
-  async findByProduct(productId: string): Promise<ProductImage[]> {
+  async findByProduct(productId: number): Promise<ProductImage[]> {
     return this.productImageRepository.find({
       where: { product: { id: productId } },
       relations: ['product'],
@@ -142,7 +142,7 @@ export class ProductImageService {
     });
   }
 
-  async findPrimaryImage(productId: string): Promise<ProductImage | null> {
+  async findPrimaryImage(productId: number): Promise<ProductImage | null> {
     return this.productImageRepository.findOne({
       where: { product: { id: productId }, isPrimary: true },
       relations: ['product'],
@@ -172,7 +172,7 @@ export class ProductImageService {
     return this.findOne(id);
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: number): Promise<void> {
     const productImage = await this.productImageRepository.findOne({
       where: { id },
       withDeleted: true,
@@ -186,7 +186,7 @@ export class ProductImageService {
     await this.productImageRepository.softDelete(id);
   }
 
-  async restore(id: string): Promise<ProductImage> {
+  async restore(id: number): Promise<ProductImage> {
     const productImage = await this.productImageRepository.findOne({
       where: { id },
       withDeleted: true,
@@ -204,7 +204,7 @@ export class ProductImageService {
     return this.findOne(id);
   }
 
-  async setPrimary(id: string): Promise<ProductImage> {
+  async setPrimary(id: number): Promise<ProductImage> {
     const productImage = await this.productImageRepository.findOne({
       where: { id },
       relations: ['product'],
@@ -250,21 +250,21 @@ export class ProductImageService {
     return this.findByProduct(productId);
   }
 
-  async getImagesCount(productId: string): Promise<number> {
+  async getImagesCount(productId: number): Promise<number> {
     return this.productImageRepository.count({
       where: { product: { id: productId } },
     });
   }
 
   // Private helper methods
-  private async unsetPrimaryImages(productId: string): Promise<void> {
+  private async unsetPrimaryImages(productId: number): Promise<void> {
     await this.productImageRepository.update(
       { product: { id: productId } },
       { isPrimary: false },
     );
   }
 
-  private async getMaxSortOrder(productId: string): Promise<number> {
+  private async getMaxSortOrder(productId: number): Promise<number> {
     const result = await this.productImageRepository
       .createQueryBuilder('productImage')
       .where('productImage.product.id = :productId', { productId })

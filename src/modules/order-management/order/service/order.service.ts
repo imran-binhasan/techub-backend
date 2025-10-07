@@ -235,7 +235,7 @@ export class OrderService {
     };
   }
 
-  async findById(id: string): Promise<OrderResponse> {
+  async findById(id: number): Promise<OrderResponse> {
     const order = await this.orderRepository.findOne({
       where: { id },
       relations: [
@@ -255,7 +255,7 @@ export class OrderService {
     return this.transformToOrderResponse(order);
   }
 
-  async updateOrder(id: string, updateOrderDto: UpdateOrderDto): Promise<OrderResponse> {
+  async updateOrder(id: number, updateOrderDto: UpdateOrderDto): Promise<OrderResponse> {
     const order = await this.orderRepository.findOne({
       where: { id },
       relations: ['customer', 'items'],
@@ -287,7 +287,7 @@ export class OrderService {
     return this.findById(savedOrder.id);
   }
 
-  async cancelOrder(id: string): Promise<OrderResponse> {
+  async cancelOrder(id: number): Promise<OrderResponse> {
     const order = await this.orderRepository.findOne({
       where: { id },
       relations: ['customer', 'items'],
@@ -373,7 +373,7 @@ export class OrderService {
     });
   }
 
-  async getOrdersByCustomerId(customerId: string, page: number = 1, limit: number = 10): Promise<{
+  async getOrdersByCustomerId(customerId: number, page: number = 1, limit: number = 10): Promise<{
     data: OrderResponse[];
     total: number;
     page: number;

@@ -2,7 +2,6 @@ import {
   IsString,
   IsNotEmpty,
   IsOptional,
-  IsUUID,
   IsBoolean,
   IsNumber,
   Min,
@@ -10,9 +9,9 @@ import {
 import { Type } from 'class-transformer';
 
 export class CreateProductImageDto {
-  
+  @IsNumber()
   @IsNotEmpty()
-  productId: string;
+  productId: number;
 
   @IsString()
   @IsNotEmpty()

@@ -138,7 +138,7 @@ export class WishlistService {
     };
   }
 
-  async findOne(id: string): Promise<Wishlist> {
+  async findOne(id: number): Promise<Wishlist> {
     const wishlist = await this.wishlistRepository.findOne({
       where: { id },
       relations: [
@@ -158,7 +158,7 @@ export class WishlistService {
   }
 
   async update(
-    id: string,
+    id: number,
     updateWishlistDto: UpdateWishlistDto,
   ): Promise<Wishlist> {
     const existingWishlist = await this.wishlistRepository.findOne({
@@ -230,7 +230,7 @@ export class WishlistService {
     return this.findOne(id);
   }
 
-  async findByCustomerId(customerId: string): Promise<Wishlist[]> {
+  async findByCustomerId(customerId: number): Promise<Wishlist[]> {
     return this.wishlistRepository.find({
       where: { customer: { id: customerId } },
       relations: [
@@ -243,7 +243,7 @@ export class WishlistService {
     });
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: number): Promise<void> {
     const wishlist = await this.wishlistRepository.findOne({
       where: { id },
       withDeleted: true,
@@ -257,7 +257,7 @@ export class WishlistService {
     await this.wishlistRepository.softDelete(id);
   }
 
-  async restore(id: string): Promise<Wishlist> {
+  async restore(id: number): Promise<Wishlist> {
     const wishlist = await this.wishlistRepository.findOne({
       where: { id },
       withDeleted: true,
@@ -276,8 +276,8 @@ export class WishlistService {
   }
 
   async removeByCustomerAndProduct(
-    customerId: string,
-    productId: string,
+    customerId: number,
+    productId: number,
   ): Promise<void> {
     const wishlist = await this.wishlistRepository.findOne({
       where: { customer: { id: customerId }, product: { id: productId } },
@@ -290,19 +290,19 @@ export class WishlistService {
     await this.wishlistRepository.remove(wishlist);
   }
 
-  async clearCustomerWishlist(customerId: string): Promise<void> {
+  async clearCustomerWishlist(customerId: number): Promise<void> {
     await this.wishlistRepository.delete({ customer: { id: customerId } });
   }
 
-  async getWishlistCount(customerId: string): Promise<number> {
+  async getWishlistCount(customerId: number): Promise<number> {
     return this.wishlistRepository.count({
       where: { customer: { id: customerId } },
     });
   }
 
   async isProductInWishlist(
-    customerId: string,
-    productId: string,
+    customerId: number,
+    productId: number,
   ): Promise<boolean> {
     const count = await this.wishlistRepository.count({
       where: { customer: { id: customerId }, product: { id: productId } },

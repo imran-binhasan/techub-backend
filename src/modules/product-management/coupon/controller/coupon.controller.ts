@@ -10,7 +10,7 @@ import {
   Query,
   HttpCode,
   HttpStatus,
-  ParseUUIDPipe,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { CouponService } from '../service/coupon.service';
 import { CreateCouponDto } from '../dto/create-coupon.dto';
@@ -52,7 +52,7 @@ export class CouponController {
 
   @RequirePermissions('read:coupon')
   @Get(':id')
-  async findOne(@Param('id', ParseUUIDPipe) id: string) {
+  async findOne(@Param('id', ParseIntPipe) id: number) {
     const result = await this.couponService.findOne(id);
     return {
       success: true,
@@ -64,7 +64,7 @@ export class CouponController {
   @RequireResource('coupon', 'update')
   @Patch(':id')
   async update(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateCouponDto: UpdateCouponDto,
   ) {
     const result = await this.couponService.update(id, updateCouponDto);
@@ -78,7 +78,7 @@ export class CouponController {
   @RequireResource('coupon', 'delete')
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Param('id', ParseUUIDPipe) id: string) {
+  async remove(@Param('id', ParseIntPipe) id: number) {
     await this.couponService.remove(id);
     return {
       success: true,

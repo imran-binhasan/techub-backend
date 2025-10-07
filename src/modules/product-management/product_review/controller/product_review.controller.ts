@@ -10,7 +10,7 @@ import {
   Query,
   HttpCode,
   HttpStatus,
-  ParseUUIDPipe,
+  ParseIntPipe,
 } from '@nestjs/common';
 import {
   RequirePermissions,
@@ -52,7 +52,7 @@ export class ProductReviewController {
 
   @Public()
   @Get(':id')
-  async findOne(@Param('id', ParseUUIDPipe) id: string) {
+  async findOne(@Param('id', ParseIntPipe) id: number) {
     const result = await this.productReviewService.findOne(id);
     return {
       success: true,
@@ -64,7 +64,7 @@ export class ProductReviewController {
   @RequireResource('product-review', 'update')
   @Patch(':id')
   async update(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateProductReviewDto: UpdateProductReviewDto,
   ) {
     const result = await this.productReviewService.update(
@@ -81,7 +81,7 @@ export class ProductReviewController {
   @RequireResource('product-review', 'delete')
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Param('id', ParseUUIDPipe) id: string) {
+  async remove(@Param('id', ParseIntPipe) id: number) {
     await this.productReviewService.remove(id);
     return {
       success: true,
@@ -92,7 +92,7 @@ export class ProductReviewController {
   @RequireResource('product-review', 'manage')
   @Patch(':id/restore')
   @HttpCode(HttpStatus.OK)
-  async restore(@Param('id', ParseUUIDPipe) id: string) {
+  async restore(@Param('id', ParseIntPipe) id: number) {
     const result = await this.productReviewService.restore(id);
     return {
       success: true,
@@ -105,7 +105,7 @@ export class ProductReviewController {
   @Public()
   @Get('product/:productId')
   async findByProduct(
-    @Param('productId', ParseUUIDPipe) productId: string,
+    @Param('productId', ParseIntPipe) productId: number,
     @Query() query: ProductReviewQueryDto,
   ) {
     const result = await this.productReviewService.findByProduct(
@@ -121,7 +121,7 @@ export class ProductReviewController {
 
   @Public()
   @Get('product/:productId/average-rating')
-  async getAverageRating(@Param('productId', ParseUUIDPipe) productId: string) {
+  async getAverageRating(@Param('productId', ParseIntPipe) productId: number) {
     const result = await this.productReviewService.getAverageRating(productId);
     return {
       success: true,

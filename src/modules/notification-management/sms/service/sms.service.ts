@@ -151,7 +151,7 @@ export class SmsService {
     };
   }
 
-  async findOne(id: string): Promise<SmsLog> {
+  async findOne(id: number): Promise<SmsLog> {
     const smsLog = await this.smsLogRepository.findOne({
       where: { id },
     });
@@ -163,12 +163,12 @@ export class SmsService {
     return smsLog;
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: number): Promise<void> {
     const smsLog = await this.findOne(id);
     await this.smsLogRepository.softDelete(smsLog.id);
   }
 
-  async restore(id: string): Promise<SmsLog> {
+  async restore(id: number): Promise<SmsLog> {
     const result = await this.smsLogRepository.restore(id);
     
     if (result.affected === 0) {
@@ -197,7 +197,7 @@ export class SmsService {
     return await this.smsLogRepository.save(smsLog);
   }
 
-  async resendSms(id: string): Promise<SmsLog> {
+  async resendSms(id: number): Promise<SmsLog> {
     const originalSms = await this.findOne(id);
     
     if (originalSms.status === 'sent' && originalSms.delivered) {

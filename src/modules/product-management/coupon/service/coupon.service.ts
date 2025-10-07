@@ -125,7 +125,7 @@ export class CouponService {
     };
   }
 
-  async findOne(id: string): Promise<Coupon> {
+  async findOne(id: number): Promise<Coupon> {
     const coupon = await this.couponRepository.findOne({
       where: { id },
     });
@@ -149,7 +149,7 @@ export class CouponService {
     return coupon;
   }
 
-  async update(id: string, updateCouponDto: UpdateCouponDto): Promise<Coupon> {
+  async update(id: number, updateCouponDto: UpdateCouponDto): Promise<Coupon> {
     const existingCoupon = await this.couponRepository.findOne({
       where: { id },
     });
@@ -191,7 +191,7 @@ export class CouponService {
     return this.findOne(id);
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: number): Promise<void> {
     const coupon = await this.couponRepository.findOne({
       where: { id },
     });
@@ -285,7 +285,7 @@ export class CouponService {
     }
   }
 
-  async incrementUsage(id: string): Promise<void> {
+  async incrementUsage(id: number): Promise<void> {
     await this.couponRepository.increment({ id }, 'usageCount', 1);
   }
 

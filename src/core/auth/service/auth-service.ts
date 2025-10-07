@@ -186,7 +186,7 @@ export class AuthService {
   }
 
   private async refreshCustomerToken(
-    customerId: string,
+    customerId: number,
   ): Promise<AuthResponse> {
     const customer = await this.customerRepository.findOne({
       where: { id: customerId, isActive: true },
@@ -240,7 +240,7 @@ export class AuthService {
     });
   }
 
-  private async validateCustomer(customerId: string): Promise<Customer | null> {
+  private async validateCustomer(customerId: number): Promise<Customer | null> {
     return this.customerRepository.findOne({
       where: { id: customerId, isActive: true },
     });

@@ -110,7 +110,7 @@ export class AttributeValueService {
     };
   }
 
-  async findOne(id: string): Promise<AttributeValue> {
+  async findOne(id: number): Promise<AttributeValue> {
     const attributeValue = await this.attributeValueRepository.findOne({
       where: { id },
       relations: ['attribute'],
@@ -211,7 +211,7 @@ export class AttributeValueService {
     return this.findOne(id);
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: number): Promise<void> {
     const attributeValue = await this.attributeValueRepository.findOne({
       where: { id },
       relations: ['productAttributeValues'],
@@ -235,7 +235,7 @@ export class AttributeValueService {
     await this.attributeValueRepository.softDelete(id);
   }
 
-  async restore(id: string): Promise<AttributeValue> {
+  async restore(id: number): Promise<AttributeValue> {
     const attributeValue = await this.attributeValueRepository.findOne({
       where: { id },
       withDeleted: true,

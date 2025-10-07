@@ -10,7 +10,7 @@ import {
   Query,
   HttpCode,
   HttpStatus,
-  ParseUUIDPipe,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { CategoryService } from '../service/category.service';
 import { CreateCategoryDto } from '../dto/create-category.dto';
@@ -83,7 +83,7 @@ export class CategoryController {
 
   @RequireResource('category', 'read')
   @Get(':id')
-  async findOne(@Param('id', ParseUUIDPipe) id: string) {
+  async findOne(@Param('id', ParseIntPipe) id: number) {
     const result = await this.categoryService.findOne(id);
     return {
       success: true,
@@ -95,7 +95,7 @@ export class CategoryController {
   @RequireResource('category', 'update')
   @Patch(':id')
   async update(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateCategoryDto: UpdateCategoryDto,
   ) {
     const result = await this.categoryService.update(id, updateCategoryDto);
@@ -109,7 +109,7 @@ export class CategoryController {
   @RequireResource('category', 'delete')
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Param('id', ParseUUIDPipe) id: string) {
+  async remove(@Param('id', ParseIntPipe) id: number) {
     await this.categoryService.remove(id);
     return {
       success: true,
@@ -120,7 +120,7 @@ export class CategoryController {
   @RequireResource('category', 'manage')
   @Patch(':id/restore')
   @HttpCode(HttpStatus.OK)
-  async restore(@Param('id', ParseUUIDPipe) id: string) {
+  async restore(@Param('id', ParseIntPipe) id: number) {
     const result = await this.categoryService.restore(id);
     return {
       success: true,
@@ -132,7 +132,7 @@ export class CategoryController {
   // Utility endpoints
   @Public()
   @Get(':id/children')
-  async getChildCategories(@Param('id', ParseUUIDPipe) id: string) {
+  async getChildCategories(@Param('id', ParseIntPipe) id: number) {
     const result = await this.categoryService.getChildCategories(id);
     return {
       success: true,
@@ -143,7 +143,7 @@ export class CategoryController {
 
   @RequireResource('category', 'read')
   @Get(':id/products')
-  async findWithProducts(@Param('id', ParseUUIDPipe) id: string) {
+  async findWithProducts(@Param('id', ParseIntPipe) id: number) {
     const result = await this.categoryService.findWithProducts(id);
     return {
       success: true,

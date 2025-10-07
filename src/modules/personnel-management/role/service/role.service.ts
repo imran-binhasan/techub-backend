@@ -66,7 +66,7 @@ export class RoleService {
     });
   }
 
-  async findById(id: string): Promise<Role> {
+  async findById(id: number): Promise<Role> {
     const role = await this.roleRepository.findOne({
       where: { id },
       relations: ['permissions'],
@@ -107,7 +107,7 @@ export class RoleService {
     return updatedRole;
   }
 
-  async deleteRole(id: string): Promise<void> {
+  async deleteRole(id: number): Promise<void> {
     const role = await this.findById(id);
 
     // Check if role has any admins

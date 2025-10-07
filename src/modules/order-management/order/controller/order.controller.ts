@@ -81,7 +81,7 @@ export class OrderController {
   @ApiResponse({ status: 200, description: 'Customer orders retrieved successfully' })
   @ApiResponse({ status: 404, description: 'Customer not found' })
   async getCustomerOrders(
-    @Param('customerId') customerId: string,
+    @Param('customerId') customerId: number,
     @Query('page') page?: number,
     @Query('limit') limit?: number,
   ): Promise<{
@@ -142,7 +142,7 @@ export class OrderController {
   @ApiOperation({ summary: 'Get order by ID' })
   @ApiResponse({ status: 200, description: 'Order retrieved successfully' })
   @ApiResponse({ status: 404, description: 'Order not found' })
-  async findOne(@Param('id') id: string): Promise<{
+  async findOne(@Param('id') id: number): Promise<{
     message: string;
     data: OrderResponse;
   }> {
@@ -160,7 +160,7 @@ export class OrderController {
   @ApiResponse({ status: 404, description: 'Order not found' })
   @ApiResponse({ status: 400, description: 'Invalid status transition' })
   async update(
-    @Param('id') id: string,
+    @Param('id') id: number,
     @Body() updateOrderDto: UpdateOrderDto,
   ): Promise<{
     message: string;
@@ -178,7 +178,7 @@ export class OrderController {
   @ApiResponse({ status: 200, description: 'Order cancelled successfully' })
   @ApiResponse({ status: 404, description: 'Order not found' })
   @ApiResponse({ status: 400, description: 'Cannot cancel order in current status' })
-  async cancel(@Param('id') id: string): Promise<{
+  async cancel(@Param('id') id: number): Promise<{
     message: string;
     data: OrderResponse;
   }> {
@@ -195,7 +195,7 @@ export class OrderController {
   @ApiResponse({ status: 200, description: 'Payment status updated successfully' })
   @ApiResponse({ status: 404, description: 'Order not found' })
   async updatePaymentStatus(
-    @Param('id') id: string,
+    @Param('id') id: number,
     @Body() updateData: {
       paymentStatus: string;
       paymentMethod?: string;

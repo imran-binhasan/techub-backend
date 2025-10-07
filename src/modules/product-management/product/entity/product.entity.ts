@@ -1,5 +1,10 @@
-
-import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
+import {
+  Column,
+  DeleteDateColumn,
+  Entity,
+  ManyToOne,
+  OneToMany,
+} from 'typeorm';
 import { ProductAttributeValue } from './product_attribute_value.entity';
 import { Inventory } from 'src/modules/order-management/inventory/entity/inventory.entity';
 import { BaseEntity } from 'src/shared/entity/base.entity';
@@ -56,4 +61,7 @@ export class Product extends BaseEntity {
     cascade: true,
   })
   attributeValues: ProductAttributeValue[];
+
+  @DeleteDateColumn({ type: 'timestamptz' })
+  deletedAt: Date;
 }

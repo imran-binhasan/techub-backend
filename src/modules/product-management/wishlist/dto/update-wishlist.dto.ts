@@ -3,9 +3,9 @@ import { IsOptional, IsUUID } from 'class-validator';
 export class UpdateWishlistDto {
   @IsOptional()
   
-  customerId?: string;
+  customerId?: number;
 
   @IsOptional()
   
-  productId?: string;
+  productId?: number;
 }

@@ -11,7 +11,7 @@ import {
   UploadedFile,
   HttpCode,
   HttpStatus,
-  ParseUUIDPipe,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CustomerService } from '../service/customer.service';
@@ -77,7 +77,7 @@ export class CustomerController {
 
   @RequireResource('customer', 'read')
   @Get('admin/:id')
-  async findOneByAdmin(@Param('id', ParseUUIDPipe) id: string) {
+  async findOneByAdmin(@Param('id', ParseIntPipe) id: number) {
     const result = await this.customerService.findOne(id);
     return {
       success: true,
@@ -90,7 +90,7 @@ export class CustomerController {
   @Patch('admin/:id')
   @UseInterceptors(FileInterceptor('image'))
   async updateByAdmin(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateCustomerDto: UpdateCustomerDto,
     @UploadedFile() image?: Express.Multer.File,
   ) {
@@ -109,7 +109,7 @@ export class CustomerController {
   @RequireResource('customer', 'manage')
   @Patch('admin/:id/toggle-status')
   @HttpCode(HttpStatus.OK)
-  async toggleStatusByAdmin(@Param('id', ParseUUIDPipe) id: string) {
+  async toggleStatusByAdmin(@Param('id', ParseIntPipe) id: number) {
     const result = await this.customerService.toggleStatus(id);
     return {
       success: true,
@@ -121,7 +121,7 @@ export class CustomerController {
   @RequireResource('customer', 'delete')
   @Delete('admin/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async removeByAdmin(@Param('id', ParseUUIDPipe) id: string) {
+  async removeByAdmin(@Param('id', ParseIntPipe) id: number) {
     await this.customerService.softDelete(id);
     return {
       success: true,
@@ -132,7 +132,7 @@ export class CustomerController {
   @RequireResource('customer', 'manage')
   @Patch('admin/:id/restore')
   @HttpCode(HttpStatus.OK)
-  async restoreByAdmin(@Param('id', ParseUUIDPipe) id: string) {
+  async restoreByAdmin(@Param('id', ParseIntPipe) id: number) {
     const result = await this.customerService.restore(id);
     return {
       success: true,

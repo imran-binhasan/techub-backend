@@ -10,7 +10,7 @@ import {
   Query,
   HttpCode,
   HttpStatus,
-  ParseUUIDPipe,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { InventoryService } from '../service/inventory.service';
 import { CreateInventoryDto } from '../dto/create-inventory.dto';
@@ -52,7 +52,7 @@ export class InventoryController {
 
   @RequirePermissions('read:inventory')
   @Get(':id')
-  async findOne(@Param('id', ParseUUIDPipe) id: string) {
+  async findOne(@Param('id', ParseIntPipe) id: number) {
     const result = await this.inventoryService.findOne(id);
     return {
       success: true,
@@ -64,7 +64,7 @@ export class InventoryController {
   @RequireResource('inventory', 'update')
   @Patch(':id')
   async update(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateInventoryDto: UpdateInventoryDto,
   ) {
     const result = await this.inventoryService.update(id, updateInventoryDto);
@@ -78,7 +78,7 @@ export class InventoryController {
   @RequireResource('inventory', 'update')
   @Patch(':id/adjust-stock')
   async adjustStock(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() adjustmentDto: StockAdjustmentDto,
   ) {
     const result = await this.inventoryService.adjustStock(id, adjustmentDto);
@@ -92,7 +92,7 @@ export class InventoryController {
   @RequireResource('inventory', 'delete')
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Param('id', ParseUUIDPipe) id: string) {
+  async remove(@Param('id', ParseIntPipe) id: number) {
     await this.inventoryService.remove(id);
     return {
       success: true,
@@ -103,7 +103,7 @@ export class InventoryController {
   // Utility endpoints
   @RequirePermissions('read:inventory')
   @Get('product/:productId')
-  async findByProduct(@Param('productId', ParseUUIDPipe) productId: string) {
+  async findByProduct(@Param('productId', ParseIntPipe) productId: number) {
     const result = await this.inventoryService.findByProductId(productId);
     return {
       success: true,

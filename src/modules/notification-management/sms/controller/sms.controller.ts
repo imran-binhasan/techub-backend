@@ -10,7 +10,7 @@ import {
   Query,
   HttpCode,
   HttpStatus,
-  ParseUUIDPipe,
+  ParseIntPipe,
   ParseIntPipe,
 } from '@nestjs/common';
 import {
@@ -52,7 +52,7 @@ export class SmsController {
 
   @RequirePermissions('read:sms')
   @Get(':id')
-  async findOne(@Param('id', ParseUUIDPipe) id: string) {
+  async findOne(@Param('id', ParseIntPipe) id: number) {
     const result = await this.smsService.findOne(id);
     return {
       success: true,
@@ -64,7 +64,7 @@ export class SmsController {
   @RequireResource('sms', 'delete')
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Param('id', ParseUUIDPipe) id: string) {
+  async remove(@Param('id', ParseIntPipe) id: number) {
     await this.smsService.remove(id);
     return {
       success: true,
@@ -75,7 +75,7 @@ export class SmsController {
   @RequireResource('sms', 'manage')
   @Patch(':id/restore')
   @HttpCode(HttpStatus.OK)
-  async restore(@Param('id', ParseUUIDPipe) id: string) {
+  async restore(@Param('id', ParseIntPipe) id: number) {
     const result = await this.smsService.restore(id);
     return {
       success: true,
@@ -103,7 +103,7 @@ export class SmsController {
   // Resend failed SMS
   @RequireResource('sms', 'create')
   @Post(':id/resend')
-  async resendSms(@Param('id', ParseUUIDPipe) id: string) {
+  async resendSms(@Param('id', ParseIntPipe) id: number) {
     const result = await this.smsService.resendSms(id);
     return {
       success: true,

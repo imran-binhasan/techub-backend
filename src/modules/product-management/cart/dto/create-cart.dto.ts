@@ -1,10 +1,11 @@
 // src/cart/dto/create-cart.dto.ts
-import { IsUUID, IsNotEmpty, IsNumber, Min, IsOptional } from 'class-validator';
+import { IsNotEmpty, IsNumber, Min, IsOptional } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class CreateCartDto {
+  @IsNumber()
   @IsNotEmpty({ message: 'Product ID is required' })
-  productId: string;
+  productId: number;
 
   @IsOptional()
   @IsNumber({}, { message: 'Quantity must be a number' })

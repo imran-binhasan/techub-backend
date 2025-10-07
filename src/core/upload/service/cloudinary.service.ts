@@ -70,7 +70,7 @@ export class CloudinaryService {
 
   async uploadCustomerImage(
     file: Express.Multer.File,
-    customerId: string,
+    customerId: number,
   ): Promise<string> {
     const folder = `customers/${customerId}`;
     const result = await this.uploadFile(file.buffer, folder, customerId);

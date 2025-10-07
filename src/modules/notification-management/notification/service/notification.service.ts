@@ -81,7 +81,7 @@ export class NotificationService {
     };
   }
 
-  async findOne(id: string): Promise<Notification> {
+  async findOne(id: number): Promise<Notification> {
     const notification = await this.notificationRepository.findOne({
       where: { id },
       relations: ['customers'],
@@ -103,12 +103,12 @@ export class NotificationService {
     return await this.notificationRepository.save(notification);
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: number): Promise<void> {
     const notification = await this.findOne(id);
     await this.notificationRepository.softDelete(notification.id);
   }
 
-  async restore(id: string): Promise<Notification> {
+  async restore(id: number): Promise<Notification> {
     const result = await this.notificationRepository.restore(id);
 
     if (result.affected === 0) {
@@ -179,7 +179,7 @@ export class NotificationService {
   }
 
   async getCustomerNotifications(
-    customerId: string,
+    customerId: number,
     query: NotificationQueryDto,
   ) {
     const customer = await this.customerRepository.findOne({
@@ -239,7 +239,7 @@ export class NotificationService {
   }
 
   async getUnreadNotifications(
-    customerId: string,
+    customerId: number,
   ): Promise<CustomerNotification[]> {
     const customer = await this.customerRepository.findOne({
       where: { id: customerId },
@@ -261,7 +261,7 @@ export class NotificationService {
   }
 
   async getNotificationCounts(
-    customerId: string,
+    customerId: number,
   ): Promise<{ total: number; unread: number }> {
     const customer = await this.customerRepository.findOne({
       where: { id: customerId },
@@ -290,7 +290,7 @@ export class NotificationService {
   }
 
   async markAsRead(
-    customerId: string,
+    customerId: number,
     markAsReadDto: MarkAsReadDto,
   ): Promise<{ updated: number }> {
     const customer = await this.customerRepository.findOne({
@@ -318,7 +318,7 @@ export class NotificationService {
     return { updated: result.affected || 0 };
   }
 
-  async markAllAsRead(customerId: string): Promise<{ updated: number }> {
+  async markAllAsRead(customerId: number): Promise<{ updated: number }> {
     const customer = await this.customerRepository.findOne({
       where: { id: customerId },
     });

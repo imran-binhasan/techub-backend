@@ -9,9 +9,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Product } from '../entity/product.entity';
 import { ProductAttributeValue } from '../entity/product_attribute_value.entity';
-import { Category } from 'src/product-management/category/entity/category.entity';
-import { Brand } from 'src/product-management/brand/entity/brand.entity';
-import { AttributeValue } from 'src/product-management/attribute_value/entity/attribute_value.entity';
+import { Category } from 'src/modules/product-management/category/entity/category.entity';
+import { Brand } from 'src/modules/product-management/brand/entity/brand.entity';
+import { AttributeValue } from 'src/modules/product-management/attribute_value/entity/attribute_value.entity';
 import { CreateProductDto } from '../dto/create-product.dto';
 import { UpdateProductDto } from '../dto/update-product.dto';
 import { ProductQueryDto } from '../dto/query-product.dto';
@@ -81,7 +81,7 @@ export class ProductService {
       ...(brand && { brand }),
     });
 
-    const savedProduct = await this.productRepository.save(product);
+    const savedProduct = await this.productRepository.save(product) as Product;
 
     // Handle attribute values if provided
     if (
@@ -188,7 +188,7 @@ export class ProductService {
     };
   }
 
-  async findOne(id: string): Promise<Product> {
+  async findOne(id: number): Promise<Product> {
     const product = await this.productRepository.findOne({
       where: { id },
       relations: [
@@ -216,7 +216,7 @@ export class ProductService {
   }
 
   async update(
-    id: string,
+    id: number,
     updateProductDto: UpdateProductDto,
   ): Promise<Product> {
     const existingProduct = await this.productRepository.findOne({
@@ -319,7 +319,7 @@ export class ProductService {
     return this.findOne(id);
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: number): Promise<void> {
     const product = await this.productRepository.findOne({
       where: { id },
       relations: ['carts', 'reviews'],
@@ -341,7 +341,7 @@ export class ProductService {
     await this.productRepository.softDelete(id);
   }
 
-  async restore(id: string): Promise<Product> {
+  async restore(id: number): Promise<Product> {
     const product = await this.productRepository.findOne({
       where: { id },
       withDeleted: true,
@@ -364,7 +364,7 @@ export class ProductService {
     return this.productRepository.count();
   }
 
-  async findByCategory(categoryId: string): Promise<Product[]> {
+  async findByCategory(categoryId: number): Promise<Product[]> {
     return this.productRepository.find({
       where: { category: { id: categoryId } },
       relations: ['brand', 'images'],
@@ -372,7 +372,7 @@ export class ProductService {
     });
   }
 
-  async findByBrand(brandId: string): Promise<Product[]> {
+  async findByBrand(brandId: number): Promise<Product[]> {
     return this.productRepository.find({
       where: { brand: { id: brandId } },
       relations: ['category', 'images'],
@@ -380,7 +380,7 @@ export class ProductService {
     });
   }
 
-  async updateStock(id: string, newStock: number): Promise<Product> {
+  async updateStock(id: number, newStock: number): Promise<Product> {
     if (newStock < 0) {
       throw new BadRequestException('Stock cannot be negative');
     }
@@ -426,8 +426,8 @@ export class ProductService {
 
   // Private helper methods
   private async handleAttributeValues(
-    productId: string,
-    attributeValueIds: string[],
+    productId: number,
+    attributeValueIds: number[],
   ): Promise<void> {
     // Validate all attribute values exist
     const attributeValues =
@@ -455,8 +455,8 @@ export class ProductService {
   }
 
   private async updateAttributeValues(
-    productId: string,
-    attributeValueIds: string[],
+    productId: number,
+    attributeValueIds: number[],
   ): Promise<void> {
     // Remove existing attribute values
     await this.productAttributeValueRepository.delete({

@@ -26,7 +26,7 @@ export class Order extends BaseEntity {
   orderNumber: string;
 
   @Column()
-  customerId: string;
+  customerId: number;
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   subtotal: number;

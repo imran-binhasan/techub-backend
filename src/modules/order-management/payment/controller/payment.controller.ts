@@ -28,7 +28,7 @@ export class PaymentController {
   @ApiResponse({ status: 404, description: 'Order not found' })
   @HttpCode(HttpStatus.CREATED)
   async createPayment(
-    @Param('orderId') orderId: string,
+    @Param('orderId') orderId: number,
     @Body() createPaymentDto: {
       gateway: PaymentGateway;
       amount: number;
@@ -58,7 +58,7 @@ export class PaymentController {
   @ApiResponse({ status: 200, description: 'Payment status updated successfully' })
   @ApiResponse({ status: 404, description: 'Payment not found' })
   async updatePaymentStatus(
-    @Param('id') id: string,
+    @Param('id') id: number,
     @Body() updateData: {
       status: PaymentStatus;
       gatewayResponse?: any;
@@ -81,7 +81,7 @@ export class PaymentController {
   @Get('order/:orderId')
   @ApiOperation({ summary: 'Get payments by order ID' })
   @ApiResponse({ status: 200, description: 'Payments retrieved successfully' })
-  async getPaymentsByOrder(@Param('orderId') orderId: string): Promise<{
+  async getPaymentsByOrder(@Param('orderId') orderId: number): Promise<{
     message: string;
     data: Payment[];
   }> {

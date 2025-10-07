@@ -25,7 +25,7 @@ export class CartService {
   ) {}
 
   async addToCart(
-    customerId: string,
+    customerId: number,
     createCartDto: CreateCartDto,
   ): Promise<Cart> {
     // Verify customer exists
@@ -140,7 +140,7 @@ export class CartService {
     };
   }
 
-  async findOne(id: string): Promise<Cart> {
+  async findOne(id: number): Promise<Cart> {
     const cart = await this.cartRepository.findOne({
       where: { id },
       relations: ['customer', 'product'],
@@ -153,7 +153,7 @@ export class CartService {
     return cart;
   }
 
-  async findByCustomer(customerId: string): Promise<Cart[]> {
+  async findByCustomer(customerId: number): Promise<Cart[]> {
     // Verify customer exists
     const customer = await this.customerRepository.findOne({
       where: { id: customerId },
@@ -195,7 +195,7 @@ export class CartService {
     return this.findOne(id);
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: number): Promise<void> {
     const cartItem = await this.cartRepository.findOne({
       where: { id },
     });
@@ -207,7 +207,7 @@ export class CartService {
     await this.cartRepository.delete(id);
   }
 
-  async clearCart(customerId: string): Promise<void> {
+  async clearCart(customerId: number): Promise<void> {
     // Verify customer exists
     const customer = await this.customerRepository.findOne({
       where: { id: customerId },
@@ -222,7 +222,7 @@ export class CartService {
 
   // Utility methods
   async getCartTotal(
-    customerId: string,
+    customerId: number,
   ): Promise<{ total: number; items: number }> {
     const cartItems = await this.cartRepository.find({
       where: { customerId },
@@ -238,14 +238,14 @@ export class CartService {
     return { total, items };
   }
 
-  async getCartItemsCount(customerId: string): Promise<number> {
+  async getCartItemsCount(customerId: number): Promise<number> {
     return this.cartRepository.count({
       where: { customerId },
     });
   }
 
   async findCartItemByProductAndCustomer(
-    customerId: string,
+    customerId: number,
     productId: string,
   ): Promise<Cart | null> {
     return this.cartRepository.findOne({
@@ -281,8 +281,8 @@ export class CartService {
   }
 
   async moveToCart(
-    customerId: string,
-    fromCustomerId: string,
+    customerId: number,
+    fromcustomerId: number,
   ): Promise<Cart[]> {
     // Verify both customers exist
     const [customer, fromCustomer] = await Promise.all([

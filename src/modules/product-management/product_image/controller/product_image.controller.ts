@@ -9,7 +9,7 @@ import {
   Query,
   HttpCode,
   HttpStatus,
-  ParseUUIDPipe,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { Public, RequireResource } from 'src/core/auth/decorator/auth.decorator';
 import { ProductImageService } from '../service/product_image.service';
@@ -45,7 +45,7 @@ export class ProductImageController {
 
   @Public()
   @Get(':id')
-  async findOne(@Param('id', ParseUUIDPipe) id: string) {
+  async findOne(@Param('id', ParseIntPipe) id: number) {
     const result = await this.productImageService.findOne(id);
     return {
       success: true,
@@ -57,7 +57,7 @@ export class ProductImageController {
   @RequireResource('product_image', 'update')
   @Patch(':id')
   async update(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateProductImageDto: UpdateProductImageDto,
   ) {
     const result = await this.productImageService.update(
@@ -74,7 +74,7 @@ export class ProductImageController {
   @RequireResource('product_image', 'delete')
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Param('id', ParseUUIDPipe) id: string) {
+  async remove(@Param('id', ParseIntPipe) id: number) {
     await this.productImageService.remove(id);
     return {
       success: true,
@@ -85,7 +85,7 @@ export class ProductImageController {
   @RequireResource('product_image', 'manage')
   @Patch(':id/restore')
   @HttpCode(HttpStatus.OK)
-  async restore(@Param('id', ParseUUIDPipe) id: string) {
+  async restore(@Param('id', ParseIntPipe) id: number) {
     const result = await this.productImageService.restore(id);
     return {
       success: true,
@@ -97,7 +97,7 @@ export class ProductImageController {
   // Product-specific endpoints
   @Public()
   @Get('product/:productId')
-  async findByProduct(@Param('productId', ParseUUIDPipe) productId: string) {
+  async findByProduct(@Param('productId', ParseIntPipe) productId: number) {
     const result = await this.productImageService.findByProduct(productId);
     return {
       success: true,
@@ -108,7 +108,7 @@ export class ProductImageController {
 
   @Public()
   @Get('product/:productId/primary')
-  async findPrimaryImage(@Param('productId', ParseUUIDPipe) productId: string) {
+  async findPrimaryImage(@Param('productId', ParseIntPipe) productId: number) {
     const result = await this.productImageService.findPrimaryImage(productId);
     return {
       success: true,
@@ -119,7 +119,7 @@ export class ProductImageController {
 
   @RequireResource('product_image', 'update')
   @Patch(':id/set-primary')
-  async setPrimary(@Param('id', ParseUUIDPipe) id: string) {
+  async setPrimary(@Param('id', ParseIntPipe) id: number) {
     const result = await this.productImageService.setPrimary(id);
     return {
       success: true,
@@ -131,7 +131,7 @@ export class ProductImageController {
   @RequireResource('product_image', 'update')
   @Patch('product/:productId/reorder')
   async reorderImages(
-    @Param('productId', ParseUUIDPipe) productId: string,
+    @Param('productId', ParseIntPipe) productId: number,
     @Body('imageIds') imageIds: string[],
   ) {
     const result = await this.productImageService.reorderImages(
@@ -148,7 +148,7 @@ export class ProductImageController {
   // Utility endpoints
   @Public()
   @Get('product/:productId/count')
-  async getImagesCount(@Param('productId', ParseUUIDPipe) productId: string) {
+  async getImagesCount(@Param('productId', ParseIntPipe) productId: number) {
     const result = await this.productImageService.getImagesCount(productId);
     return {
       success: true,

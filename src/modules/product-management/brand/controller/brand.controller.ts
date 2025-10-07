@@ -12,7 +12,7 @@ import {
   UploadedFile,
   HttpCode,
   HttpStatus,
-  ParseUUIDPipe,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { BrandService } from '../service/brand.service';
@@ -68,7 +68,7 @@ export class BrandController {
 
   @RequireResource('brand', 'read')
   @Get(':id')
-  async findOne(@Param('id', ParseUUIDPipe) id: string) {
+  async findOne(@Param('id', ParseIntPipe) id: number) {
     const result = await this.brandService.findOne(id);
     return {
       success: true,
@@ -81,7 +81,7 @@ export class BrandController {
   @Patch(':id')
   @UseInterceptors(FileInterceptor('logo'))
   async update(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateBrandDto: UpdateBrandDto,
     @UploadedFile() logo?: Express.Multer.File,
   ) {
@@ -96,7 +96,7 @@ export class BrandController {
   @RequireResource('brand', 'delete')
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Param('id', ParseUUIDPipe) id: string) {
+  async remove(@Param('id', ParseIntPipe) id: number) {
     await this.brandService.remove(id);
     return {
       success: true,
@@ -107,7 +107,7 @@ export class BrandController {
   @RequireResource('brand', 'manage')
   @Patch(':id/restore')
   @HttpCode(HttpStatus.OK)
-  async restore(@Param('id', ParseUUIDPipe) id: string) {
+  async restore(@Param('id', ParseIntPipe) id: number) {
     const result = await this.brandService.restore(id);
     return {
       success: true,
@@ -119,7 +119,7 @@ export class BrandController {
   // Utility endpoints
   @RequireResource('brand', 'read')
   @Get(':id/products')
-  async findWithProducts(@Param('id', ParseUUIDPipe) id: string) {
+  async findWithProducts(@Param('id', ParseIntPipe) id: number) {
     const result = await this.brandService.findWithProducts(id);
     return {
       success: true,

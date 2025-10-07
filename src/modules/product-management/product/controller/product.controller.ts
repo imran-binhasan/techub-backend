@@ -10,7 +10,7 @@ import {
   Query,
   HttpCode,
   HttpStatus,
-  ParseUUIDPipe,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { ProductService } from '../service/product.service';
 import { CreateProductDto } from '../dto/create-product.dto';
@@ -50,7 +50,7 @@ export class ProductController {
 
   @Public()
   @Get(':id')
-  async findOne(@Param('id', ParseUUIDPipe) id: string) {
+  async findOne(@Param('id', ParseIntPipe) id: number) {
     const result = await this.productService.findOne(id);
     return {
       success: true,
@@ -62,7 +62,7 @@ export class ProductController {
   @RequireResource('product', 'update')
   @Patch(':id')
   async update(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateProductDto: UpdateProductDto,
   ) {
     const result = await this.productService.update(id, updateProductDto);
@@ -76,7 +76,7 @@ export class ProductController {
   @RequireResource('product', 'delete')
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Param('id', ParseUUIDPipe) id: string) {
+  async remove(@Param('id', ParseIntPipe) id: number) {
     await this.productService.remove(id);
     return {
       success: true,
@@ -87,7 +87,7 @@ export class ProductController {
   @RequireResource('product', 'manage')
   @Patch(':id/restore')
   @HttpCode(HttpStatus.OK)
-  async restore(@Param('id', ParseUUIDPipe) id: string) {
+  async restore(@Param('id', ParseIntPipe) id: number) {
     const result = await this.productService.restore(id);
     return {
       success: true,
@@ -99,7 +99,7 @@ export class ProductController {
   @RequireResource('product', 'update')
   @Patch(':id/stock')
   async updateStock(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body('stock') stock: number,
   ) {
     const result = await this.productService.updateStock(id, stock);
@@ -113,7 +113,7 @@ export class ProductController {
   // Utility endpoints
   @Public()
   @Get('category/:categoryId')
-  async findByCategory(@Param('categoryId', ParseUUIDPipe) categoryId: string) {
+  async findByCategory(@Param('categoryId', ParseIntPipe) categoryId: number) {
     const result = await this.productService.findByCategory(categoryId);
     return {
       success: true,
@@ -124,7 +124,7 @@ export class ProductController {
 
   @Public()
   @Get('brand/:brandId')
-  async findByBrand(@Param('brandId', ParseUUIDPipe) brandId: string) {
+  async findByBrand(@Param('brandId', ParseIntPipe) brandId: number) {
     const result = await this.productService.findByBrand(brandId);
     return {
       success: true,

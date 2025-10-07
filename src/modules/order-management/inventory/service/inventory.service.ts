@@ -157,7 +157,7 @@ export class InventoryService {
     };
   }
 
-  async findOne(id: string): Promise<Inventory> {
+  async findOne(id: number): Promise<Inventory> {
     const inventory = await this.inventoryRepository.findOne({
       where: { id },
       relations: ['product', 'transactions'],
@@ -171,7 +171,7 @@ export class InventoryService {
     return inventory;
   }
 
-  async findByProductId(productId: string): Promise<Inventory> {
+  async findByProductId(productId: number): Promise<Inventory> {
     const inventory = await this.inventoryRepository.findOne({
       where: { product: { id: productId } },
       relations: ['product'],
@@ -268,7 +268,7 @@ export class InventoryService {
     return this.findOne(id);
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: number): Promise<void> {
     const inventory = await this.inventoryRepository.findOne({
       where: { id },
       relations: ['product'],

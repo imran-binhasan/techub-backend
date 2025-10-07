@@ -9,7 +9,7 @@ import {
   Query,
   HttpCode,
   HttpStatus,
-  ParseUUIDPipe,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { CreateNotificationDto } from '../dto/create-notification.dto';
 import { UpdateNotificationDto } from '../dto/update-notification.dto';
@@ -51,7 +51,7 @@ export class NotificationController {
 
   @RequirePermissions('read:notification')
   @Get(':id')
-  async findOne(@Param('id', ParseUUIDPipe) id: string) {
+  async findOne(@Param('id', ParseIntPipe) id: number) {
     const result = await this.notificationService.findOne(id);
     return {
       success: true,
@@ -63,7 +63,7 @@ export class NotificationController {
   @RequireResource('notification', 'update')
   @Patch(':id')
   async update(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateNotificationDto: UpdateNotificationDto,
   ) {
     const result = await this.notificationService.update(
@@ -80,7 +80,7 @@ export class NotificationController {
   @RequireResource('notification', 'delete')
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Param('id', ParseUUIDPipe) id: string) {
+  async remove(@Param('id', ParseIntPipe) id: number) {
     await this.notificationService.remove(id);
     return {
       success: true,
@@ -91,7 +91,7 @@ export class NotificationController {
   @RequireResource('notification', 'manage')
   @Patch(':id/restore')
   @HttpCode(HttpStatus.OK)
-  async restore(@Param('id', ParseUUIDPipe) id: string) {
+  async restore(@Param('id', ParseIntPipe) id: number) {
     const result = await this.notificationService.restore(id);
     return {
       success: true,
@@ -104,7 +104,7 @@ export class NotificationController {
   @RequireResource('notification', 'create')
   @Post(':id/send')
   async sendNotification(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() sendNotificationDto: SendNotificationDto,
   ) {
     const result = await this.notificationService.sendNotification(
@@ -121,7 +121,7 @@ export class NotificationController {
   // Broadcast notification to all customers
   @RequireResource('notification', 'create')
   @Post(':id/broadcast')
-  async broadcastNotification(@Param('id', ParseUUIDPipe) id: string) {
+  async broadcastNotification(@Param('id', ParseIntPipe) id: number) {
     const result = await this.notificationService.broadcastNotification(id);
     return {
       success: true,
@@ -134,7 +134,7 @@ export class NotificationController {
   @Public()
   @Get('customer/:customerId')
   async getCustomerNotifications(
-    @Param('customerId', ParseUUIDPipe) customerId: string,
+    @Param('customerId', ParseIntPipe) customerId: number,
     @Query() query: NotificationQueryDto,
   ) {
     const result = await this.notificationService.getCustomerNotifications(
@@ -151,7 +151,7 @@ export class NotificationController {
   @Public()
   @Get('customer/:customerId/unread')
   async getUnreadNotifications(
-    @Param('customerId', ParseUUIDPipe) customerId: string,
+    @Param('customerId', ParseIntPipe) customerId: number,
   ) {
     const result =
       await this.notificationService.getUnreadNotifications(customerId);
@@ -165,7 +165,7 @@ export class NotificationController {
   @Public()
   @Get('customer/:customerId/count')
   async getNotificationCounts(
-    @Param('customerId', ParseUUIDPipe) customerId: string,
+    @Param('customerId', ParseIntPipe) customerId: number,
   ) {
     const result =
       await this.notificationService.getNotificationCounts(customerId);
@@ -179,7 +179,7 @@ export class NotificationController {
   @Public()
   @Patch('customer/:customerId/mark-as-read')
   async markNotificationsAsRead(
-    @Param('customerId', ParseUUIDPipe) customerId: string,
+    @Param('customerId', ParseIntPipe) customerId: number,
     @Body() markAsReadDto: MarkAsReadDto,
   ) {
     const result = await this.notificationService.markAsRead(
@@ -195,7 +195,7 @@ export class NotificationController {
 
   @Public()
   @Patch('customer/:customerId/mark-all-as-read')
-  async markAllAsRead(@Param('customerId', ParseUUIDPipe) customerId: string) {
+  async markAllAsRead(@Param('customerId', ParseIntPipe) customerId: number) {
     const result = await this.notificationService.markAllAsRead(customerId);
     return {
       success: true,

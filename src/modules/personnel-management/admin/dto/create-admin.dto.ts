@@ -4,7 +4,6 @@ import {
   IsOptional,
   IsString,
   MinLength,
-  IsUUID,
   IsBoolean,
 } from 'class-validator';
 import { Transform } from 'class-transformer';
@@ -30,9 +29,8 @@ export class CreateAdminDto {
   @MinLength(6, { message: 'Password must be at least 6 characters long' })
   password: string;
 
-
   @IsNotEmpty({ message: 'Role ID is required' })
-  roleId: string;
+  roleId: number;
 
   @IsOptional()
   @IsBoolean({ message: 'isActive must be a boolean' })

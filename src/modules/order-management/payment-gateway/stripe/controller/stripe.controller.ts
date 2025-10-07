@@ -110,7 +110,7 @@ export class StripeController {
   }
 
   @Get('customer/:id/payment-methods')
-  async getCustomerPaymentMethods(@Param('id') customerId: string) {
+  async getCustomerPaymentMethods(@Param('id') customerId: number) {
     const result = await this.stripeService.listPaymentMethods(customerId);
     return {
       success: true,

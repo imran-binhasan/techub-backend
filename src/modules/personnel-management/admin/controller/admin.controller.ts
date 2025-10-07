@@ -14,7 +14,7 @@ import {
   UploadedFile,
   HttpCode,
   HttpStatus,
-  ParseUUIDPipe,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AdminService } from '../service/admin.service';
@@ -64,7 +64,7 @@ export class AdminController {
 
   @RequireResource('admin', 'read')
   @Get(':id')
-  async findOne(@Param('id', ParseUUIDPipe) id: string) {
+  async findOne(@Param('id', ParseIntPipe) id: number) {
     const result = await this.adminService.findOne(id);
     return {
       success: true,
@@ -77,7 +77,7 @@ export class AdminController {
   @Patch(':id')
   @UseInterceptors(FileInterceptor('image'))
   async update(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateAdminDto: UpdateAdminDto,
     @UploadedFile() image?: Express.Multer.File,
   ) {
@@ -92,7 +92,7 @@ export class AdminController {
   @RequireResource('admin', 'manage')
   @Patch(':id/role')
   async updateRole(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateAdminRoleDto: UpdateAdminRoleDto,
   ) {
     const result = await this.adminService.updateRole(
@@ -109,7 +109,7 @@ export class AdminController {
   @RequireResource('admin', 'manage')
   @Patch(':id/toggle-status')
   @HttpCode(HttpStatus.OK)
-  async toggleStatus(@Param('id', ParseUUIDPipe) id: string) {
+  async toggleStatus(@Param('id', ParseIntPipe) id: number) {
     const result = await this.adminService.toggleStatus(id);
     return {
       success: true,
@@ -121,7 +121,7 @@ export class AdminController {
   @RequireResource('admin', 'delete')
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Param('id', ParseUUIDPipe) id: string) {
+  async remove(@Param('id', ParseIntPipe) id: number) {
     await this.adminService.softDelete(id);
     return {
       success: true,
@@ -132,7 +132,7 @@ export class AdminController {
   @RequireResource('admin', 'manage')
   @Patch(':id/restore')
   @HttpCode(HttpStatus.OK)
-  async restore(@Param('id', ParseUUIDPipe) id: string) {
+  async restore(@Param('id', ParseIntPipe) id: number) {
     const result = await this.adminService.restore(id);
     return {
       success: true,

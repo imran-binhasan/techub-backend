@@ -10,7 +10,7 @@ import {
   Query,
   HttpCode,
   HttpStatus,
-  ParseUUIDPipe,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { AttributeService } from '../service/attribute.service';
 import { CreateAttributeDto } from '../dto/create-attribute.dto';
@@ -61,7 +61,7 @@ export class AttributeController {
 
   @RequireResource('attribute', 'read')
   @Get(':id')
-  async findOne(@Param('id', ParseUUIDPipe) id: string) {
+  async findOne(@Param('id', ParseIntPipe) id: number) {
     const result = await this.attributeService.findOne(id);
     return {
       success: true,
@@ -73,7 +73,7 @@ export class AttributeController {
   @RequireResource('attribute', 'update')
   @Patch(':id')
   async update(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateAttributeDto: UpdateAttributeDto,
   ) {
     const result = await this.attributeService.update(id, updateAttributeDto);
@@ -87,7 +87,7 @@ export class AttributeController {
   @RequireResource('attribute', 'delete')
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Param('id', ParseUUIDPipe) id: string) {
+  async remove(@Param('id', ParseIntPipe) id: number) {
     await this.attributeService.remove(id);
     return {
       success: true,
@@ -98,7 +98,7 @@ export class AttributeController {
   @RequireResource('attribute', 'manage')
   @Patch(':id/restore')
   @HttpCode(HttpStatus.OK)
-  async restore(@Param('id', ParseUUIDPipe) id: string) {
+  async restore(@Param('id', ParseIntPipe) id: number) {
     const result = await this.attributeService.restore(id);
     return {
       success: true,

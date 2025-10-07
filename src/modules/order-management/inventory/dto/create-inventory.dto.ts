@@ -2,16 +2,15 @@ import {
   IsString,
   IsNumber,
   IsOptional,
-  IsUUID,
   Min,
   IsNotEmpty,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class CreateInventoryDto {
-  
+  @IsNumber()
   @IsNotEmpty()
-  productId: string;
+  productId: number;
 
   @IsNumber()
   @Min(0)

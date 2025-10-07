@@ -8,12 +8,12 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Admin } from '../entity/admin.entity';
 import { Repository } from 'typeorm';
-import { Role } from 'src/user-management/role/entity/role.entity';
 import { CloudinaryService } from 'src/core/upload/service/cloudinary.service';
 import { PaginatedServiceResponse } from 'src/shared/interface/api-response.interface';
 import { CreateAdminDto } from '../dto/create-admin.dto';
 import { UpdateAdminDto } from '../dto/update-admin.dto';
 import { PaginationQuery } from 'src/shared/dto/pagination_query.dto';
+import { Role } from '../../role/entity/role.entity';
 
 @Injectable()
 export class AdminService {
@@ -149,7 +149,7 @@ export class AdminService {
     };
   }
 
-  async findOne(id: string): Promise<Admin> {
+  async findOne(id: number): Promise<Admin> {
     const admin = await this.adminRepository.findOne({
       where: { id },
       relations: ['role'],
@@ -242,7 +242,7 @@ export class AdminService {
     return this.findOne(adminId);
   }
 
-  async toggleStatus(id: string): Promise<Admin> {
+  async toggleStatus(id: number): Promise<Admin> {
     const admin = await this.findOne(id);
     const newStatus = !admin.isActive;
 
@@ -250,7 +250,7 @@ export class AdminService {
     return { ...admin, isActive: newStatus };
   }
 
-  async softDelete(id: string): Promise<void> {
+  async softDelete(id: number): Promise<void> {
     const admin = await this.adminRepository.findOne({
       where: { id },
       withDeleted: true,
@@ -263,7 +263,7 @@ export class AdminService {
     await this.adminRepository.softDelete(id);
   }
 
-  async restore(id: string): Promise<Admin> {
+  async restore(id: number): Promise<Admin> {
     const admin = await this.adminRepository.findOne({
       where: { id },
       withDeleted: true,

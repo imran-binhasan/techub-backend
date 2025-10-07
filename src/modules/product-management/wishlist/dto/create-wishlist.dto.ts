@@ -1,11 +1,11 @@
-import { IsUUID, IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsNumber } from 'class-validator';
 
 export class CreateWishlistDto {
-  
+  @IsNumber()
   @IsNotEmpty()
-  customerId: string;
+  customerId: number;
 
-  
+  @IsNumber()
   @IsNotEmpty()
-  productId: string;
+  productId: number;
 }

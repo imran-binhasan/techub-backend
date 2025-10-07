@@ -106,7 +106,7 @@ export class BrandService {
     };
   }
 
-  async findOne(id: string): Promise<Brand> {
+  async findOne(id: number): Promise<Brand> {
     const brand = await this.brandRepository.findOne({
       where: { id },
       select: ['id', 'name', 'description', 'logo', 'createdAt', 'updatedAt'],
@@ -166,7 +166,7 @@ export class BrandService {
     return this.findOne(id);
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: number): Promise<void> {
     const brand = await this.brandRepository.findOne({
       where: { id },
       relations: ['products'],
@@ -187,7 +187,7 @@ export class BrandService {
     await this.brandRepository.softDelete(id);
   }
 
-  async restore(id: string): Promise<Brand> {
+  async restore(id: number): Promise<Brand> {
     const brand = await this.brandRepository.findOne({
       where: { id },
       withDeleted: true,
@@ -217,7 +217,7 @@ export class BrandService {
     });
   }
 
-  async findWithProducts(id: string): Promise<Brand> {
+  async findWithProducts(id: number): Promise<Brand> {
     const brand = await this.brandRepository.findOne({
       where: { id },
       relations: ['products'],

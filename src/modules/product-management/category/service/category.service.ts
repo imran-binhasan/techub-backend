@@ -119,7 +119,7 @@ export class CategoryService {
     };
   }
 
-  async findOne(id: string): Promise<Category> {
+  async findOne(id: number): Promise<Category> {
     const category = await this.categoryRepository.findOne({
       where: { id },
       relations: ['parent', 'children'],
@@ -209,7 +209,7 @@ export class CategoryService {
     return this.findOne(id);
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: number): Promise<void> {
     const category = await this.categoryRepository.findOne({
       where: { id },
       relations: ['children', 'products'],
@@ -237,7 +237,7 @@ export class CategoryService {
     await this.categoryRepository.softDelete(id);
   }
 
-  async restore(id: string): Promise<Category> {
+  async restore(id: number): Promise<Category> {
     const category = await this.categoryRepository.findOne({
       where: { id },
       withDeleted: true,
@@ -304,7 +304,7 @@ export class CategoryService {
     });
   }
 
-  async findWithProducts(id: string): Promise<Category> {
+  async findWithProducts(id: number): Promise<Category> {
     const category = await this.categoryRepository.findOne({
       where: { id },
       relations: ['parent', 'children', 'products'],
