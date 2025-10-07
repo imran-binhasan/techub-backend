@@ -1,4 +1,3 @@
-// src/cart/service/cart.service.ts
 import {
   BadRequestException,
   Injectable,
@@ -7,12 +6,12 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Cart } from '../entity/cart.entity';
-import { Customer } from 'src/user-management/customer/entity/customer.entity';
-import { Product } from 'src/product-management/product/entity/product.entity';
 import { PaginatedServiceResponse } from 'src/shared/interface/api-response.interface';
 import { CreateCartDto } from '../dto/create-cart.dto';
 import { CartQueryDto } from '../dto/query-cart.dto';
 import { UpdateCartDto } from '../dto/update-cart.dto';
+import { Customer } from 'src/modules/personnel-management/customer/entity/customer.entity';
+import { Product } from '../../product/entity/product.entity';
 
 @Injectable()
 export class CartService {

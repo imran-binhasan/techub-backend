@@ -32,6 +32,4 @@ export class Customer extends BaseEntity {
     (customerNotification) => customerNotification.customer,
   )
   customerNotifications: CustomerNotification[];
-
-c
 }

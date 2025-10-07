@@ -1,13 +1,14 @@
-import { Brand } from 'src/product-management/brand/entity/brand.entity';
-import { Cart } from 'src/product-management/cart/entity/cart.entity';
-import { Category } from 'src/product-management/category/entity/category.entity';
-import { BaseEntity } from 'src/shared/entity/base.entity';
-import { ProductImage } from 'src/product-management/product_image/entity/product_image.entity';
-import { ProductReview } from 'src/product-management/product_review/entity/product_review.entity';
-import { Column, Entity, ManyToMany, ManyToOne, OneToMany } from 'typeorm';
+
+import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { ProductAttributeValue } from './product_attribute_value.entity';
-import { Wishlist } from 'src/product-management/wishlist/entity/wishlist.entity';
 import { Inventory } from 'src/modules/order-management/inventory/entity/inventory.entity';
+import { BaseEntity } from 'src/shared/entity/base.entity';
+import { ProductImage } from '../../product_image/entity/product_image.entity';
+import { Category } from '../../category/entity/category.entity';
+import { Brand } from '../../brand/entity/brand.entity';
+import { Cart } from '../../cart/entity/cart.entity';
+import { ProductReview } from '../../product_review/entity/product_review.entity';
+import { Wishlist } from '../../wishlist/entity/wishlist.entity';
 
 @Entity('product')
 export class Product extends BaseEntity {

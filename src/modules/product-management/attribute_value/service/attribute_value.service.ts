@@ -1,4 +1,3 @@
-// src/attribute_value/service/attribute-value.service.ts
 import {
   BadRequestException,
   Injectable,
@@ -8,12 +7,12 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AttributeValue } from '../entity/attribute_value.entity';
-import { Attribute } from 'src/product-management/attribute/entity/attribute.entity';
 
 import { PaginatedServiceResponse } from 'src/shared/interface/api-response.interface';
 import { CreateAttributeValueDto } from '../dto/create-attribute_value.dto';
 import { AttributeValueQueryDto } from '../dto/query-attribute_value.dto';
 import { UpdateAttributeValueDto } from '../dto/update-attribute_value.dto';
+import { Attribute } from '../../attribute/entity/attribute.entity';
 
 @Injectable()
 export class AttributeValueService {

@@ -1,15 +1,15 @@
+import { Customer } from 'src/modules/personnel-management/customer/entity/customer.entity';
 import { BaseEntity } from 'src/shared/entity/base.entity';
-import { Customer } from 'src/user-management/customer/entity/customer.entity';
-import { Product } from 'src/product-management/product/entity/product.entity';
 import { Entity, ManyToOne, Column, JoinColumn, Unique } from 'typeorm';
+import { Product } from '../../product/entity/product.entity';
 
 @Entity('cart')
 export class Cart extends BaseEntity {
   @Column()
-  customerId: string;
+  customerId: number;
 
   @Column()
-  productId: string;
+  productId: number;
 
   @Column({ type: 'int', default: 1 })
   quantity: number;

@@ -1,8 +1,8 @@
-import { IsIn, IsString } from 'class-validator';
+import { IsIn, IsNumber } from 'class-validator';
 
 export class RefreshTokenDto {
-  @IsString()
-  userId: string;
+  @IsNumber()
+  userId: number;
 
   @IsIn(['admin', 'customer'])
   userType: 'admin' | 'customer';

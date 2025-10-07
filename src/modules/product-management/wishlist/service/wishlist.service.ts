@@ -7,12 +7,12 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Wishlist } from '../entity/wishlist.entity';
-import { Customer } from 'src/user-management/customer/entity/customer.entity';
-import { Product } from 'src/product-management/product/entity/product.entity';
 import { CreateWishlistDto } from '../dto/create-wishlist.dto';
 import { UpdateWishlistDto } from '../dto/update-wishlist.dto';
 import { WishlistQueryDto } from '../dto/query-wishlist.dto';
 import { PaginatedServiceResponse } from 'src/shared/interface/api-response.interface';
+import { Customer } from 'src/modules/personnel-management/customer/entity/customer.entity';
+import { Product } from '../../product/entity/product.entity';
 
 @Injectable()
 export class WishlistService {

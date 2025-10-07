@@ -1,7 +1,7 @@
 import { BaseEntity } from 'src/shared/entity/base.entity';
-import { Attribute } from 'src/product-management/attribute/entity/attribute.entity';
 import { Column, Entity, ManyToOne, OneToMany, Unique } from 'typeorm';
-import { ProductAttributeValue } from 'src/product-management/product/entity/product_attribute_value.entity';
+import { Attribute } from '../../attribute/entity/attribute.entity';
+import { ProductAttributeValue } from '../../product/entity/product_attribute_value.entity';
 
 @Entity('attribute_value')
 export class AttributeValue extends BaseEntity {

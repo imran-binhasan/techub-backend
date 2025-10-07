@@ -1,8 +1,8 @@
-// src/wishlist/entity/wishlist.entity.ts
+
+import { Customer } from 'src/modules/personnel-management/customer/entity/customer.entity';
 import { BaseEntity } from 'src/shared/entity/base.entity';
-import { Customer } from 'src/user-management/customer/entity/customer.entity';
-import { Product } from 'src/product-management/product/entity/product.entity';
-import { Entity, ManyToOne, Unique } from 'typeorm';
+import { DeleteDateColumn, Entity, ManyToOne, Unique } from 'typeorm';
+import { Product } from '../../product/entity/product.entity';
 
 @Entity('wishlist')
 @Unique(['customer', 'product'])
@@ -16,4 +16,7 @@ export class Wishlist extends BaseEntity {
     onDelete: 'CASCADE',
   })
   product: Product;
+
+  @DeleteDateColumn({ type: 'timestamptz' })
+  deletedAt: Date;
 }

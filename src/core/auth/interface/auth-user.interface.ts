@@ -1,5 +1,5 @@
 export interface BaseAuthenticatedUser {
-  id: string;
+  id: number;
   email: string;
   type: 'admin' | 'customer';
 }
@@ -7,7 +7,7 @@ export interface BaseAuthenticatedUser {
 export interface AuthenticatedAdmin extends BaseAuthenticatedUser {
   type: 'admin';
   role: string;
-  roleId: string;
+  roleId: number;
   permissions: string[];
 }
 
