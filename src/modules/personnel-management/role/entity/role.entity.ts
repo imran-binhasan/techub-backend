@@ -1,4 +1,3 @@
-
 import {
   Column,
   Entity,
@@ -12,12 +11,19 @@ import { User } from '../../user/entity/user.entity';
 import { Permission } from '../../permission/entity/permission.entity';
 
 @Entity('role')
+@Index(['name'], { unique: true })
 export class Role extends BaseEntity {
-  @Column()
-  resource: string; // e.g., 'admin', 'manager', 'user'
+  @Column({ name: 'name', type: 'varchar', length: 100, unique: true })
+  name: string; // 'SUPER_ADMIN', 'CUSTOMER', 'VENDOR_MANAGER'
 
-  @Column()
-  action: string; // e.g., 'super', 'limited', 'read-only'
+  @Column({ name: 'display_name', type: 'varchar', length: 100 })
+  displayName: string; // 'Super Admin', 'Customer', 'Vendor Manager'
+
+  @Column({ name: 'description', type: 'text', nullable: true })
+  description?: string;
+
+  @Column({ name: 'is_system_role', type: 'boolean', default: false })
+  isSystemRole: boolean; // Prevents deletion of critical roles
 
   @OneToMany(() => User, (user) => user.role)
   users: User[];
@@ -27,8 +33,8 @@ export class Role extends BaseEntity {
   })
   @JoinTable({
     name: 'role_permissions',
-    joinColumn: { name: 'roleId', referencedColumnName: 'id' },
-    inverseJoinColumn: { name: 'permissionId', referencedColumnName: 'id' },
+    joinColumn: { name: 'role_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'permission_id', referencedColumnName: 'id' },
   })
   permissions: Permission[];
 }
