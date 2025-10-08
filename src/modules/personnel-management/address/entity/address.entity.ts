@@ -1,51 +1,54 @@
 import { BaseEntity } from 'src/shared/entity/base.entity';
-import { Column, DeleteDateColumn, Entity, ManyToOne } from 'typeorm';
+import { Column, DeleteDateColumn, Entity, ManyToOne, Index } from 'typeorm';
 import { Customer } from '../../customer/entity/customer.entity';
-
-export enum CountryList {
-  BANGLADESH = 'bangladesh',
-  GERMANY = 'germany',
-  USA = 'united_states',
-  CANADA = 'canada',
-}
 
 export enum AddressType {
   SHIPPING = 'shipping',
   BILLING = 'billing',
+  BOTH = 'both',
 }
 
 @Entity('address')
+@Index(['customer_id'])
 export class Address extends BaseEntity {
-  @Column()
-  street: string;
+  @Column({ name: 'full_name', type: 'varchar', length: 200 })
+  fullName: string;
 
-  @Column()
+  @Column({ name: 'phone', type: 'varchar', length: 20 })
+  phone: string;
+
+  @Column({ name: 'address_line_1', type: 'varchar', length: 255 })
+  addressLine1: string;
+
+  @Column({ name: 'address_line_2', type: 'varchar', length: 255, nullable: true })
+  addressLine2?: string;
+
+  @Column({ name: 'city', type: 'varchar', length: 100 })
   city: string;
 
-  @Column({ nullable: true })
-  state: string;
+  @Column({ name: 'state', type: 'varchar', length: 100, nullable: true })
+  state?: string;
 
-  @Column({ nullable: true })
+  @Column({ name: 'postal_code', type: 'varchar', length: 20 })
   postalCode: string;
 
-  @Column({ nullable: true })
-  addressLine: string;
+  @Column({ name: 'country', type: 'varchar', length: 100 })
+  country: string; // Free text for multi-country support
 
-  @Column({ type: 'enum', enum: AddressType, default: AddressType.SHIPPING })
+  @Column({ name: 'country_code', type: 'varchar', length: 3, nullable: true })
+  countryCode?: string; // ISO 3166-1 alpha-2 (e.g., 'BD', 'US', 'DE')
+
+  @Column({ name: 'type', type: 'enum', enum: AddressType, default: AddressType.SHIPPING })
   type: AddressType;
 
-  @Column({ type: 'enum', enum: CountryList, default: CountryList.BANGLADESH })
-  country: CountryList;
-
-  @Column({ default: false })
+  @Column({ name: 'is_default', type: 'boolean', default: false })
   isDefault: boolean;
 
   @ManyToOne(() => Customer, (customer) => customer.addresses, {
     onDelete: 'CASCADE',
   })
   customer: Customer;
-  
-  @DeleteDateColumn({ type: 'timestamptz' })
-  deletedAt: Date;
-}
 
+  @DeleteDateColumn({ name: 'deleted_at', type: 'timestamptz' })
+  deletedAt?: Date;
+}
