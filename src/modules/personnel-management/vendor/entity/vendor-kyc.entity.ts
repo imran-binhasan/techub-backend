@@ -21,7 +21,6 @@ export enum DocumentType {
 }
 
 @Entity('vendor_kyc')
-@Index(['vendor_id'], { unique: true })
 export class VendorKYC extends BaseEntity {
   @OneToOne(() => Vendor, (vendor) => vendor.kyc, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'vendor_id' })

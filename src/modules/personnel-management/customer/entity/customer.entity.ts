@@ -1,7 +1,8 @@
 import { BaseEntity } from 'src/shared/entity/base.entity';
-import { Column, Entity, OneToMany, OneToOne, JoinColumn, Index } from 'typeorm';
+import { Column, Entity, OneToMany, OneToOne, JoinColumn, Index, ManyToOne } from 'typeorm';
 import { User } from '../../user/entity/user.entity';
 import { Address } from '../../address/entity/address.entity';
+import { Wishlist } from 'src/modules/product-management/wishlist/entity/wishlist.entity';
 
 export enum CustomerVerificationStatus {
   UNVERIFIED = 'unverified',
@@ -56,9 +57,12 @@ export class Customer extends BaseEntity {
   @Column({ name: 'total_spent', type: 'decimal', precision: 12, scale: 2, default: 0 })
   totalSpent: number;
 
-  @Column({ name: 'points', type: 'integer', default: 0 })
-  points: number;
+  @Column({ name: 'loyalty_points', type: 'integer', default: 0 })
+  loyaltyPoints: number;
 
   @Column({ name: 'preferred_language', type: 'varchar', length: 10, nullable: true })
   preferredLanguage?: string; // 'en', 'bn', 'de'
+
+  @OneToMany(() => Wishlist, (wishlist) => wishlist.customer, { nullable: true })
+  wishlists: Wishlist[];
 }

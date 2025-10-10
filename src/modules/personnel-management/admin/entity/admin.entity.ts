@@ -12,6 +12,6 @@ export class Admin extends BaseEntity {
   @Column({ name: 'department', type: 'varchar', length: 100, nullable: true })
   department?: string;
 
-  @Column({ name: 'employee_id', type: 'varchar', length: 50, nullable: true, unique: true })
-  employeeId?: string;
+  @Column({ name: 'employee_number', type: 'varchar', length: 50, nullable: true, unique: true })
+  employeeNumber?: string;
 }
