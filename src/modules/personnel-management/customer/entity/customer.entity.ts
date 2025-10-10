@@ -4,12 +4,6 @@ import { User } from '../../user/entity/user.entity';
 import { Address } from '../../address/entity/address.entity';
 import { Wishlist } from 'src/modules/product-management/wishlist/entity/wishlist.entity';
 
-export enum CustomerVerificationStatus {
-  UNVERIFIED = 'unverified',
-  EMAIL_VERIFIED = 'email_verified',
-  PHONE_VERIFIED = 'phone_verified',
-  FULLY_VERIFIED = 'fully_verified',
-}
 
 @Entity('customer')
 @Index(['user_id'], { unique: true })
@@ -24,26 +18,8 @@ export class Customer extends BaseEntity {
   @Column({ name: 'gender', type: 'varchar', length: 20, nullable: true })
   gender?: string;
 
-  // Verification status
-  @Column({ 
-    name: 'verification_status', 
-    type: 'enum', 
-    enum: CustomerVerificationStatus, 
-    default: CustomerVerificationStatus.UNVERIFIED 
-  })
-  verificationStatus: CustomerVerificationStatus;
-
-  @Column({ name: 'email_verified', type: 'boolean', default: false })
-  emailVerified: boolean;
-
-  @Column({ name: 'email_verified_at', type: 'timestamptz', nullable: true })
-  emailVerifiedAt?: Date;
-
-  @Column({ name: 'phone_verified', type: 'boolean', default: false })
-  phoneVerified: boolean;
-
-  @Column({ name: 'phone_verified_at', type: 'timestamptz', nullable: true })
-  phoneVerifiedAt?: Date;
+  @Column({ name: 'verified_at', type: 'timestamptz', nullable: true })
+  verifiedAt?: Date;
 
   @OneToMany(() => Address, (address) => address.customer, {
     cascade: true,
