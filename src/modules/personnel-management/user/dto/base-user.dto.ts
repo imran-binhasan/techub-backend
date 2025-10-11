@@ -20,16 +20,3 @@ export class BaseUserDto {
   @IsString()
   phone?: string;
 }
-
-
-
-// admin/dto/create-admin.dto.ts
-export class CreateAdminDto extends BaseUserDto {
-  @IsOptional()
-  @IsString()
-  department?: string;
-
-  @IsOptional()
-  @IsString()
-  employeeNumber?: string;
-}
