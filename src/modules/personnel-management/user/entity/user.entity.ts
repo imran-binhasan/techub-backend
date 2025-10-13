@@ -44,6 +44,9 @@ export class User extends BaseEntity {
   @JoinColumn({ name: 'role_id' })
   role: Role;
 
+  @Column({ name: 'role_id', type: 'int' })
+  roleId: number;
+
   @Column({ name: 'last_login_at', type: 'timestamptz', nullable: true })
   lastLoginAt?: Date;
 
