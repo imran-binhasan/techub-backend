@@ -15,7 +15,6 @@ import { Vendor } from '../../vendor/entity/vendor.entity';
 
 
 @Entity('user')
-@Index(['email'])
 export class User extends BaseEntity {
   @Column({ name: 'first_name', type: 'varchar', length: 100 })
   firstName: string;
@@ -30,7 +29,7 @@ export class User extends BaseEntity {
   @Column({ name: 'password', type: 'text', select: false })
   password: string;
 
-  @Column({ name: 'phone', type: 'varchar', length: 20, nullable: true })
+  @Column({ name: 'phone', type: 'varchar', length: 20, nullable: true, unique: true })
   phone?: string;
 
   @Column({ name: 'image', type: 'varchar', length: 500, nullable: true })
