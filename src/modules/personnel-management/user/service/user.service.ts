@@ -58,5 +58,16 @@ async deleteUser(id: number): Promise<void> {
   await this.userRepository.softRemove(user);
 }
 
+async getSingleUser(id: number): Promise<User> {
+  const user = await this.userRepository.findOne({ where: { id }, relations: ['role'] });
+  if (!user) {
+    throw new NotFoundException('User not found');
+  }
+  return user;
+}
+
+async getAllUsers(): Promise<User[]> {
+  return await this.userRepository.find({ relations: ['role'] });
+}
 
 }
