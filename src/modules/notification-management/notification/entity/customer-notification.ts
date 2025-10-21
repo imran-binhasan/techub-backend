@@ -1,7 +1,7 @@
 import { BaseEntity } from 'src/shared/entity/base.entity';
-import { Customer } from 'src/user-management/customer/entity/customer.entity';
 import { Notification } from './notification.entity';
-import { Column, Entity, ManyToOne, JoinColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, JoinColumn, DeleteDateColumn } from 'typeorm';
+import { Customer } from 'src/modules/personnel-management/customer/entity/customer.entity';
 
 @Entity('customer_notification')
 export class CustomerNotification extends BaseEntity {
@@ -11,7 +11,7 @@ export class CustomerNotification extends BaseEntity {
   @Column({ type: 'timestamptz', nullable: true })
   readAt: Date | null;
 
-  @ManyToOne(() => Customer, (customer) => customer.customerNotifications, {
+  @ManyToOne(() => Customer, (customer) => customer.notifications, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'customerId' })
@@ -26,4 +26,7 @@ export class CustomerNotification extends BaseEntity {
   )
   @JoinColumn({ name: 'notificationId' })
   notification: Notification;
+
+  @DeleteDateColumn()
+  deletedAt: Date | null;
 }

@@ -4,6 +4,7 @@ import { User } from '../../user/entity/user.entity';
 import { Address } from '../../address/entity/address.entity';
 import { Wishlist } from 'src/modules/product-management/wishlist/entity/wishlist.entity';
 import { Cart } from 'src/modules/product-management/cart/entity/cart.entity';
+import { CustomerNotification } from 'src/modules/notification-management/notification/entity/customer-notification';
 
 
 @Entity('customer')
@@ -44,4 +45,7 @@ export class Customer extends BaseEntity {
 
   @OneToMany(()=> Cart, (cart)=> cart.customer, {nullable:true})
   carts:Cart[]
+
+  @OneToMany(() => CustomerNotification, (notification) => notification.customer, { nullable: true })
+  notifications: CustomerNotification[];
 }

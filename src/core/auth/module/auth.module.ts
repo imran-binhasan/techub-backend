@@ -3,20 +3,19 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { Admin } from 'src/user-management/admin/entity/admin.entity';
-import { Customer } from 'src/user-management/customer/entity/customer.entity';
-import { Role } from 'src/user-management/role/entity/role.entity';
-import { Permission } from 'src/user-management/permission/entity/permission.entity';
-
-import { RoleService } from 'src/user-management/role/service/role.service';
 import { AuthController } from '../controller/auth.controller';
-import { AuthService } from '../service/auth-service';
 import { TokenService } from '../service/token-service';
 import { PermissionCacheService } from '../service/permission-cache.service';
 import { JwtAuthGuard } from '../guard/jwt-auth-guard';
 import { UserTypeGuard } from '../guard/user-type.guard';
 import { DynamicRbacGuard } from '../guard/dynamic-rbac.guard';
-import { PermissionService } from 'src/user-management/permission/service/permission.service';
+import { Admin } from 'src/modules/personnel-management/admin/entity/admin.entity';
+import { Customer } from 'src/modules/personnel-management/customer/entity/customer.entity';
+import { Role } from 'src/modules/personnel-management/role/entity/role.entity';
+import { Permission } from 'src/modules/personnel-management/permission/entity/permission.entity';
+import { AuthService } from '../service/auth.service';
+import { PermissionService } from 'src/modules/personnel-management/permission/service/permission.service';
+import { RoleService } from 'src/modules/personnel-management/role/service/role.service';
 
 @Module({
   imports: [
