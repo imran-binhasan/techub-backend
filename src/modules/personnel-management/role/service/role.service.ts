@@ -22,157 +22,157 @@ export class RoleService {
     private readonly permissionCacheService: PermissionCacheService,
   ) {}
 
-  async createRole(
-    resource: string,
-    action: string,
-    permissionIds: string[],
-  ): Promise<Role> {
-    // Check if role already exists
-    const existingRole = await this.roleRepository.findOne({
-      where: { resource, action },
-    });
+  // async createRole(
+  //   resource: string,
+  //   action: string,
+  //   permissionIds: string[],
+  // ): Promise<Role> {
+  //   // Check if role already exists
+  //   const existingRole = await this.roleRepository.findOne({
+  //     where: { resource, action },
+  //   });
 
-    if (existingRole) {
-      throw new ConflictException(`Role ${resource}:${action} already exists`);
-    }
+  //   if (existingRole) {
+  //     throw new ConflictException(`Role ${resource}:${action} already exists`);
+  //   }
 
-    // Fetch permissions
-    const permissions =
-      await this.permissionRepository.findByIds(permissionIds);
+  //   // Fetch permissions
+  //   const permissions =
+  //     await this.permissionRepository.findByIds(permissionIds);
 
-    if (permissions.length !== permissionIds.length) {
-      throw new NotFoundException('One or more permissions not found');
-    }
+  //   if (permissions.length !== permissionIds.length) {
+  //     throw new NotFoundException('One or more permissions not found');
+  //   }
 
-    // Create role
-    const role = this.roleRepository.create({
-      resource,
-      action,
-      permissions,
-    });
+  //   // Create role
+  //   const role = this.roleRepository.create({
+  //     resource,
+  //     action,
+  //     permissions,
+  //   });
 
-    const savedRole = await this.roleRepository.save(role);
-    this.logger.log(
-      `Created role: ${resource}:${action} with ${permissions.length} permissions`,
-    );
+  //   const savedRole = await this.roleRepository.save(role);
+  //   this.logger.log(
+  //     `Created role: ${resource}:${action} with ${permissions.length} permissions`,
+  //   );
 
-    return savedRole;
-  }
+  //   return savedRole;
+  // }
 
-  async findAll(): Promise<Role[]> {
-    return await this.roleRepository.find({
-      relations: ['permissions'],
-      order: { resource: 'ASC', action: 'ASC' },
-    });
-  }
+  // async findAll(): Promise<Role[]> {
+  //   return await this.roleRepository.find({
+  //     relations: ['permissions'],
+  //     order: { resource: 'ASC', action: 'ASC' },
+  //   });
+  // }
 
-  async findById(id: number): Promise<Role> {
-    const role = await this.roleRepository.findOne({
-      where: { id },
-      relations: ['permissions'],
-    });
+  // async findById(id: number): Promise<Role> {
+  //   const role = await this.roleRepository.findOne({
+  //     where: { id },
+  //     relations: ['permissions'],
+  //   });
 
-    if (!role) {
-      throw new NotFoundException(`Role with ID ${id} not found`);
-    }
+  //   if (!role) {
+  //     throw new NotFoundException(`Role with ID ${id} not found`);
+  //   }
 
-    return role;
-  }
+  //   return role;
+  // }
 
-  async updateRolePermissions(
-    roleId: number,
-    permissionIds: number[],
-  ): Promise<Role> {
-    const role = await this.findById(roleId);
+  // async updateRolePermissions(
+  //   roleId: number,
+  //   permissionIds: number[],
+  // ): Promise<Role> {
+  //   const role = await this.findById(roleId);
 
-    // Fetch new permissions
-    const permissions =
-      await this.permissionRepository.findByIds(permissionIds);
+  //   // Fetch new permissions
+  //   const permissions =
+  //     await this.permissionRepository.findByIds(permissionIds);
 
-    if (permissions.length !== permissionIds.length) {
-      throw new NotFoundException('One or more permissions not found');
-    }
+  //   if (permissions.length !== permissionIds.length) {
+  //     throw new NotFoundException('One or more permissions not found');
+  //   }
 
-    // Update permissions
-    role.permissions = permissions;
-    const updatedRole = await this.roleRepository.save(role);
+  //   // Update permissions
+  //   role.permissions = permissions;
+  //   const updatedRole = await this.roleRepository.save(role);
 
-    // Invalidate cache for this role
-    await this.permissionCacheService.invalidatePermissions(roleId);
+  //   // Invalidate cache for this role
+  //   await this.permissionCacheService.invalidatePermissions(roleId);
 
-    this.logger.log(
-      `Updated permissions for role ${roleId}: ${permissions.length} permissions`,
-    );
+  //   this.logger.log(
+  //     `Updated permissions for role ${roleId}: ${permissions.length} permissions`,
+  //   );
 
-    return updatedRole;
-  }
+  //   return updatedRole;
+  // }
 
-  async deleteRole(id: number): Promise<void> {
-    const role = await this.findById(id);
+  // async deleteRole(id: number): Promise<void> {
+  //   const role = await this.findById(id);
 
-    // Check if role has any admins
-    const adminCount = await this.roleRepository
-      .createQueryBuilder('role')
-      .leftJoinAndSelect('role.admins', 'admin')
-      .where('role.id = :id', { id })
-      .getCount();
+  //   // Check if role has any admins
+  //   const adminCount = await this.roleRepository
+  //     .createQueryBuilder('role')
+  //     .leftJoinAndSelect('role.admins', 'admin')
+  //     .where('role.id = :id', { id })
+  //     .getCount();
 
-    if (adminCount > 0) {
-      throw new ConflictException(
-        'Cannot delete role that has assigned admins',
-      );
-    }
+  //   if (adminCount > 0) {
+  //     throw new ConflictException(
+  //       'Cannot delete role that has assigned admins',
+  //     );
+  //   }
 
-    await this.roleRepository.remove(role);
+  //   await this.roleRepository.remove(role);
 
-    // Invalidate cache for this role
-    await this.permissionCacheService.invalidatePermissions(id);
+  //   // Invalidate cache for this role
+  //   await this.permissionCacheService.invalidatePermissions(id);
 
-    this.logger.log(`Deleted role ${id}`);
-  }
+  //   this.logger.log(`Deleted role ${id}`);
+  // }
 
-  async addPermissionToRole(
-    roleId: number,
-    permissionId: number,
-  ): Promise<Role> {
-    const role = await this.findById(roleId);
-    const permission = await this.permissionRepository.findOne({
-      where: { id: permissionId },
-    });
+  // async addPermissionToRole(
+  //   roleId: number,
+  //   permissionId: number,
+  // ): Promise<Role> {
+  //   const role = await this.findById(roleId);
+  //   const permission = await this.permissionRepository.findOne({
+  //     where: { id: permissionId },
+  //   });
 
-    if (!permission) {
-      throw new NotFoundException(
-        `Permission with ID ${permissionId} not found`,
-      );
-    }
+  //   if (!permission) {
+  //     throw new NotFoundException(
+  //       `Permission with ID ${permissionId} not found`,
+  //     );
+  //   }
 
-    // Check if permission already exists
-    const hasPermission = role.permissions.some((p) => p.id === permissionId);
-    if (hasPermission) {
-      throw new ConflictException('Permission already assigned to role');
-    }
+  //   // Check if permission already exists
+  //   const hasPermission = role.permissions.some((p) => p.id === permissionId);
+  //   if (hasPermission) {
+  //     throw new ConflictException('Permission already assigned to role');
+  //   }
 
-    role.permissions.push(permission);
-    const updatedRole = await this.roleRepository.save(role);
+  //   role.permissions.push(permission);
+  //   const updatedRole = await this.roleRepository.save(role);
 
-    // Invalidate cache
-    await this.permissionCacheService.invalidatePermissions(roleId);
+  //   // Invalidate cache
+  //   await this.permissionCacheService.invalidatePermissions(roleId);
 
-    return updatedRole;
-  }
+  //   return updatedRole;
+  // }
 
-  async removePermissionFromRole(
-    roleId: number,
-    permissionId: number,
-  ): Promise<Role> {
-    const role = await this.findById(roleId);
+  // async removePermissionFromRole(
+  //   roleId: number,
+  //   permissionId: number,
+  // ): Promise<Role> {
+  //   const role = await this.findById(roleId);
 
-    role.permissions = role.permissions.filter((p) => p.id !== permissionId);
-    const updatedRole = await this.roleRepository.save(role);
+  //   role.permissions = role.permissions.filter((p) => p.id !== permissionId);
+  //   const updatedRole = await this.roleRepository.save(role);
 
-    // Invalidate cache
-    await this.permissionCacheService.invalidatePermissions(roleId);
+  //   // Invalidate cache
+  //   await this.permissionCacheService.invalidatePermissions(roleId);
 
-    return updatedRole;
-  }
+  //   return updatedRole;
+  // }
 }

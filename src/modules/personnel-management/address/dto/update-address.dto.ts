@@ -1,6 +1,6 @@
 // src/address/dto/update-address.dto.ts
 import { IsString, IsOptional, IsEnum, IsBoolean } from 'class-validator';
-import { AddressType, CountryList } from '../entity/address.entity';
+import { AddressType } from '../entity/address.entity';
 
 export class UpdateAddressDto {
   @IsOptional()
@@ -27,9 +27,6 @@ export class UpdateAddressDto {
   @IsEnum(AddressType)
   type?: AddressType;
 
-  @IsOptional()
-  @IsEnum(CountryList)
-  country?: CountryList;
 
   @IsOptional()
   @IsBoolean()

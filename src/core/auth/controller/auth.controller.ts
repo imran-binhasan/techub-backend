@@ -1,76 +1,57 @@
-import {
-  Controller,
-  Post,
-  Body,
-  HttpCode,
-  HttpStatus,
-  Get,
-} from '@nestjs/common';
-import { Public, Auth } from '../decorator/auth.decorator';
-import type { AuthenticatedUser } from '../interface/auth-user.interface';
-import { AuthService } from '../service/auth-service';
-import { LoginDto } from '../dto/login.dto';
-import { RefreshTokenDto } from '../dto/refresh-token.dto';
-import { CurrentUser } from '../decorator/current-user.decorator';
+import { Body, Controller, Post } from '@nestjs/common';
+import { AuthService } from '../service/auth.service';
+import { CustomerRegisterDto } from '../dto/customer-register.dto';
+import { CustomerLoginDto } from '../dto/customer-login.dto';
+import { VendorRegisterDto } from '../dto/vendor-register.dto';
+import { VendorLoginDto } from '../dto/vendor-login.dto';
+import { AdminRegisterDto } from '../dto/admin-register.dto';
+import { AdminLoginDto } from '../dto/admin-login.dto';
 
-@Controller('auth')
+
+@Controller({ path: 'auth', version: '1' })
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private authService: AuthService) {}
 
-  @Public()
-  @Post('admin/login')
-  @HttpCode(HttpStatus.OK)
-  async adminLogin(@Body() loginDto: LoginDto) {
-    const result = await this.authService.login(loginDto, 'admin');
-    return {
-      success: true,
-      message: 'Admin login successful',
-      data: result,
-    };
+  // ========== CUSTOMER ==========
+  @Post('customer/register')
+  registerCustomer(@Body() dto: CustomerRegisterDto) {
+    return this.authService.registerCustomer(dto);
   }
 
-  @Public()
   @Post('customer/login')
-  @HttpCode(HttpStatus.OK)
-  async customerLogin(@Body() loginDto: LoginDto) {
-    const result = await this.authService.login(loginDto, 'customer');
-    return {
-      success: true,
-      message: 'Customer login successful',
-      data: result,
-    };
+  loginCustomer(@Body() dto: CustomerLoginDto) {
+    return this.authService.loginCustomer(dto);
   }
 
-  @Public()
-  @Post('refresh-token')
-  @HttpCode(HttpStatus.OK)
-  async refreshToken(@Body() refreshTokenDto: RefreshTokenDto) {
-    const result = await this.authService.refreshToken(refreshTokenDto);
-    return {
-      success: true,
-      message: 'Token refreshed successfully',
-      data: result,
-    };
+  @Post('customer/send-otp')
+  sendCustomerOtp(@Body('phone') phone: string) {
+    return this.authService.sendOtp(phone, 'CUSTOMER');
   }
 
-  @Auth()
-  @Post('logout')
-  @HttpCode(HttpStatus.OK)
-  async logout(@CurrentUser() user: AuthenticatedUser) {
-    await this.authService.logout(user.id);
-    return {
-      success: true,
-      message: 'Logout successful',
-    };
+  // ========== VENDOR ==========
+  @Post('vendor/register')
+  registerVendor(@Body() dto: VendorRegisterDto) {
+    return this.authService.registerVendor(dto);
   }
 
-  @Auth()
-  @Get('profile')
-  async getProfile(@CurrentUser() user: AuthenticatedUser) {
-    return {
-      success: true,
-      message: 'Profile retrieved successfully',
-      data: user,
-    };
+  @Post('vendor/login')
+  loginVendor(@Body() dto: VendorLoginDto) {
+    return this.authService.loginVendor(dto);
+  }
+
+  @Post('vendor/send-otp')
+  sendVendorOtp(@Body('phone') phone: string) {
+    return this.authService.sendOtp(phone, 'VENDOR');
+  }
+
+  // ========== ADMIN ==========
+  @Post('admin/register')
+  registerAdmin(@Body() dto: AdminRegisterDto) {
+    return this.authService.registerAdmin(dto);
+  }
+
+  @Post('admin/login')
+  loginAdmin(@Body() dto: AdminLoginDto) {
+    return this.authService.loginAdmin(dto);
   }
 }

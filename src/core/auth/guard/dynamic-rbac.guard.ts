@@ -6,7 +6,6 @@ import {
   Logger,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { PermissionService } from 'src/user-management/permission/service/permission.service';
 import { PermissionCacheService } from '../service/permission-cache.service';
 import {
   PERMISSIONS_KEY,
@@ -15,6 +14,7 @@ import {
   MINIMUM_LEVEL_KEY,
 } from '../decorator/auth.decorator';
 import { AuthenticatedUser, isAdmin } from '../interface/auth-user.interface';
+import { PermissionService } from 'src/modules/personnel-management/permission/service/permission.service';
 
 interface ResourceAction {
   resource: string;

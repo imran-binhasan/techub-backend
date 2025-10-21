@@ -9,7 +9,6 @@ export enum AddressType {
 }
 
 @Entity('address')
-@Index(['customer_id'])
 export class Address extends BaseEntity {
   @Column({ name: 'full_name', type: 'varchar', length: 200 })
   fullName: string;

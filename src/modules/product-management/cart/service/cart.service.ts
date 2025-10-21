@@ -30,7 +30,7 @@ export class CartService {
   ): Promise<Cart> {
     // Verify customer exists
     const customer = await this.customerRepository.findOne({
-      where: { id: customerId, isActive: true },
+      where: { id: customerId },
     });
 
     if (!customer) {

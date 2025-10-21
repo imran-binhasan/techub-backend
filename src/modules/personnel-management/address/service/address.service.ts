@@ -9,8 +9,8 @@ import { Address } from '../entity/address.entity';
 import { UpdateAddressDto } from '../dto/update-address.dto';
 import { AddressQueryDto } from '../dto/query-address.dto';
 import { PaginatedServiceResponse } from 'src/shared/interface/api-response.interface';
-import { CreateAddressDto } from '../dto/create-addresss.dto';
 import { Customer } from '../../customer/entity/customer.entity';
+import { CreateAddressDto } from '../dto/create-address.dto';
 
 @Injectable()
 export class AddressService {
@@ -58,7 +58,6 @@ export class AddressService {
       search,
       customerId,
       type,
-      country,
       isDefault,
     } = query;
 
@@ -104,9 +103,6 @@ export class AddressService {
       queryBuilder.andWhere('address.type = :type', { type });
     }
 
-    if (country) {
-      queryBuilder.andWhere('address.country = :country', { country });
-    }
 
     if (isDefault !== undefined) {
       queryBuilder.andWhere('address.isDefault = :isDefault', { isDefault });

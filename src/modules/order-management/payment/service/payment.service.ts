@@ -128,7 +128,7 @@ export class PaymentService {
   }
 
   async createRefund(
-    originalPaymentId: string,
+    originalPaymentId: number,
     refundAmount: number,
     reason?: string,
     gatewayRefundId?: string,

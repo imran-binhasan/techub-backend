@@ -7,7 +7,7 @@ import {
   IsUUID,
   IsBoolean,
 } from 'class-validator';
-import { AddressType, CountryList } from '../entity/address.entity';
+import { AddressType } from '../entity/address.entity';
 
 export class CreateAddressDto {
   
@@ -37,8 +37,6 @@ export class CreateAddressDto {
   @IsEnum(AddressType)
   type: AddressType;
 
-  @IsEnum(CountryList)
-  country: CountryList;
 
   @IsOptional()
   @IsBoolean()

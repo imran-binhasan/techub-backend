@@ -1,8 +1,8 @@
-// src/address/dto/query-address.dto.ts
-import { IsOptional, IsUUID, IsEnum, IsBoolean } from 'class-validator';
+
+import { IsOptional, IsEnum, IsBoolean } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { PaginationQuery } from 'src/shared/dto/pagination_query.dto';
-import { AddressType, CountryList } from '../entity/address.entity';
+import { AddressType } from '../entity/address.entity';
 
 export class AddressQueryDto extends PaginationQuery {
   @IsOptional()
@@ -13,9 +13,6 @@ export class AddressQueryDto extends PaginationQuery {
   @IsEnum(AddressType)
   type?: AddressType;
 
-  @IsOptional()
-  @IsEnum(CountryList)
-  country?: CountryList;
 
   @IsOptional()
   @Transform(({ value }) => {

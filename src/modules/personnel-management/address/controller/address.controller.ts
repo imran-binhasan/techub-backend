@@ -13,9 +13,9 @@ import {
 } from '@nestjs/common';
 import { AddressService } from '../service/address.service';
 import { UpdateAddressDto } from '../dto/update-address.dto';
-import { RequireResource, Public } from 'src/core/auth/decorator/auth.decorator';
+import { RequireResource } from 'src/core/auth/decorator/auth.decorator';
 import { AddressQueryDto } from '../dto/query-address.dto';
-import { CreateAddressDto } from '../dto/create-addresss.dto';
+import { CreateAddressDto } from '../dto/create-address.dto';
 
 @Controller('address')
 export class AddressController {

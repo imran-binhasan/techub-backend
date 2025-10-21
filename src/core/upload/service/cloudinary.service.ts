@@ -1,8 +1,4 @@
-import {
-  Inject,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { Inject, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { v2 as cloudinary, UploadApiResponse } from 'cloudinary';
 import { Readable } from 'stream';
@@ -11,40 +7,45 @@ import { Readable } from 'stream';
 export class CloudinaryService {
   constructor(
     @Inject(ConfigService)
-    private configService: ConfigService,
+    private readonly configService: ConfigService,
   ) {
     cloudinary.config({
-      cloud_name: configService.get<string>('CLOUD_NAME'),
-      api_key: configService.get<string>('CLOUD_API_KEY'),
-      api_secret: configService.get<string>('CLOUD_API_SECRET'),
+      cloud_name: this.configService.get<string>('CLOUD_NAME'),
+      api_key: this.configService.get<string>('CLOUD_API_KEY'),
+      api_secret: this.configService.get<string>('CLOUD_API_SECRET'),
     });
   }
 
   private async uploadFile(
     fileBuffer: Buffer,
     folder: string,
-    fileName?: string,
-  ): Promise<UploadApiResponse> {
+    fileName?: string | number,
+  ): Promise<string> {
     try {
-      return await new Promise<UploadApiResponse>((resolve, reject) => {
+      const result = await new Promise<UploadApiResponse>((resolve, reject) => {
         const uploadStream = cloudinary.uploader.upload_stream(
-          { folder, public_id: fileName, overwrite: true },
+          {
+            folder,
+            public_id: fileName?.toString(),
+            overwrite: true,
+          },
           (error, result) => {
-            if (error) return reject(error);
-            if (!result)
-              return reject(
+            if (error) reject(error);
+            else if (!result)
+              reject(
                 new InternalServerErrorException(
                   'Cloudinary returned no result',
                 ),
               );
-            resolve(result);
+            else resolve(result);
           },
         );
         Readable.from(fileBuffer).pipe(uploadStream);
       });
-    } catch (error: any) {
+      return result.secure_url;
+    } catch (error) {
       throw new InternalServerErrorException(
-        `File upload failed: ${error.message}`,
+        `File upload failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }
@@ -54,35 +55,41 @@ export class CloudinaryService {
       await cloudinary.uploader.destroy(publicId);
     } catch (error) {
       throw new InternalServerErrorException(
-        `Failed to delete file: ${error.message}`,
+        `Failed to delete file: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
+  }
+
+  private async uploadImageWithFolder(
+    file: Express.Multer.File,
+    folderPath: string,
+    fileName: string | number,
+  ): Promise<string> {
+    return this.uploadFile(file.buffer, folderPath, fileName);
   }
 
   async uploadAdminImage(
     file: Express.Multer.File,
     adminId: number,
   ): Promise<string> {
-    const folder = `admins/${adminId}`;
-    const result = await this.uploadFile(file.buffer, folder, adminId);
-    return result.secure_url; // return Cloudinary public URL
+    return this.uploadImageWithFolder(file, `admins/${adminId}`, adminId);
   }
 
   async uploadCustomerImage(
     file: Express.Multer.File,
     customerId: number,
   ): Promise<string> {
-    const folder = `customers/${customerId}`;
-    const result = await this.uploadFile(file.buffer, folder, customerId);
-    return result.secure_url; // return Cloudinary public URL
+    return this.uploadImageWithFolder(
+      file,
+      `customers/${customerId}`,
+      customerId,
+    );
   }
 
   async uploadBrandLogo(
     file: Express.Multer.File,
     brandId: number,
   ): Promise<string> {
-    const folder = `brands/${brandId}`;
-    const result = await this.uploadFile(file.buffer, folder, brandId);
-    return result.secure_url; // return Cloudinary public URL
+    return this.uploadImageWithFolder(file, `brands/${brandId}`, brandId);
   }
 }

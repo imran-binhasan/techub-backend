@@ -23,7 +23,7 @@ export class StockAdjustmentDto {
 
   @IsOptional()
   @IsString()
-  referenceId?: string;
+  referenceId?: number;
 }
 
 // src/inventory/dto/inventory-query.dto.ts

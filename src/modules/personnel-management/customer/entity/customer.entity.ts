@@ -3,10 +3,10 @@ import { Column, Entity, OneToMany, OneToOne, JoinColumn, Index, ManyToOne } fro
 import { User } from '../../user/entity/user.entity';
 import { Address } from '../../address/entity/address.entity';
 import { Wishlist } from 'src/modules/product-management/wishlist/entity/wishlist.entity';
+import { Cart } from 'src/modules/product-management/cart/entity/cart.entity';
 
 
 @Entity('customer')
-@Index(['user_id'], { unique: true })
 export class Customer extends BaseEntity {
   @OneToOne(() => User, { eager: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
@@ -41,4 +41,7 @@ export class Customer extends BaseEntity {
 
   @OneToMany(() => Wishlist, (wishlist) => wishlist.customer, { nullable: true })
   wishlists: Wishlist[];
+
+  @OneToMany(()=> Cart, (cart)=> cart.customer, {nullable:true})
+  carts:Cart[]
 }

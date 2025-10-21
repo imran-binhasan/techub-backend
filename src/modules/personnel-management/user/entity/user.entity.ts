@@ -13,7 +13,7 @@ import { Admin } from '../../admin/entity/admin.entity';
 import { Customer } from '../../customer/entity/customer.entity';
 import { Vendor } from '../../vendor/entity/vendor.entity';
 
-
+// user.entity.ts - simplified
 @Entity('user')
 export class User extends BaseEntity {
   @Column({ name: 'first_name', type: 'varchar', length: 100 })
@@ -22,7 +22,7 @@ export class User extends BaseEntity {
   @Column({ name: 'last_name', type: 'varchar', length: 100 })
   lastName: string;
 
-  @Column({ name: 'email', type: 'varchar', length: 255, unique: true })
+  @Column({ name: 'email', type: 'varchar', length: 255, nullable: false, unique: true })
   @Index()
   email: string;
 
@@ -33,12 +33,11 @@ export class User extends BaseEntity {
   phone?: string;
 
   @Column({ name: 'image', type: 'varchar', length: 500, nullable: true })
-  image?: string;;
+  image?: string;
 
   @ManyToOne(() => Role, (role) => role.users, {
-    eager: false,
+    eager: true,
     onDelete: 'RESTRICT',
-    onUpdate: 'CASCADE',
   })
   @JoinColumn({ name: 'role_id' })
   role: Role;
@@ -52,22 +51,23 @@ export class User extends BaseEntity {
   @Column({ name: 'failed_login_attempts', type: 'integer', default: 0 })
   failedLoginAttempts: number;
 
-  @OneToOne(() => Customer, (customer) => customer.user)
+  @OneToOne(() => Customer, (customer) => customer.user, { nullable: true })
   customer?: Customer;
 
-  @OneToOne(() => Admin, (admin) => admin.user)
+  @OneToOne(() => Admin, (admin) => admin.user, { nullable: true })
   admin?: Admin;
 
-  @OneToOne(() => Vendor, (vendor) => vendor.user)
+  @OneToOne(() => Vendor, (vendor) => vendor.user, { nullable: true })
   vendor?: Vendor;
 
   @DeleteDateColumn({ name: 'deleted_at', type: 'timestamptz' })
   deletedAt?: Date;
 
+  // Helper method
   getUserType(): 'admin' | 'customer' | 'vendor' | null {
-    if (this.admin) return 'admin';
-    if (this.customer) return 'customer';
-    if (this.vendor) return 'vendor';
-    return null;
+    return this.role?.name === 'ADMIN' ? 'admin'
+         : this.role?.name === 'CUSTOMER' ? 'customer'
+         : this.role?.name === 'VENDOR' ? 'vendor'
+         : null;
   }
 }

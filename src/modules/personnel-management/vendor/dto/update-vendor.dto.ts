@@ -1,7 +1,6 @@
 import { IsEmail, IsNotEmpty, IsOptional, IsString } from "class-validator";
-import { BaseUserDto } from "../../user/dto/base-user.dto";
 
-export class CreateVendorDto extends BaseUserDto {
+export class UpdateVendorDto {
   @IsString()
   @IsNotEmpty()
   shopName: string;

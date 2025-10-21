@@ -3,10 +3,7 @@ import { Column, Entity, OneToOne, JoinColumn, Index, DeleteDateColumn } from 't
 import { User } from '../../user/entity/user.entity';
 
 @Entity('admin')
-@Index(['user_id'], { unique: true })
 export class Admin extends BaseEntity {
-
-  
 
   @OneToOne(() => User, { eager: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
