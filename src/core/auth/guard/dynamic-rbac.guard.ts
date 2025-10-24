@@ -98,7 +98,7 @@ export class DynamicRbacGuard implements CanActivate {
     return false;
   }
 
-  private async getUserPermissions(roleId: string): Promise<string[]> {
+  private async getUserPermissions(roleId: number): Promise<string[]> {
     // Try cache first
     let permissions = await this.permissionCacheService.getPermissions(roleId);
 
