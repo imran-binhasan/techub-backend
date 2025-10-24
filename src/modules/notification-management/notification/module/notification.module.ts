@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Customer } from 'src/user-management/customer/entity/customer.entity';
 import { Notification } from '../entity/notification.entity';
 import { CustomerNotification } from '../entity/customer-notification';
 import { NotificationController } from '../controller/notification.controller';
 import { NotificationService } from '../service/notification.service';
 import { AuthModule } from 'src/core/auth/module/auth.module';
+import { Customer } from 'src/modules/personnel-management/customer/entity/customer.entity';
 
 @Module({
   imports: [

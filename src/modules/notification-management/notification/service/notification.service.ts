@@ -7,13 +7,13 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In, IsNull } from 'typeorm';
 import { Notification } from '../entity/notification.entity';
-import { Customer } from 'src/user-management/customer/entity/customer.entity';
 import { CreateNotificationDto } from '../dto/create-notification.dto';
 import { UpdateNotificationDto } from '../dto/update-notification.dto';
 import { SendNotificationDto } from '../dto/send-notification.dto';
 import { CustomerNotification } from '../entity/customer-notification';
 import { NotificationQueryDto } from '../dto/query.notification.dto';
 import { MarkAsReadDto } from '../dto/read-notificaion.dto';
+import { Customer } from 'src/modules/personnel-management/customer/entity/customer.entity';
 
 @Injectable()
 export class NotificationService {
