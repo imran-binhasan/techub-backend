@@ -2,7 +2,7 @@
 
 // src/sms/entity/sms-log.entity.ts
 import { BaseEntity } from 'src/shared/entity/base.entity';
-import { Entity, Column } from 'typeorm';
+import { Entity, Column, DeleteDateColumn } from 'typeorm';
 
 @Entity('sms_log')
 export class SmsLog extends BaseEntity {
@@ -32,6 +32,9 @@ export class SmsLog extends BaseEntity {
 
   @Column({ type: 'text', nullable: true })
   errorMessage: string | null;
+
+  @DeleteDateColumn()
+  deletedAt:Date | never
 }
 
 // src/sms/dto/send-sms.dto.ts

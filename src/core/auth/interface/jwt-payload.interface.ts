@@ -3,7 +3,7 @@ export class JwtPayload {
   email: string;
   type: 'admin' | 'customer';
   role?: string;
-  roleId?: string;
+  roleId?: number;
   permissions?: string[];
   iat?: number;
   exp?: number;

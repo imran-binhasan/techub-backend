@@ -11,7 +11,6 @@ import {
   HttpCode,
   HttpStatus,
   ParseIntPipe,
-  ParseIntPipe,
 } from '@nestjs/common';
 import {
   RequirePermissions,

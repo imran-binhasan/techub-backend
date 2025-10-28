@@ -7,7 +7,6 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Inventory } from '../entity/inventory.entity';
-import { Product } from 'src/product-management/product/entity/product.entity';
 import { CreateInventoryDto } from '../dto/create-inventory.dto';
 import { UpdateInventoryDto } from '../dto/update-inventory.dto';
 import { StockAdjustmentDto } from '../dto/stock-adjustment.dto';
@@ -18,6 +17,7 @@ import {
   TransactionType,
 } from '../entity/inventory-transaction.entity';
 import { InventoryQueryDto } from '../dto/query-inventory.dto';
+import { Product } from 'src/modules/product-management/product/entity/product.entity';
 
 @Injectable()
 export class InventoryService {

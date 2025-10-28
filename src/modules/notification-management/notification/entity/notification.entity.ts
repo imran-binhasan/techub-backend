@@ -1,5 +1,5 @@
 import { BaseEntity } from 'src/shared/entity/base.entity';
-import { Column, Entity, OneToMany } from 'typeorm';
+import { Column, DeleteDateColumn, Entity, OneToMany } from 'typeorm';
 import { CustomerNotification } from './customer-notification';
 
 @Entity('notification')
@@ -19,4 +19,7 @@ export class Notification extends BaseEntity {
     },
   )
   customerNotifications: CustomerNotification[];
+
+    @DeleteDateColumn()
+    deletedAt: Date | null;
 }

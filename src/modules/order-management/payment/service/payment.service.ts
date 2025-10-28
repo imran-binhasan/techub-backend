@@ -131,7 +131,7 @@ export class PaymentService {
     originalPaymentId: number,
     refundAmount: number,
     reason?: string,
-    gatewayRefundId?: string,
+    gatewayRefundId?: number,
   ): Promise<Payment> {
     const originalPayment = await this.paymentRepository.findOne({
       where: { id: originalPaymentId },
