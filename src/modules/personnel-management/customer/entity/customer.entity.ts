@@ -1,11 +1,10 @@
 import { BaseEntity } from 'src/shared/entity/base.entity';
-import { Column, Entity, OneToMany, OneToOne, JoinColumn} from 'typeorm';
+import { Column, Entity, OneToMany, OneToOne, JoinColumn } from 'typeorm';
 import { User } from '../../user/entity/user.entity';
 import { Address } from '../../address/entity/address.entity';
 import { Wishlist } from 'src/modules/product-management/wishlist/entity/wishlist.entity';
 import { Cart } from 'src/modules/product-management/cart/entity/cart.entity';
 import { CustomerNotification } from 'src/modules/notification-management/notification/entity/customer-notification';
-
 
 @Entity('customer')
 export class Customer extends BaseEntity {
@@ -27,40 +26,57 @@ export class Customer extends BaseEntity {
   })
   addresses: Address[];
 
-  @Column({ 
-    name: 'tier', 
-    type: 'enum', 
+  @Column({
+    name: 'tier',
+    type: 'enum',
     enum: ['bronze', 'silver', 'gold', 'platinum'],
-    default: 'bronze' 
+    default: 'bronze',
   })
   tier: string;
 
-   @Column({ 
-    name: 'status', 
-    type: 'enum', 
+  @Column({
+    name: 'status',
+    type: 'enum',
     enum: ['active', 'inactive', 'suspended', 'blacklisted'],
-    default: 'active' 
+    default: 'active',
   })
   status: string;
 
   @Column({ name: 'total_orders', type: 'integer', default: 0 })
   totalOrders: number;
 
-  @Column({ name: 'total_spent', type: 'decimal', precision: 12, scale: 2, default: 0 })
+  @Column({
+    name: 'total_spent',
+    type: 'decimal',
+    precision: 12,
+    scale: 2,
+    default: 0,
+  })
   totalSpent: number;
 
   @Column({ name: 'l_points', type: 'integer', default: 0 })
   rewardPoints: number;
 
-  @Column({ name: 'preferred_language', type: 'varchar', length: 10, nullable: true })
+  @Column({
+    name: 'preferred_language',
+    type: 'varchar',
+    length: 10,
+    nullable: true,
+  })
   preferredLanguage?: string; // 'en', 'bn',
 
-  @OneToMany(() => Wishlist, (wishlist) => wishlist.customer, { nullable: true })
+  @OneToMany(() => Wishlist, (wishlist) => wishlist.customer, {
+    nullable: true,
+  })
   wishlists: Wishlist[];
 
-  @OneToMany(()=> Cart, (cart)=> cart.customer, {nullable:true})
-  carts:Cart[]
+  @OneToMany(() => Cart, (cart) => cart.customer, { nullable: true })
+  carts: Cart[];
 
-  @OneToMany(() => CustomerNotification, (notification) => notification.customer, { nullable: true })
+  @OneToMany(
+    () => CustomerNotification,
+    (notification) => notification.customer,
+    { nullable: true },
+  )
   notifications: CustomerNotification[];
 }
