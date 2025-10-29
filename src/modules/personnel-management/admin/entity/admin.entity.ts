@@ -14,7 +14,4 @@ export class Admin extends BaseEntity {
 
   @Column({ name: 'employee_number', type: 'varchar', length: 50, nullable: true, unique: true })
   employeeNumber?: string;
-
-  @DeleteDateColumn()
-  deletedAt?: Date;
 }

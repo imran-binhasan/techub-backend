@@ -1,7 +1,7 @@
 export class JwtPayload {
   sub: string;
   email: string;
-  type: 'admin' | 'customer';
+  type: 'admin' | 'customer' | 'vendor';
   role?: string;
   roleId?: number;
   permissions?: string[];

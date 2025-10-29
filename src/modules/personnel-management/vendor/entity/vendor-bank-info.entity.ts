@@ -9,7 +9,6 @@ export class VendorBankInfo extends BaseEntity {
   @JoinColumn({ name: 'vendor_id' })
   vendor: Vendor;
 
-  // These should be encrypted at application level or using database encryption
   @Column({ name: 'account_holder_name', type: 'varchar', length: 255 })
   accountHolderName: string;
 
@@ -27,9 +26,6 @@ export class VendorBankInfo extends BaseEntity {
 
   @Column({ name: 'routing_number', type: 'varchar', length: 100, nullable: true })
   routingNumber?: string;
-
-  @Column({ name: 'iban', type: 'varchar', length: 100, nullable: true })
-  iban?: string;
 
   @Column({ name: 'account_type', type: 'varchar', length: 50, nullable: true })
   accountType?: string; // 'savings', 'checking', 'business'

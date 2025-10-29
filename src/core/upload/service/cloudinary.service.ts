@@ -86,6 +86,13 @@ export class CloudinaryService {
     );
   }
 
+  async uploadVendorImage(
+    file: Express.Multer.File,
+    vendorId: number,
+  ): Promise<string> {
+    return this.uploadImageWithFolder(file, `vendors/${vendorId}`, vendorId);
+  }
+
   async uploadBrandLogo(
     file: Express.Multer.File,
     brandId: number,

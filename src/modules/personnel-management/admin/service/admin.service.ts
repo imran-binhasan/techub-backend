@@ -9,7 +9,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Admin } from '../entity/admin.entity';
 import { Repository } from 'typeorm';
 import { CloudinaryService } from 'src/core/upload/service/cloudinary.service';
-import { UpdateAdminDto } from '../dto/update-admin.dto';
 import { Role } from '../../role/entity/role.entity';
 
 @Injectable()

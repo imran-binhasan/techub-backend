@@ -6,207 +6,214 @@ import {
   Logger,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { PermissionCacheService } from '../service/permission-cache.service';
 import {
   PERMISSIONS_KEY,
   RESOURCE_KEY,
   REQUIRE_ALL_PERMISSIONS_KEY,
   MINIMUM_LEVEL_KEY,
 } from '../decorator/auth.decorator';
-import { AuthenticatedUser, isAdmin } from '../interface/auth-user.interface';
+import { PermissionCacheService } from '../service/permission-cache.service';
 import { PermissionService } from 'src/modules/personnel-management/permission/service/permission.service';
-
-interface ResourceAction {
-  resource: string;
-  action: string;
-}
-
-interface MinimumLevel {
-  resource: string;
-  level: 'read' | 'write' | 'admin';
-}
+import { AuthenticatedUser, isAdmin } from '../interface/auth-user.interface';
 
 @Injectable()
 export class DynamicRbacGuard implements CanActivate {
   private readonly logger = new Logger(DynamicRbacGuard.name);
-  private readonly levelHierarchy = ['read', 'write', 'admin'];
+
+  private readonly permissionHierarchy = {
+    read: 1,
+    write: 2,
+    admin: 3,
+  };
 
   constructor(
-    private readonly reflector: Reflector,
-    private readonly permissionService: PermissionService,
-    private readonly permissionCacheService: PermissionCacheService,
+    private reflector: Reflector,
+    private permissionCacheService: PermissionCacheService,
+    private permissionService: PermissionService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const permissions = this.reflector.getAllAndOverride<string[]>(
+    const request = context.switchToHttp().getRequest();
+    const user = request.user as AuthenticatedUser;
+
+    if (!user || !isAdmin(user)) {
+      throw new ForbiddenException('Admin access required');
+    }
+
+    // Check for required permissions
+    const requiredPermissions = this.reflector.getAllAndOverride<string[]>(
       PERMISSIONS_KEY,
       [context.getHandler(), context.getClass()],
     );
 
-    const resourceAction = this.reflector.getAllAndOverride<ResourceAction>(
-      RESOURCE_KEY,
-      [context.getHandler(), context.getClass()],
-    );
+    if (requiredPermissions) {
+      return this.checkPermissions(user, requiredPermissions, false);
+    }
 
-    const allPermissions = this.reflector.getAllAndOverride<string[]>(
+    // Check for required ALL permissions
+    const requireAll = this.reflector.getAllAndOverride<string[]>(
       REQUIRE_ALL_PERMISSIONS_KEY,
       [context.getHandler(), context.getClass()],
     );
 
-    const minimumLevel = this.reflector.getAllAndOverride<MinimumLevel>(
-      MINIMUM_LEVEL_KEY,
-      [context.getHandler(), context.getClass()],
-    );
-
-    // If no RBAC requirements, allow access
-    if (!permissions && !resourceAction && !allPermissions && !minimumLevel) {
-      return true;
+    if (requireAll) {
+      return this.checkPermissions(user, requireAll, true);
     }
 
-    const request = context.switchToHttp().getRequest();
-    const user = request.user as AuthenticatedUser;
+    // Check for resource-based permission
+    const resourceConfig = this.reflector.getAllAndOverride<{
+      resource: string;
+      action: string;
+    }>(RESOURCE_KEY, [context.getHandler(), context.getClass()]);
 
+    if (resourceConfig) {
+      return this.checkResourcePermission(
+        user,
+        resourceConfig.resource,
+        resourceConfig.action,
+      );
+    }
+
+    // Check for minimum level
+    const minimumLevel = this.reflector.getAllAndOverride<{
+      resource: string;
+      level: 'read' | 'write' | 'admin';
+    }>(MINIMUM_LEVEL_KEY, [context.getHandler(), context.getClass()]);
+
+    if (minimumLevel) {
+      return this.checkMinimumLevel(
+        user,
+        minimumLevel.resource,
+        minimumLevel.level,
+      );
+    }
+
+    return true;
+  }
+
+  private async checkPermissions(
+    user: AuthenticatedUser,
+    requiredPermissions: string[],
+    requireAll: boolean,
+  ): Promise<boolean> {
     if (!isAdmin(user)) {
-      throw new ForbiddenException('Access denied. Admin privileges required.');
+      throw new ForbiddenException('Admin access required');
     }
 
-    const userPermissions = await this.getUserPermissions(user.roleId);
-
-    try {
-      if (resourceAction) {
-        return this.checkResourcePermission(userPermissions, resourceAction);
-      }
-
-      if (permissions) {
-        return this.checkOrPermissions(userPermissions, permissions);
-      }
-
-      if (allPermissions) {
-        return this.checkAndPermissions(userPermissions, allPermissions);
-      }
-
-      if (minimumLevel) {
-        return this.checkMinimumLevel(userPermissions, minimumLevel);
-      }
-    } catch (error) {
-      this.logger.error(
-        `RBAC check failed for user ${user.id}: ${error.message}`,
-      );
-      throw error;
-    }
-
-    return false;
-  }
-
-  private async getUserPermissions(roleId: number): Promise<string[]> {
     // Try cache first
-    let permissions = await this.permissionCacheService.getPermissions(roleId);
+    let userPermissions = await this.permissionCacheService.getPermissions(
+      user.roleId,
+    );
 
-    if (!permissions) {
-      // Fallback to database
-      permissions = await this.permissionService.getUserPermissions(roleId);
-      // Cache for future use
-      await this.permissionCacheService.setPermissions(roleId, permissions);
+    // Fallback to database
+    if (!userPermissions) {
+      userPermissions = await this.permissionService.getUserPermissions(
+        user.roleId,
+      );
+      await this.permissionCacheService.setPermissions(
+        user.roleId,
+        userPermissions,
+      );
     }
 
-    return permissions;
+    const hasPermissions = requireAll
+      ? requiredPermissions.every((perm) => userPermissions.includes(perm))
+      : requiredPermissions.some((perm) => userPermissions.includes(perm));
+
+    if (!hasPermissions) {
+      this.logger.warn(
+        `User ${user.id} denied access. Required: [${requiredPermissions.join(', ')}], Has: [${userPermissions.join(', ')}]`,
+      );
+      throw new ForbiddenException('Insufficient permissions');
+    }
+
+    return true;
   }
 
-  private checkResourcePermission(
-    userPermissions: string[],
-    resourceAction: ResourceAction,
-  ): boolean {
-    const requiredPermission = `${resourceAction.action}:${resourceAction.resource}`;
+  private async checkResourcePermission(
+    user: AuthenticatedUser,
+    resource: string,
+    action: string,
+  ): Promise<boolean> {
+    if (!isAdmin(user)) {
+      throw new ForbiddenException('Admin access required');
+    }
 
-    if (!this.hasPermission(userPermissions, requiredPermission)) {
+    const requiredPermission = `${action}:${resource}`;
+
+    let userPermissions = await this.permissionCacheService.getPermissions(
+      user.roleId,
+    );
+
+    if (!userPermissions) {
+      userPermissions = await this.permissionService.getUserPermissions(
+        user.roleId,
+      );
+      await this.permissionCacheService.setPermissions(
+        user.roleId,
+        userPermissions,
+      );
+    }
+
+    if (!userPermissions.includes(requiredPermission)) {
+      this.logger.warn(
+        `User ${user.id} denied ${action} on ${resource}`,
+      );
       throw new ForbiddenException(
-        `Access denied. Required permission: ${requiredPermission}`,
+        `Permission denied: ${action} on ${resource}`,
       );
     }
 
     return true;
   }
 
-  private checkOrPermissions(
-    userPermissions: string[],
-    requiredPermissions: string[],
-  ): boolean {
-    const hasAnyPermission = requiredPermissions.some((permission) =>
-      this.hasPermission(userPermissions, permission),
+  private async checkMinimumLevel(
+    user: AuthenticatedUser,
+    resource: string,
+    level: 'read' | 'write' | 'admin',
+  ): Promise<boolean> {
+    if (!isAdmin(user)) {
+      throw new ForbiddenException('Admin access required');
+    }
+
+    const requiredLevel = this.permissionHierarchy[level];
+
+    let userPermissions = await this.permissionCacheService.getPermissions(
+      user.roleId,
     );
 
-    if (!hasAnyPermission) {
+    if (!userPermissions) {
+      userPermissions = await this.permissionService.getUserPermissions(
+        user.roleId,
+      );
+      await this.permissionCacheService.setPermissions(
+        user.roleId,
+        userPermissions,
+      );
+    }
+
+    // Check if user has any permission level for this resource
+    const resourcePermissions = userPermissions.filter((perm) =>
+      perm.endsWith(`:${resource}`),
+    );
+
+    const userLevel = Math.max(
+      ...resourcePermissions.map((perm) => {
+        const action = perm.split(':')[0];
+        return this.permissionHierarchy[action] || 0;
+      }),
+      0,
+    );
+
+    if (userLevel < requiredLevel) {
+      this.logger.warn(
+        `User ${user.id} has level ${userLevel} but requires ${requiredLevel} for ${resource}`,
+      );
       throw new ForbiddenException(
-        `Access denied. Required permissions: ${requiredPermissions.join(' OR ')}`,
+        `Minimum ${level} permission required for ${resource}`,
       );
     }
 
     return true;
-  }
-
-  private checkAndPermissions(
-    userPermissions: string[],
-    requiredPermissions: string[],
-  ): boolean {
-    const missingPermissions = requiredPermissions.filter(
-      (permission) => !this.hasPermission(userPermissions, permission),
-    );
-
-    if (missingPermissions.length > 0) {
-      throw new ForbiddenException(
-        `Access denied. Missing permissions: ${missingPermissions.join(', ')}`,
-      );
-    }
-
-    return true;
-  }
-
-  private checkMinimumLevel(
-    userPermissions: string[],
-    minimumLevel: MinimumLevel,
-  ): boolean {
-    const requiredLevelIndex = this.levelHierarchy.indexOf(minimumLevel.level);
-
-    if (requiredLevelIndex === -1) {
-      throw new ForbiddenException('Invalid permission level specified');
-    }
-
-    // Check if user has required level or higher
-    for (let i = requiredLevelIndex; i < this.levelHierarchy.length; i++) {
-      const permission = `${this.levelHierarchy[i]}:${minimumLevel.resource}`;
-      if (this.hasPermission(userPermissions, permission)) {
-        return true;
-      }
-    }
-
-    throw new ForbiddenException(
-      `Access denied. Minimum ${minimumLevel.level} level required for ${minimumLevel.resource}`,
-    );
-  }
-
-  private hasPermission(
-    userPermissions: string[],
-    requiredPermission: string,
-  ): boolean {
-    // Super admin wildcard
-    if (userPermissions.includes('*:*')) {
-      return true;
-    }
-
-    // Exact match
-    if (userPermissions.includes(requiredPermission)) {
-      return true;
-    }
-
-    const [action, resource] = requiredPermission.split(':');
-    if (!action || !resource) {
-      return false;
-    }
-
-    // Wildcard matches
-    return (
-      userPermissions.includes(`*:${resource}`) || // Resource wildcard
-      userPermissions.includes(`${action}:*`) // Action wildcard
-    );
   }
 }

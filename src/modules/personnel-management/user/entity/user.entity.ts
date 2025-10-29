@@ -3,17 +3,12 @@ import {
   Column,
   DeleteDateColumn,
   Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToOne,
-  Index,
+  OneToOne
 } from 'typeorm';
-import { Role } from '../../role/entity/role.entity';
 import { Admin } from '../../admin/entity/admin.entity';
 import { Customer } from '../../customer/entity/customer.entity';
 import { Vendor } from '../../vendor/entity/vendor.entity';
 
-// user.entity.ts - simplified
 @Entity('user')
 export class User extends BaseEntity {
   @Column({ name: 'first_name', type: 'varchar', length: 100 })
@@ -22,34 +17,38 @@ export class User extends BaseEntity {
   @Column({ name: 'last_name', type: 'varchar', length: 100 })
   lastName: string;
 
-  @Column({ name: 'email', type: 'varchar', length: 255, nullable: false, unique: true })
-  @Index()
-  email: string;
+  @Column({
+    name: 'email',
+    type: 'varchar',
+    length: 255,
+    nullable: false,
+    unique: true,
+  })
+  email?: string;
+
+  @Column({ name: 'email_verified', default: false })
+  emailVerified: boolean;
 
   @Column({ name: 'password', type: 'text', select: false })
   password: string;
 
-  @Column({ name: 'phone', type: 'varchar', length: 20, nullable: true, unique: true })
+  @Column({
+    name: 'phone',
+    type: 'varchar',
+    length: 20,
+    nullable: true,
+    unique: true,
+  })
   phone?: string;
 
   @Column({ name: 'image', type: 'varchar', length: 500, nullable: true })
   image?: string;
 
-  @ManyToOne(() => Role, (role) => role.users, {
-    eager: true,
-    onDelete: 'RESTRICT',
-  })
-  @JoinColumn({ name: 'role_id' })
-  role: Role;
-
-  @Column({ name: 'role_id', type: 'int' })
-  roleId: number;
+  @Column({ type: 'enum', enum: ['customer', 'vendor', 'admin'] })
+  userType: 'customer' | 'vendor' | 'admin';
 
   @Column({ name: 'last_login_at', type: 'timestamptz', nullable: true })
   lastLoginAt?: Date;
-
-  @Column({ name: 'failed_login_attempts', type: 'integer', default: 0 })
-  failedLoginAttempts: number;
 
   @OneToOne(() => Customer, (customer) => customer.user, { nullable: true })
   customer?: Customer;
@@ -62,12 +61,4 @@ export class User extends BaseEntity {
 
   @DeleteDateColumn({ name: 'deleted_at', type: 'timestamptz' })
   deletedAt?: Date;
-
-  // Helper method
-  getUserType(): 'admin' | 'customer' | 'vendor' | null {
-    return this.role?.name === 'ADMIN' ? 'admin'
-         : this.role?.name === 'CUSTOMER' ? 'customer'
-         : this.role?.name === 'VENDOR' ? 'vendor'
-         : null;
-  }
 }

@@ -39,7 +39,6 @@ export class VendorKYC extends BaseEntity {
   @Column({ name: 'trade_license_number', type: 'varchar', length: 255, nullable: true })
   tradeLicenseNumber?: string;
 
-  // Document URLs (encrypted/secured storage)
   @Column({ name: 'business_license_document', type: 'varchar', length: 500, nullable: true })
   businessLicenseDocument?: string;
 

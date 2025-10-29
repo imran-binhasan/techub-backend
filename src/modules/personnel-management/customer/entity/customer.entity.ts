@@ -1,5 +1,5 @@
 import { BaseEntity } from 'src/shared/entity/base.entity';
-import { Column, Entity, OneToMany, OneToOne, JoinColumn, Index, ManyToOne } from 'typeorm';
+import { Column, Entity, OneToMany, OneToOne, JoinColumn, Index, ManyToOne, DeleteDateColumn } from 'typeorm';
 import { User } from '../../user/entity/user.entity';
 import { Address } from '../../address/entity/address.entity';
 import { Wishlist } from 'src/modules/product-management/wishlist/entity/wishlist.entity';
@@ -27,7 +27,7 @@ export class Customer extends BaseEntity {
   })
   addresses: Address[];
 
-  // Customer metrics
+
   @Column({ name: 'total_orders', type: 'integer', default: 0 })
   totalOrders: number;
 
@@ -38,7 +38,7 @@ export class Customer extends BaseEntity {
   loyaltyPoints: number;
 
   @Column({ name: 'preferred_language', type: 'varchar', length: 10, nullable: true })
-  preferredLanguage?: string; // 'en', 'bn', 'de'
+  preferredLanguage?: string; // 'en', 'bn',
 
   @OneToMany(() => Wishlist, (wishlist) => wishlist.customer, { nullable: true })
   wishlists: Wishlist[];

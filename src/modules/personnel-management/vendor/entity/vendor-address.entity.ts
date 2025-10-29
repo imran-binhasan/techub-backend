@@ -42,12 +42,6 @@ export class VendorAddress extends BaseEntity {
 
   @Column({ name: 'is_primary', type: 'boolean', default: false })
   isPrimary: boolean;
-
-  @Column({ name: 'contact_person', type: 'varchar', length: 200, nullable: true })
-  contactPerson?: string;
-
-  @Column({ name: 'contact_phone', type: 'varchar', length: 20, nullable: true })
-  contactPhone?: string;
     
   @DeleteDateColumn({ name: 'deleted_at', type: 'timestamptz' })
   deletedAt?: Date;

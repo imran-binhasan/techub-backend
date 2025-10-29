@@ -15,6 +15,10 @@ export enum VendorStatus {
 @Entity('vendor')
 @Index(['user_id'], { unique: true })
 export class Vendor extends BaseEntity {
+
+  @Column({ name: 'user_id', type: 'int' })
+  userId: number; // Add this
+
   @OneToOne(() => User, { eager: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user: User;
