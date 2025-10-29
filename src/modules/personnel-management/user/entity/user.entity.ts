@@ -1,13 +1,14 @@
 import { BaseEntity } from 'src/shared/entity/base.entity';
-import {
-  Column,
-  DeleteDateColumn,
-  Entity,
-  OneToOne
-} from 'typeorm';
+import { Column, DeleteDateColumn, Entity, OneToOne } from 'typeorm';
 import { Admin } from '../../admin/entity/admin.entity';
 import { Customer } from '../../customer/entity/customer.entity';
 import { Vendor } from '../../vendor/entity/vendor.entity';
+
+export enum UserType {
+  Customer = 'customer',
+  Vendor = 'vendor',
+  Admin = 'admin',
+}
 
 @Entity('user')
 export class User extends BaseEntity {
@@ -44,8 +45,8 @@ export class User extends BaseEntity {
   @Column({ name: 'image', type: 'varchar', length: 500, nullable: true })
   image?: string;
 
-  @Column({ type: 'enum', enum: ['customer', 'vendor', 'admin'] })
-  userType: 'customer' | 'vendor' | 'admin';
+  @Column({ type: 'enum', enum: UserType })
+  userType: UserType;
 
   @Column({ name: 'last_login_at', type: 'timestamptz', nullable: true })
   lastLoginAt?: Date;
