@@ -51,6 +51,9 @@ export class User extends BaseEntity {
   @Column({ name: 'last_login_at', type: 'timestamptz', nullable: true })
   lastLoginAt?: Date;
 
+  @Column({ name: 'failed_login_attempts', type: 'int', default: 0 })
+  failedLoginAttempts: number;
+
   @OneToOne(() => Customer, (customer) => customer.user, { nullable: true })
   customer?: Customer;
 
