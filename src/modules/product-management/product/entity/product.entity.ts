@@ -14,6 +14,7 @@ import { Brand } from '../../brand/entity/brand.entity';
 import { Cart } from '../../cart/entity/cart.entity';
 import { ProductReview } from '../../product_review/entity/product_review.entity';
 import { Wishlist } from '../../wishlist/entity/wishlist.entity';
+import { Vendor } from 'src/modules/personnel-management/vendor/entity/vendor.entity';
 
 @Entity('product')
 export class Product extends BaseEntity {
@@ -62,6 +63,9 @@ export class Product extends BaseEntity {
   })
   attributeValues: ProductAttributeValue[];
 
-  @DeleteDateColumn({ type: 'timestamptz' })
-  deletedAt: Date;
+  @ManyToOne(() => Vendor, (vendor) => vendor.products, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
+  vendor: Vendor;
 }

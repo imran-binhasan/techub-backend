@@ -1,5 +1,5 @@
 import { BaseEntity } from 'src/shared/entity/base.entity';
-import { Column, Entity, OneToMany, OneToOne, JoinColumn, Index, ManyToOne, DeleteDateColumn } from 'typeorm';
+import { Column, Entity, OneToMany, OneToOne, JoinColumn} from 'typeorm';
 import { User } from '../../user/entity/user.entity';
 import { Address } from '../../address/entity/address.entity';
 import { Wishlist } from 'src/modules/product-management/wishlist/entity/wishlist.entity';
@@ -27,6 +27,21 @@ export class Customer extends BaseEntity {
   })
   addresses: Address[];
 
+  @Column({ 
+    name: 'tier', 
+    type: 'enum', 
+    enum: ['bronze', 'silver', 'gold', 'platinum'],
+    default: 'bronze' 
+  })
+  tier: string;
+
+   @Column({ 
+    name: 'status', 
+    type: 'enum', 
+    enum: ['active', 'inactive', 'suspended', 'blacklisted'],
+    default: 'active' 
+  })
+  status: string;
 
   @Column({ name: 'total_orders', type: 'integer', default: 0 })
   totalOrders: number;
@@ -34,8 +49,8 @@ export class Customer extends BaseEntity {
   @Column({ name: 'total_spent', type: 'decimal', precision: 12, scale: 2, default: 0 })
   totalSpent: number;
 
-  @Column({ name: 'loyalty_points', type: 'integer', default: 0 })
-  loyaltyPoints: number;
+  @Column({ name: 'l_points', type: 'integer', default: 0 })
+  rewardPoints: number;
 
   @Column({ name: 'preferred_language', type: 'varchar', length: 10, nullable: true })
   preferredLanguage?: string; // 'en', 'bn',

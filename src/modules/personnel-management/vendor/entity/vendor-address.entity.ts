@@ -43,6 +43,4 @@ export class VendorAddress extends BaseEntity {
   @Column({ name: 'is_primary', type: 'boolean', default: false })
   isPrimary: boolean;
     
-  @DeleteDateColumn({ name: 'deleted_at', type: 'timestamptz' })
-  deletedAt?: Date;
 }

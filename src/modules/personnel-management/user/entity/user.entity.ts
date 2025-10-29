@@ -5,9 +5,9 @@ import { Customer } from '../../customer/entity/customer.entity';
 import { Vendor } from '../../vendor/entity/vendor.entity';
 
 export enum UserType {
-  Customer = 'customer',
-  Vendor = 'vendor',
-  Admin = 'admin',
+  CUSTOMER = 'customer',
+  VENDOR = 'vendor',
+  ADMIN = 'admin',
 }
 
 @Entity('user')
@@ -45,7 +45,7 @@ export class User extends BaseEntity {
   @Column({ name: 'image', type: 'varchar', length: 500, nullable: true })
   image?: string;
 
-  @Column({ type: 'enum', enum: UserType })
+  @Column({ name:'user_type', type: 'enum', enum: UserType })
   userType: UserType;
 
   @Column({ name: 'last_login_at', type: 'timestamptz', nullable: true })
@@ -59,7 +59,4 @@ export class User extends BaseEntity {
 
   @OneToOne(() => Vendor, (vendor) => vendor.user, { nullable: true })
   vendor?: Vendor;
-
-  @DeleteDateColumn({ name: 'deleted_at', type: 'timestamptz' })
-  deletedAt?: Date;
 }
