@@ -71,8 +71,28 @@ export class PermissionCacheService {
     await this.cacheService.del('sessions', `user:${userId}`);
   }
 
+  // User-specific permission caching (for scope-based permissions)
+  async getUserPermissions(userId: number): Promise<any[] | null> {
+    return this.cacheService.get<any[]>('permissions', `user:${userId}`);
+  }
+
+  async cacheUserPermissions(
+    userId: number,
+    roleId: number,
+    permissions: any[],
+  ): Promise<void> {
+    await this.cacheService.set('permissions', `user:${userId}`, permissions, {
+      ttl: 3600,
+      tags: [`user:${userId}`, `role:${roleId}`, 'permissions'],
+    });
+  }
+
+  async invalidateUserPermissions(userId: number): Promise<void> {
+    await this.cacheService.del('permissions', `user:${userId}`);
+  }
+
   // Batch operations
-  async getUserPermissions(
+  async getBatchUserPermissions(
     userIds: string[],
   ): Promise<Record<string, string[]>> {
     const keys = userIds.map((id) => `user:${id}`);

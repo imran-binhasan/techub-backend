@@ -1,5 +1,4 @@
-import { IsEmail, IsOptional, IsString } from "class-validator";
-import { IsNotEmpty, MinLength } from "class-validator";
+import { IsEmail, IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator';
 
 export class AdminLoginDto {
   @IsEmail()
@@ -13,5 +12,5 @@ export class AdminLoginDto {
 
   @IsOptional()
   @IsString()
-  twoFactorCode?: string; // Optional 2FA
+  twoFactorCode?: string;
 }

@@ -1,3 +1,5 @@
+import { Injectable, CanActivate, ExecutionContext, UnauthorizedException, ForbiddenException } from '@nestjs/common';
+
 @Injectable()
 export class CustomerGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {

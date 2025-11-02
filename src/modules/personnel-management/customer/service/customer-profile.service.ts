@@ -1,17 +1,11 @@
-import { NotFoundException } from "@nestjs/common";
-import { Injectable, ConflictException, BadRequestException, UnauthorizedException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DataSource } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Customer } from '../entity/customer.entity';
-import { CustomerRegisterDto } from '../dto/customer-register.dto';
-import { CustomerLoginDto } from '../dto/customer-login.dto';
-import { CustomerAuthResponseDto } from '../dto/customer-auth-response.dto';
-import { AuthBaseService } from 'src/core/auth/service/auth-base.service';
-import { User, UserType } from '../../user/entity/user.entity';
-import { TokenService } from 'src/core/auth/service/token-service';
-import { RedisService } from 'src/core/redis/service/redis.service';
-import { PasswordUtil } from 'src/shared/utils/password.util';
-
+import { CustomerProfileDto } from '../dto/customer-profile.dto';
+import { UpdateCustomerProfileDto } from '../dto/update-customer.dto';
+import { User } from '../../user/entity/user.entity';
+import { CacheService } from 'src/core/cache/service/cache.service';
 
 @Injectable()
 export class CustomerProfileService {
@@ -20,7 +14,6 @@ export class CustomerProfileService {
     private customerRepository: Repository<Customer>,
     @InjectRepository(User)
     private userRepository: Repository<User>,
-    private cloudinaryService: CloudinaryService,
     private cacheService: CacheService,
   ) {}
 
@@ -43,7 +36,7 @@ export class CustomerProfileService {
 
     const dto: CustomerProfileDto = {
       id: customer.id,
-      email: customer.user.email,
+      email: customer.user.email!,
       firstName: customer.user.firstName,
       lastName: customer.user.lastName,
       phone: customer.user.phone,
@@ -52,7 +45,7 @@ export class CustomerProfileService {
       gender: customer.gender,
       preferredLanguage: customer.preferredLanguage,
       tier: customer.tier,
-      loyaltyPoints: customer.loyaltyPoints,
+      rewardPoints: customer.rewardPoints,
       totalOrders: customer.totalOrders,
       totalSpent: parseFloat(customer.totalSpent.toString()),
       createdAt: customer.createdAt,
@@ -98,29 +91,5 @@ export class CustomerProfileService {
     await this.cacheService.del('customers', customerId.toString());
 
     return this.getProfile(customerId);
-  }
-
-  async uploadProfileImage(
-    customerId: number,
-    file: Express.Multer.File,
-  ): Promise<string> {
-    const customer = await this.customerRepository.findOne({
-      where: { id: customerId },
-      relations: ['user'],
-    });
-
-    if (!customer) {
-      throw new NotFoundException('Customer not found');
-    }
-
-    const imageUrl = await this.cloudinaryService.uploadCustomerImage(
-      file,
-      customerId,
-    );
-
-    await this.userRepository.update(customer.user.id, { image: imageUrl });
-    await this.cacheService.del('customers', customerId.toString());
-
-    return imageUrl;
   }
 }

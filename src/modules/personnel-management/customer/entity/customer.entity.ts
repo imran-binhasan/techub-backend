@@ -8,6 +8,9 @@ import { CustomerNotification } from 'src/modules/notification-management/notifi
 
 @Entity('customer')
 export class Customer extends BaseEntity {
+  @Column({ name: 'user_id', type: 'int', unique: true })
+  userId: number;
+
   @OneToOne(() => User, { eager: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user: User;

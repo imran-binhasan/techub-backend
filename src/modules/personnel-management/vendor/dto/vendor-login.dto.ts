@@ -1,5 +1,4 @@
-import { IsEmail, IsOptional, IsString } from "class-validator";
-import { IsNotEmpty, MinLength } from "class-validator";
+import { IsEmail, IsOptional, IsString, MinLength } from 'class-validator';
 
 export class VendorLoginDto {
   @IsOptional()
@@ -10,9 +9,10 @@ export class VendorLoginDto {
   @IsString()
   phone?: string;
 
+  @IsOptional()
   @IsString()
   @MinLength(6)
-  password: string;
+  password?: string;
 
   @IsOptional()
   @IsString()

@@ -54,6 +54,9 @@ export class User extends BaseEntity {
   @Column({ name: 'failed_login_attempts', type: 'int', default: 0 })
   failedLoginAttempts: number;
 
+  @Column({ name: 'role_id', type: 'int', nullable: true })
+  roleId?: number; // Only for admins who need RBAC
+
   @OneToOne(() => Customer, (customer) => customer.user, { nullable: true })
   customer?: Customer;
 

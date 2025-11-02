@@ -11,6 +11,9 @@ import { Role } from '../../role/entity/role.entity';
 
 @Entity('admin')
 export class Admin extends BaseEntity {
+  @Column({ name: 'user_id', type: 'int', unique: true })
+  userId: number;
+
   @OneToOne(() => User, { eager: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user: User;

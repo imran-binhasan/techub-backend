@@ -8,7 +8,6 @@ import {
 import { Reflector } from '@nestjs/core';
 import { IS_PUBLIC_KEY } from '../decorator/auth.decorator';
 import { TokenService } from '../service/token-service';
-import { AuthService } from '../service/auth.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/modules/personnel-management/user/entity/user.entity';
 import { Repository } from 'typeorm';
@@ -24,7 +23,7 @@ export class JwtAuthGuard implements CanActivate {
     private readonly userRepository: Repository<User>,
   ) {}
 
-    private extractTokenFromHeader(request: any): string | undefined {
+  private extractTokenFromHeader(request: any): string | undefined {
     const [type, token] = request.headers.authorization?.split(' ') ?? [];
     return type === 'Bearer' ? token : undefined;
   }
@@ -53,15 +52,26 @@ export class JwtAuthGuard implements CanActivate {
 
       const user = await this.userRepository.findOne({
         where: { id: parseInt(payload.sub) },
-        relations: ['role'],
-        select: ['id', 'email', 'firstName', 'lastName', 'deletedAt'],
+        select: ['id', 'email', 'firstName', 'lastName', 'userType', 'deletedAt'],
       });
 
       if (!user || user.deletedAt) {
         throw new UnauthorizedException('User not found or inactive');
       }
 
-      request.user = this.buildUserContext(payload, user);
+      // Build user context for request
+      request.user = {
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        type: payload.type,
+        ...(payload.type === 'admin' && {
+          roleId: payload.roleId,
+          permissions: payload.permissions || [],
+        }),
+      };
+
       return true;
 
     } catch (error) {
