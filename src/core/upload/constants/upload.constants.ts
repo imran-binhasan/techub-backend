@@ -4,96 +4,115 @@
  * Defines size limits, allowed types, and configuration values.
  */
 
-import { ImageCategory, SupportedMimeType, UploaderType } from '../enum/upload.enum';
+import { ImageCategory, SupportedMimeType, UploadType, UploaderType } from '../enum/upload.enum';
 
 /**
  * File size limits in bytes
  */
 export const FILE_SIZE_LIMITS = {
   [UploaderType.CUSTOMER]: {
-    IMAGE: 5 * 1024 * 1024,      // 5MB
-    DOCUMENT: 10 * 1024 * 1024,  // 10MB
-    VIDEO: 0,                    // Not allowed
-    AUDIO: 0,                    // Not allowed
+    [UploadType.IMAGE]: 5 * 1024 * 1024,      // 5MB
+    [UploadType.DOCUMENT]: 10 * 1024 * 1024,  // 10MB
+    [UploadType.VIDEO]: 0,                    // Not allowed
+    [UploadType.AUDIO]: 0,                    // Not allowed
   },
   [UploaderType.VENDOR]: {
-    IMAGE: 10 * 1024 * 1024,     // 10MB
-    DOCUMENT: 20 * 1024 * 1024,  // 20MB
-    VIDEO: 50 * 1024 * 1024,     // 50MB
-    AUDIO: 10 * 1024 * 1024,     // 10MB
+    [UploadType.IMAGE]: 10 * 1024 * 1024,     // 10MB
+    [UploadType.DOCUMENT]: 20 * 1024 * 1024,  // 20MB
+    [UploadType.VIDEO]: 50 * 1024 * 1024,     // 50MB
+    [UploadType.AUDIO]: 10 * 1024 * 1024,     // 10MB
   },
   [UploaderType.ADMIN]: {
-    IMAGE: 20 * 1024 * 1024,     // 20MB
-    DOCUMENT: 50 * 1024 * 1024,  // 50MB
-    VIDEO: 100 * 1024 * 1024,    // 100MB
-    AUDIO: 20 * 1024 * 1024,     // 20MB
+    [UploadType.IMAGE]: 20 * 1024 * 1024,     // 20MB
+    [UploadType.DOCUMENT]: 50 * 1024 * 1024,  // 50MB
+    [UploadType.VIDEO]: 100 * 1024 * 1024,    // 100MB
+    [UploadType.AUDIO]: 20 * 1024 * 1024,     // 20MB
   },
   [UploaderType.GUEST]: {
-    IMAGE: 2 * 1024 * 1024,      // 2MB
-    DOCUMENT: 0,                 // Not allowed
-    VIDEO: 0,                    // Not allowed
-    AUDIO: 0,                    // Not allowed
+    [UploadType.IMAGE]: 2 * 1024 * 1024,      // 2MB
+    [UploadType.DOCUMENT]: 0,                 // Not allowed
+    [UploadType.VIDEO]: 0,                    // Not allowed
+    [UploadType.AUDIO]: 0,                    // Not allowed
   },
 };
 
 /**
- * Allowed mime types per user type
+ * Allowed mime types per user type and upload type
  */
 export const ALLOWED_MIME_TYPES = {
-  [UploaderType.CUSTOMER]: [
-    SupportedMimeType.JPEG,
-    SupportedMimeType.JPG,
-    SupportedMimeType.PNG,
-    SupportedMimeType.WEBP,
-    SupportedMimeType.PDF, // For invoices/receipts
-  ],
-  [UploaderType.VENDOR]: [
-    SupportedMimeType.JPEG,
-    SupportedMimeType.JPG,
-    SupportedMimeType.PNG,
-    SupportedMimeType.WEBP,
-    SupportedMimeType.GIF,
-    SupportedMimeType.PDF,
-    SupportedMimeType.DOC,
-    SupportedMimeType.DOCX,
-    SupportedMimeType.XLS,
-    SupportedMimeType.XLSX,
-    SupportedMimeType.MP4, // Product videos
-  ],
-  [UploaderType.ADMIN]: Object.values(SupportedMimeType), // All types
-  [UploaderType.GUEST]: [
-    SupportedMimeType.JPEG,
-    SupportedMimeType.JPG,
-    SupportedMimeType.PNG,
-  ],
+  [UploaderType.CUSTOMER]: {
+    [UploadType.IMAGE]: [
+      SupportedMimeType.JPEG,
+      SupportedMimeType.JPG,
+      SupportedMimeType.PNG,
+      SupportedMimeType.WEBP,
+    ],
+    [UploadType.DOCUMENT]: [SupportedMimeType.PDF], // For invoices/receipts
+    [UploadType.VIDEO]: [], // Not allowed
+    [UploadType.AUDIO]: [], // Not allowed
+  },
+  [UploaderType.VENDOR]: {
+    [UploadType.IMAGE]: [
+      SupportedMimeType.JPEG,
+      SupportedMimeType.JPG,
+      SupportedMimeType.PNG,
+      SupportedMimeType.WEBP,
+      SupportedMimeType.GIF,
+    ],
+    [UploadType.DOCUMENT]: [
+      SupportedMimeType.PDF,
+      SupportedMimeType.DOC,
+      SupportedMimeType.DOCX,
+      SupportedMimeType.XLS,
+      SupportedMimeType.XLSX,
+    ],
+    [UploadType.VIDEO]: [SupportedMimeType.MP4], // Product videos
+    [UploadType.AUDIO]: [SupportedMimeType.MP3, SupportedMimeType.WAV],
+  },
+  [UploaderType.ADMIN]: {
+    [UploadType.IMAGE]: [
+      SupportedMimeType.JPEG,
+      SupportedMimeType.JPG,
+      SupportedMimeType.PNG,
+      SupportedMimeType.WEBP,
+      SupportedMimeType.GIF,
+      SupportedMimeType.SVG,
+    ],
+    [UploadType.DOCUMENT]: [
+      SupportedMimeType.PDF,
+      SupportedMimeType.DOC,
+      SupportedMimeType.DOCX,
+      SupportedMimeType.XLS,
+      SupportedMimeType.XLSX,
+    ],
+    [UploadType.VIDEO]: [SupportedMimeType.MP4, SupportedMimeType.AVI, SupportedMimeType.MOV],
+    [UploadType.AUDIO]: [SupportedMimeType.MP3, SupportedMimeType.WAV],
+  },
+  [UploaderType.GUEST]: {
+    [UploadType.IMAGE]: [
+      SupportedMimeType.JPEG,
+      SupportedMimeType.JPG,
+      SupportedMimeType.PNG,
+    ],
+    [UploadType.DOCUMENT]: [], // Not allowed
+    [UploadType.VIDEO]: [], // Not allowed
+    [UploadType.AUDIO]: [], // Not allowed
+  },
 };
 
 /**
  * Image dimension limits (width x height in pixels)
  */
 export const IMAGE_DIMENSION_LIMITS = {
-  MIN: {
-    [ImageCategory.PROFILE]: { width: 100, height: 100 },
-    [ImageCategory.PRODUCT]: { width: 300, height: 300 },
-    [ImageCategory.BRAND]: { width: 200, height: 200 },
-    [ImageCategory.CATEGORY]: { width: 200, height: 200 },
-    [ImageCategory.BANNER]: { width: 800, height: 300 },
-    [ImageCategory.SHOP_LOGO]: { width: 200, height: 200 },
-    [ImageCategory.SHOP_BANNER]: { width: 1000, height: 300 },
-    [ImageCategory.REVIEW]: { width: 200, height: 200 },
-    [ImageCategory.VERIFICATION]: { width: 500, height: 500 },
-  },
-  MAX: {
-    [ImageCategory.PROFILE]: { width: 2000, height: 2000 },
-    [ImageCategory.PRODUCT]: { width: 4000, height: 4000 },
-    [ImageCategory.BRAND]: { width: 2000, height: 2000 },
-    [ImageCategory.CATEGORY]: { width: 2000, height: 2000 },
-    [ImageCategory.BANNER]: { width: 4000, height: 2000 },
-    [ImageCategory.SHOP_LOGO]: { width: 2000, height: 2000 },
-    [ImageCategory.SHOP_BANNER]: { width: 4000, height: 2000 },
-    [ImageCategory.REVIEW]: { width: 2000, height: 2000 },
-    [ImageCategory.VERIFICATION]: { width: 4000, height: 4000 },
-  },
+  [ImageCategory.PROFILE]: { minWidth: 100, maxWidth: 2000, minHeight: 100, maxHeight: 2000 },
+  [ImageCategory.PRODUCT]: { minWidth: 300, maxWidth: 4000, minHeight: 300, maxHeight: 4000 },
+  [ImageCategory.BRAND]: { minWidth: 200, maxWidth: 2000, minHeight: 200, maxHeight: 2000 },
+  [ImageCategory.CATEGORY]: { minWidth: 200, maxWidth: 2000, minHeight: 200, maxHeight: 2000 },
+  [ImageCategory.BANNER]: { minWidth: 800, maxWidth: 4000, minHeight: 300, maxHeight: 2000 },
+  [ImageCategory.SHOP_LOGO]: { minWidth: 200, maxWidth: 2000, minHeight: 200, maxHeight: 2000 },
+  [ImageCategory.SHOP_BANNER]: { minWidth: 1000, maxWidth: 4000, minHeight: 300, maxHeight: 2000 },
+  [ImageCategory.REVIEW]: { minWidth: 200, maxWidth: 2000, minHeight: 200, maxHeight: 2000 },
+  [ImageCategory.VERIFICATION]: { minWidth: 500, maxWidth: 4000, minHeight: 500, maxHeight: 4000 },
 };
 
 /**

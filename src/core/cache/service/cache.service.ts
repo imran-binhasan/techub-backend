@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { RedisService } from 'src/core/redis/service/redis.service';
+import { RedisService } from '../../redis/service/redis.service';
 
 export interface CacheConfig {
-  ttl: number;
+  ttl?: number;
   prefix?: string;
   tags?: string[];
 }
