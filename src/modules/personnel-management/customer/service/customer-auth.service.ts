@@ -26,14 +26,17 @@ export class CustomerAuthService extends AuthBaseService {
 
   async register(dto: CustomerRegisterDto): Promise<CustomerAuthResponseDto> {
     return await this.dataSource.transaction(async (manager) => {
+      // Normalize email
+      const normalizedEmail = dto.email.toLowerCase().trim();
+      
       // Check uniqueness
       const existing = await manager.findOne(User, {
-        where: [{ email: dto.email }, { phone: dto.phone }].filter(Boolean),
+        where: [{ email: normalizedEmail }, { phone: dto.phone }].filter(Boolean),
       });
 
       if (existing) {
         throw new ConflictException(
-          existing.email === dto.email
+          existing.email === normalizedEmail
             ? 'Email already exists'
             : 'Phone already exists',
         );
@@ -41,11 +44,11 @@ export class CustomerAuthService extends AuthBaseService {
 
       // Create user
       const user = manager.create(User, {
-        email: dto.email.toLowerCase(),
+        email: normalizedEmail,
         password: await PasswordUtil.hash(dto.password),
-        firstName: dto.firstName,
-        lastName: dto.lastName,
-        phone: dto.phone,
+        firstName: dto.firstName.trim(),
+        lastName: dto.lastName.trim(),
+        phone: dto.phone?.trim(),
         userType: UserType.CUSTOMER,
         emailVerified: false,
       });
@@ -62,7 +65,7 @@ export class CustomerAuthService extends AuthBaseService {
       // Generate tokens
       const tokens = this.tokenService.generateTokenPair({
         sub: user.id.toString(),
-        email: user.email,
+        email: user.email!,
         type: 'customer',
       });
 
@@ -111,7 +114,7 @@ export class CustomerAuthService extends AuthBaseService {
       .createQueryBuilder('user')
       .leftJoinAndSelect('user.customer', 'customer')
       .addSelect('user.password')
-      .where('user.email = :email', { email: email.toLowerCase() })
+      .where('user.email = :email', { email: email.toLowerCase().trim() })
       .andWhere('user.userType = :userType', { userType: UserType.CUSTOMER })
       .andWhere('user.deletedAt IS NULL')
       .getOne();
@@ -119,6 +122,11 @@ export class CustomerAuthService extends AuthBaseService {
     if (!user || !user.customer) {
       await this.handleFailedLogin(email);
       throw new UnauthorizedException('Invalid credentials');
+    }
+
+    // Check customer status
+    if (['suspended', 'blacklisted'].includes(user.customer.status)) {
+      throw new UnauthorizedException(`Your account is ${user.customer.status}. Please contact support`);
     }
 
     const isValid = await this.verifyPassword(password, user.password);
@@ -132,7 +140,7 @@ export class CustomerAuthService extends AuthBaseService {
 
     const tokens = this.tokenService.generateTokenPair({
       sub: user.id.toString(),
-      email: user.email,
+      email: user.email!,
       type: 'customer',
     });
 
@@ -164,5 +172,24 @@ export class CustomerAuthService extends AuthBaseService {
   ): Promise<CustomerAuthResponseDto> {
     // Implementation similar to password login
     throw new BadRequestException('OTP login not yet implemented');
+  }
+
+  async forgotPassword(email: string): Promise<{ message: string }> {
+    const resetToken = await this.generateResetToken(email);
+    
+    // TODO: Send email with reset link containing token
+    // await this.emailService.sendPasswordResetEmail(email, resetToken);
+    
+    return {
+      message: 'If the email exists, a password reset link has been sent',
+    };
+  }
+
+  async resetPassword(token: string, newPassword: string): Promise<{ message: string }> {
+    await this.resetPasswordWithToken(token, newPassword);
+    
+    return {
+      message: 'Password has been reset successfully. Please login with your new password.',
+    };
   }
 }

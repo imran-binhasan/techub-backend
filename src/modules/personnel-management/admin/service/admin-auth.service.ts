@@ -121,7 +121,7 @@ export class AdminAuthService extends AuthBaseService {
       .leftJoinAndSelect('user.admin', 'admin')
       .leftJoinAndSelect('admin.role', 'role')
       .leftJoinAndSelect('role.permissions', 'permissions')
-      .addSelect('user.password')
+      .addSelect(['user.password', 'user.accountLockedUntil'])
       .where('user.email = :email', { email: dto.email.toLowerCase() })
       .andWhere('user.userType = :userType', { userType: UserType.ADMIN })
       .andWhere('user.deletedAt IS NULL')
@@ -130,6 +130,13 @@ export class AdminAuthService extends AuthBaseService {
     if (!user || !user.admin) {
       await this.handleFailedLogin(dto.email);
       throw new UnauthorizedException('Invalid credentials');
+    }
+
+    // Check if account is locked by super-admin
+    if (user.accountLockedUntil && user.accountLockedUntil > new Date()) {
+      throw new UnauthorizedException(
+        'Your account has been locked by an administrator. Please contact support.',
+      );
     }
 
     const isValid = await this.verifyPassword(dto.password, user.password);
@@ -183,4 +190,9 @@ export class AdminAuthService extends AuthBaseService {
       userType: 'admin',
     };
   }
+
+  // Note: Password reset is intentionally NOT implemented for admins.
+  // Enterprise security best practice: Admins must contact super-admin
+  // or IT security team for password reset with identity verification.
+  // This prevents unauthorized access if admin email is compromised.
 }

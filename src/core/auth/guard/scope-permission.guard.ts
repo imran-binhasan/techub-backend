@@ -57,8 +57,8 @@ export class ScopePermissionGuard implements CanActivate {
       throw new UnauthorizedException('User authentication required');
     }
 
-    // Only admins have roleId - customers/vendors don't use RBAC
-    if (!user.roleId) {
+    // Only admins use RBAC - customers/vendors don't have roleId
+    if (user.type !== 'admin' || !user.roleId) {
       throw new ForbiddenException('This endpoint requires admin privileges');
     }
 

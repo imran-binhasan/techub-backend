@@ -1,5 +1,5 @@
 import { BaseEntity } from 'src/shared/entity/base.entity';
-import { Column, DeleteDateColumn, Entity, OneToOne } from 'typeorm';
+import { Column, DeleteDateColumn, Entity, OneToOne, Index } from 'typeorm';
 import { Admin } from '../../admin/entity/admin.entity';
 import { Customer } from '../../customer/entity/customer.entity';
 import { Vendor } from '../../vendor/entity/vendor.entity';
@@ -25,6 +25,7 @@ export class User extends BaseEntity {
     nullable: false,
     unique: true,
   })
+  @Index()
   email?: string;
 
   @Column({ name: 'email_verified', default: false })
@@ -40,6 +41,7 @@ export class User extends BaseEntity {
     nullable: true,
     unique: true,
   })
+  @Index()
   phone?: string;
 
   @Column({ name: 'image', type: 'varchar', length: 500, nullable: true })
@@ -54,8 +56,14 @@ export class User extends BaseEntity {
   @Column({ name: 'failed_login_attempts', type: 'int', default: 0 })
   failedLoginAttempts: number;
 
-  @Column({ name: 'role_id', type: 'int', nullable: true })
-  roleId?: number; // Only for admins who need RBAC
+  @Column({ name: 'reset_password_token', type: 'varchar', length: 255, nullable: true, select: false })
+  resetPasswordToken?: string;
+
+  @Column({ name: 'reset_password_expires', type: 'timestamptz', nullable: true, select: false })
+  resetPasswordExpires?: Date;
+
+  @Column({ name: 'account_locked_until', type: 'timestamptz', nullable: true })
+  accountLockedUntil?: Date;
 
   @OneToOne(() => Customer, (customer) => customer.user, { nullable: true })
   customer?: Customer;

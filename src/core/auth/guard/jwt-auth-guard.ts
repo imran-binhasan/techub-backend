@@ -53,6 +53,7 @@ export class JwtAuthGuard implements CanActivate {
       const user = await this.userRepository.findOne({
         where: { id: parseInt(payload.sub) },
         select: ['id', 'email', 'firstName', 'lastName', 'userType', 'deletedAt'],
+        relations: payload.type === 'admin' ? ['admin'] : [],
       });
 
       if (!user || user.deletedAt) {
@@ -66,8 +67,8 @@ export class JwtAuthGuard implements CanActivate {
         firstName: user.firstName,
         lastName: user.lastName,
         type: payload.type,
-        ...(payload.type === 'admin' && {
-          roleId: payload.roleId,
+        ...(payload.type === 'admin' && user.admin && {
+          roleId: user.admin.roleId,
           permissions: payload.permissions || [],
         }),
       };

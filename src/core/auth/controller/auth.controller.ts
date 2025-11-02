@@ -11,6 +11,8 @@ import { AdminRegisterDto } from 'src/modules/personnel-management/admin/dto/adm
 import { AdminLoginDto } from 'src/modules/personnel-management/admin/dto/admin-login.dto';
 import { TokenService } from '../service/token-service';
 import { RefreshTokenDto } from '../dto/refresh-token.dto';
+import { ForgotPasswordDto } from '../dto/forgot-password.dto';
+import { ResetPasswordDto } from '../dto/reset-password.dto';
 
 @Controller({ path: 'auth', version: '1' })
 export class AuthController {
@@ -43,6 +45,16 @@ export class AuthController {
     return this.customerOAuthService.facebookAuth(accessToken);
   }
 
+  @Post('customer/forgot-password')
+  async customerForgotPassword(@Body() dto: ForgotPasswordDto) {
+    return this.customerAuthService.forgotPassword(dto.email);
+  }
+
+  @Post('customer/reset-password')
+  async customerResetPassword(@Body() dto: ResetPasswordDto) {
+    return this.customerAuthService.resetPassword(dto.token, dto.password);
+  }
+
   // ========== VENDOR ==========
   @Post('vendor/register')
   registerVendor(@Body() dto: VendorRegisterDto) {
@@ -52,6 +64,16 @@ export class AuthController {
   @Post('vendor/login')
   loginVendor(@Body() dto: VendorLoginDto) {
     return this.vendorAuthService.login(dto);
+  }
+
+  @Post('vendor/forgot-password')
+  async vendorForgotPassword(@Body() dto: ForgotPasswordDto) {
+    return this.vendorAuthService.forgotPassword(dto.email);
+  }
+
+  @Post('vendor/reset-password')
+  async vendorResetPassword(@Body() dto: ResetPasswordDto) {
+    return this.vendorAuthService.resetPassword(dto.token, dto.password);
   }
 
   // ========== ADMIN ==========
@@ -64,6 +86,10 @@ export class AuthController {
   loginAdmin(@Body() dto: AdminLoginDto) {
     return this.adminAuthService.login(dto);
   }
+
+  // Note: Admin password reset is intentionally disabled for security.
+  // Admins must contact a super-admin for password reset to prevent
+  // unauthorized access via compromised email accounts.
 
   // ========== REFRESH TOKEN ==========
   @Post('refresh')

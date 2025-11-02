@@ -5,7 +5,9 @@ import { Customer } from '../entity/customer.entity';
 import { User, UserType } from '../../user/entity/user.entity';
 import { TokenService } from 'src/core/auth/service/token-service';
 import { ConfigService } from '@nestjs/config';
+import { PasswordUtil } from 'src/shared/utils/password.util';
 import axios from 'axios';
+import { randomBytes } from 'crypto';
 
 @Injectable()
 export class CustomerOAuthService {
@@ -73,6 +75,11 @@ export class CustomerOAuthService {
       if (!user) {
         // Create new user
         isNewUser = true;
+        
+        // Generate a random secure password for OAuth users (they won't use it)
+        const randomPassword = randomBytes(32).toString('hex');
+        const hashedPassword = await PasswordUtil.hash(randomPassword);
+        
         user = manager.create(User, {
           email: email.toLowerCase(),
           firstName,
@@ -80,7 +87,7 @@ export class CustomerOAuthService {
           image: picture,
           userType: UserType.CUSTOMER,
           emailVerified: true, // Social logins are pre-verified
-          password: '', // No password for OAuth users
+          password: hashedPassword, // Store hashed random password
         });
         await manager.save(user);
 
@@ -101,6 +108,16 @@ export class CustomerOAuthService {
         });
         await manager.save(customer);
         user.customer = customer;
+      } else {
+        // Existing user - verify they are a customer
+        if (user.userType !== UserType.CUSTOMER) {
+          throw new BadRequestException('This email is associated with a different account type');
+        }
+        
+        // Check if customer is suspended or blacklisted
+        if (['suspended', 'blacklisted'].includes(user.customer.status)) {
+          throw new UnauthorizedException(`Your account is ${user.customer.status}. Please contact support`);
+        }
       }
 
       // Generate tokens

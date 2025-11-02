@@ -26,6 +26,12 @@ export class VendorAuthService extends AuthBaseService {
 
   async register(dto: VendorRegisterDto): Promise<VendorAuthResponseDto> {
     return await this.dataSource.transaction(async (manager) => {
+      // Validate shop slug format (lowercase alphanumeric with hyphens)
+      const slugRegex = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+      if (!slugRegex.test(dto.shopSlug.toLowerCase())) {
+        throw new BadRequestException('Shop slug can only contain lowercase letters, numbers, and hyphens');
+      }
+
       // Check uniqueness
       const existing = await manager.findOne(User, {
         where: [
@@ -44,11 +50,16 @@ export class VendorAuthService extends AuthBaseService {
 
       // Check shop slug uniqueness
       const existingVendor = await manager.findOne(Vendor, {
-        where: { shopSlug: dto.shopSlug },
+        where: { shopSlug: dto.shopSlug.toLowerCase() },
       });
 
       if (existingVendor) {
         throw new ConflictException('Shop slug already exists');
+      }
+
+      // Validate business email if provided
+      if (dto.businessEmail && dto.businessEmail === dto.email) {
+        throw new BadRequestException('Business email should be different from personal email');
       }
 
       // Create user
@@ -201,5 +212,24 @@ export class VendorAuthService extends AuthBaseService {
   ): Promise<VendorAuthResponseDto> {
     // TODO: Implement OTP verification logic with SMS service
     throw new BadRequestException('OTP login not yet implemented');
+  }
+
+  async forgotPassword(email: string): Promise<{ message: string }> {
+    const resetToken = await this.generateResetToken(email);
+    
+    // TODO: Send email with reset link containing token
+    // await this.emailService.sendPasswordResetEmail(email, resetToken);
+    
+    return {
+      message: 'If the email exists, a password reset link has been sent',
+    };
+  }
+
+  async resetPassword(token: string, newPassword: string): Promise<{ message: string }> {
+    await this.resetPasswordWithToken(token, newPassword);
+    
+    return {
+      message: 'Password has been reset successfully. Please login with your new password.',
+    };
   }
 }
