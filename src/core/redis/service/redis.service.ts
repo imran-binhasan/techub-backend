@@ -287,6 +287,36 @@ export class RedisService {
     }
   }
 
+  // Increment operations
+  async incr(key: string): Promise<number> {
+    try {
+      return await this.redis.incr(key);
+    } catch (error) {
+      this.logger.error(`Failed to increment key ${key}:`, error);
+      return 0;
+    }
+  }
+
+  async decr(key: string): Promise<number> {
+    try {
+      return await this.redis.decr(key);
+    } catch (error) {
+      this.logger.error(`Failed to decrement key ${key}:`, error);
+      return 0;
+    }
+  }
+
+  // Set with expiry (convenience method)
+  async setWithExpiry(key: string, value: string, seconds: number): Promise<boolean> {
+    try {
+      await this.redis.setex(key, seconds, value);
+      return true;
+    } catch (error) {
+      this.logger.error(`Failed to set ${key} with expiry:`, error);
+      return false;
+    }
+  }
+
   // Get Redis client for advanced operations
   getClient(): Redis {
     return this.redis;

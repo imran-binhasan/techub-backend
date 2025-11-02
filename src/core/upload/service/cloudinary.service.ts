@@ -16,11 +16,14 @@ export class CloudinaryService {
     });
   }
 
-  private async uploadFile(
+  /**
+   * Upload file and return full response
+   */
+  async uploadFile(
     fileBuffer: Buffer,
     folder: string,
     fileName?: string | number,
-  ): Promise<string> {
+  ): Promise<UploadApiResponse> {
     try {
       const result = await new Promise<UploadApiResponse>((resolve, reject) => {
         const uploadStream = cloudinary.uploader.upload_stream(
@@ -42,12 +45,35 @@ export class CloudinaryService {
         );
         Readable.from(fileBuffer).pipe(uploadStream);
       });
-      return result.secure_url;
+      return result;
     } catch (error) {
       throw new InternalServerErrorException(
         `File upload failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
+  }
+
+  /**
+   * Upload image and return full response
+   */
+  async uploadImage(
+    fileBuffer: Buffer,
+    folder: string,
+    fileName?: string | number,
+  ): Promise<UploadApiResponse> {
+    return this.uploadFile(fileBuffer, folder, fileName);
+  }
+
+  /**
+   * Generate signed URL for private file access
+   */
+  getSignedUrl(publicId: string, expiresIn: number = 3600): string {
+    const timestamp = Math.floor(Date.now() / 1000) + expiresIn;
+    return cloudinary.url(publicId, {
+      sign_url: true,
+      type: 'authenticated',
+      expires_at: timestamp,
+    });
   }
 
   async deleteFile(publicId: string): Promise<void> {
@@ -65,7 +91,8 @@ export class CloudinaryService {
     folderPath: string,
     fileName: string | number,
   ): Promise<string> {
-    return this.uploadFile(file.buffer, folderPath, fileName);
+    const result = await this.uploadFile(file.buffer, folderPath, fileName);
+    return result.secure_url;
   }
 
   async uploadAdminImage(
