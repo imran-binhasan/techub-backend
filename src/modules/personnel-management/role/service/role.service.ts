@@ -20,7 +20,7 @@ export class RoleService {
     @InjectRepository(Permission)
     private readonly permissionRepository: Repository<Permission>,
     private readonly permissionCacheService: PermissionCacheService,
-  ) {}{}
+  ) {}
 
   // async createRole(
   //   resource: string,

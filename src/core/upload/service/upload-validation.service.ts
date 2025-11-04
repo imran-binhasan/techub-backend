@@ -31,9 +31,9 @@ export class UploadValidationService {
       throw new NoFileProvidedException();
     }
 
-    const allowedTypes = ALLOWED_MIME_TYPES[uploaderType][uploadType];
-    if (!allowedTypes.includes(file.mimetype)) {
-      throw new InvalidFileTypeException(file.mimetype, allowedTypes);
+    const allowedTypes = ALLOWED_MIME_TYPES[uploaderType][uploadType] as string[];
+    if (!allowedTypes || !allowedTypes.includes(file.mimetype)) {
+      throw new InvalidFileTypeException(file.mimetype, allowedTypes || []);
     }
   }
 
@@ -49,8 +49,8 @@ export class UploadValidationService {
       throw new NoFileProvidedException();
     }
 
-    const maxSize = FILE_SIZE_LIMITS[uploaderType][uploadType];
-    if (file.size > maxSize) {
+    const maxSize = FILE_SIZE_LIMITS[uploaderType][uploadType] as number;
+    if (maxSize > 0 && file.size > maxSize) {
       throw new FileTooLargeException(maxSize, file.size);
     }
   }

@@ -1,12 +1,12 @@
 // src/product/service/product.service.ts
 import {
-  BadRequestException,
   Injectable,
   NotFoundException,
   ConflictException,
+  BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, In, LessThan, MoreThan } from 'typeorm';
 import { Product } from '../entity/product.entity';
 import { ProductAttributeValue } from '../entity/product_attribute_value.entity';
 import { Category } from 'src/modules/product-management/category/entity/category.entity';
@@ -16,6 +16,25 @@ import { CreateProductDto } from '../dto/create-product.dto';
 import { UpdateProductDto } from '../dto/update-product.dto';
 import { ProductQueryDto } from '../dto/query-product.dto';
 import { PaginatedServiceResponse } from 'src/shared/interface/api-response.interface';
+import {
+  ProductStatus,
+  ProductCondition,
+  ProductVisibility,
+  DiscountType,
+} from '../enum/product.enum';
+import {
+  PRODUCT_VALIDATION,
+  PRODUCT_DEFAULTS,
+  STOCK_THRESHOLDS,
+  PRODUCT_ANALYTICS,
+} from '../constants/product.constants';
+import {
+  generateSlug,
+  generateUniqueSlugAsync,
+  generateSKU,
+  isValidSKU,
+  isValidSlug,
+} from '../utils/slug.util';
 
 @Injectable()
 export class ProductService {
@@ -40,11 +59,74 @@ export class ProductService {
     });
 
     if (existingProduct) {
-      throw new ConflictException('Product with this name already exists');
+      throw new ConflictException(`Product with name '${createProductDto.name}' already exists`);
+    }
+
+    // Generate or validate SKU
+    let sku = createProductDto.sku;
+    if (sku) {
+      // Validate provided SKU
+      if (!isValidSKU(sku)) {
+        throw new BadRequestException(`Invalid SKU format: ${sku}`);
+      }
+      // Check SKU uniqueness
+      const existingSKU = await this.productRepository.findOne({
+        where: { sku },
+        withDeleted: true,
+      });
+      if (existingSKU) {
+        throw new ConflictException(`Product with SKU '${sku}' already exists`);
+      }
+    } else {
+      // Auto-generate SKU
+      const categoryCode = createProductDto.categoryId
+        ? `CAT${createProductDto.categoryId}`
+        : 'PROD';
+      sku = generateSKU({
+        categoryCode,
+        productName: createProductDto.name,
+        randomSuffix: true,
+      });
+    }
+
+    // Generate or validate slug
+    let slug = createProductDto.slug;
+    if (slug) {
+      // Validate provided slug
+      if (!isValidSlug(slug)) {
+        throw new BadRequestException(`Invalid slug format: ${slug}. Must be lowercase with hyphens only`);
+      }
+      // Check slug uniqueness
+      const existingSlug = await this.productRepository.findOne({
+        where: { slug },
+        withDeleted: true,
+      });
+      if (existingSlug) {
+        throw new ConflictException(`Product with slug '${slug}' already exists`);
+      }
+    } else {
+      // Auto-generate unique slug from name
+      slug = await generateUniqueSlugAsync(
+        createProductDto.name,
+        async (checkSlug) => {
+          const existing = await this.productRepository.findOne({
+            where: { slug: checkSlug },
+            withDeleted: true,
+          });
+          return !!existing;
+        },
+      );
+    }
+
+    // Validate price
+    if (createProductDto.price < PRODUCT_VALIDATION.PRICE.MIN) {
+      throw new BadRequestException(
+        `Price cannot be negative. Got: ${createProductDto.price}`,
+      );
     }
 
     // Validate and fetch category
-    let category: Category | null = null;
+    let category: Category | undefined | null = null;
     if (createProductDto.categoryId) {
       category = await this.categoryRepository.findOne({
         where: { id: createProductDto.categoryId },
@@ -58,30 +140,49 @@ export class ProductService {
     }
 
     // Validate and fetch brand (optional)
-    let brand: Brand | null = null;
+    let brand: Brand | undefined | null = null;
     if (createProductDto.brandId) {
       brand = await this.brandRepository.findOne({
         where: { id: createProductDto.brandId },
       });
 
       if (!brand) {
-        throw new NotFoundException(
-          `Brand with ID ${createProductDto.brandId} not found`,
-        );
+        throw new NotFoundException(`Brand with ID ${createProductDto.brandId} not found`);
       }
     }
 
-    // Create product
+    // Create product with all fields
     const product = this.productRepository.create({
       name: createProductDto.name,
       description: createProductDto.description,
+      sku,
+      slug,
+      status: (createProductDto.status || PRODUCT_DEFAULTS.STATUS) as ProductStatus,
+      condition: (createProductDto.condition || PRODUCT_DEFAULTS.CONDITION) as ProductCondition,
+      visibility: (createProductDto.visibility || PRODUCT_DEFAULTS.VISIBILITY) as ProductVisibility,
       stock: createProductDto.stock,
       price: createProductDto.price,
-      ...(category && { category }),
-      ...(brand && { brand }),
+      compareAtPrice: createProductDto.compareAtPrice,
+      costPerItem: createProductDto.costPerItem,
+      discountType: (createProductDto.discountType || PRODUCT_DEFAULTS.DISCOUNT_TYPE) as DiscountType,
+      discountValue: createProductDto.discountValue || PRODUCT_DEFAULTS.DISCOUNT_VALUE,
+      metaTitle: createProductDto.metaTitle,
+      metaDescription: createProductDto.metaDescription,
+      keywords: createProductDto.keywords,
+      isFeatured: createProductDto.isFeatured || PRODUCT_DEFAULTS.IS_FEATURED,
+      isPublished: createProductDto.isPublished || PRODUCT_DEFAULTS.IS_PUBLISHED,
+      avgRating: PRODUCT_DEFAULTS.AVG_RATING,
+      reviewCount: PRODUCT_DEFAULTS.REVIEW_COUNT,
+      viewCount: PRODUCT_DEFAULTS.VIEW_COUNT,
+      salesCount: PRODUCT_DEFAULTS.SALES_COUNT,
+      category: category || undefined,
+      brand: brand || undefined,
+      categoryId: category?.id,
+      brandId: brand?.id,
+      vendorId: createProductDto.vendorId,
     });
 
-    const savedProduct = await this.productRepository.save(product) as Product;
+    const savedProduct = await this.productRepository.save(product);
 
     // Handle attribute values if provided
     if (
@@ -246,7 +347,7 @@ export class ProductService {
     }
 
     // Validate and fetch category if being updated
-    let category: Category | null = existingProduct.category;
+    let category: Category | undefined | null = existingProduct.category || null;
     if (updateProductDto.categoryId !== undefined) {
       if (updateProductDto.categoryId === null) {
         category = null;
@@ -264,7 +365,7 @@ export class ProductService {
     }
 
     // Validate and fetch brand if being updated
-    let brand: Brand | null = existingProduct.brand;
+    let brand: Brand | undefined | null = existingProduct.brand || null;
     if (updateProductDto.brandId !== undefined) {
       if (updateProductDto.brandId === null) {
         brand = null;
@@ -422,6 +523,132 @@ export class ProductService {
       })
       .orderBy('product.price', 'ASC')
       .getMany();
+  }
+
+  // Analytics and tracking methods
+  async incrementViewCount(id: number): Promise<void> {
+    await this.productRepository.increment({ id }, 'viewCount', 1);
+  }
+
+  async incrementSalesCount(id: number, quantity: number = 1): Promise<void> {
+    await this.productRepository.increment({ id }, 'salesCount', quantity);
+  }
+
+  // Featured, popular, and trending products
+  async getFeaturedProducts(limit: number = 10): Promise<Product[]> {
+    return this.productRepository.find({
+      where: {
+        isFeatured: true,
+        isPublished: true,
+        status: ProductStatus.ACTIVE,
+      },
+      relations: ['category', 'brand', 'images'],
+      order: { viewCount: 'DESC' },
+      take: limit,
+    });
+  }
+
+  async getPopularProducts(limit: number = 10): Promise<Product[]> {
+    return this.productRepository.find({
+      where: {
+        isPublished: true,
+        status: ProductStatus.ACTIVE,
+      },
+      relations: ['category', 'brand', 'images'],
+      order: { viewCount: 'DESC' },
+      take: limit,
+    });
+  }
+
+  async getTrendingProducts(limit: number = 10): Promise<Product[]> {
+    const daysAgo = new Date();
+    daysAgo.setDate(daysAgo.getDate() - PRODUCT_ANALYTICS.TRENDING_PERIOD_DAYS);
+
+    return this.productRepository
+      .createQueryBuilder('product')
+      .leftJoinAndSelect('product.category', 'category')
+      .leftJoinAndSelect('product.brand', 'brand')
+      .leftJoinAndSelect('product.images', 'images')
+      .where('product.isPublished = :isPublished', { isPublished: true })
+      .andWhere('product.status = :status', { status: ProductStatus.ACTIVE })
+      .andWhere('product.updatedAt >= :daysAgo', { daysAgo })
+      .orderBy('product.salesCount', 'DESC')
+      .addOrderBy('product.viewCount', 'DESC')
+      .take(limit)
+      .getMany();
+  }
+
+  async getRelatedProducts(productId: number, limit: number = 6): Promise<Product[]> {
+    const product = await this.findOne(productId);
+
+    return this.productRepository
+      .createQueryBuilder('product')
+      .leftJoinAndSelect('product.images', 'images')
+      .where('product.id != :productId', { productId })
+      .andWhere('product.categoryId = :categoryId', { categoryId: product.categoryId })
+      .andWhere('product.isPublished = :isPublished', { isPublished: true })
+      .andWhere('product.status = :status', { status: ProductStatus.ACTIVE })
+      .orderBy('product.avgRating', 'DESC')
+      .addOrderBy('product.viewCount', 'DESC')
+      .take(limit)
+      .getMany();
+  }
+
+  // Search and lookup methods
+  async searchProducts(searchTerm: string, limit: number = 20): Promise<Product[]> {
+    return this.productRepository
+      .createQueryBuilder('product')
+      .leftJoinAndSelect('product.category', 'category')
+      .leftJoinAndSelect('product.brand', 'brand')
+      .leftJoinAndSelect('product.images', 'images')
+      .where('product.isPublished = :isPublished', { isPublished: true })
+      .andWhere('product.status = :status', { status: ProductStatus.ACTIVE })
+      .andWhere(
+        '(product.name ILIKE :search OR product.description ILIKE :search OR product.sku ILIKE :search OR product.keywords::text ILIKE :search)',
+        { search: `%${searchTerm}%` },
+      )
+      .orderBy('product.avgRating', 'DESC')
+      .addOrderBy('product.viewCount', 'DESC')
+      .take(limit)
+      .getMany();
+  }
+
+  async findBySlug(slug: string): Promise<Product> {
+    const product = await this.productRepository.findOne({
+      where: { slug },
+      relations: [
+        'category',
+        'brand',
+        'images',
+        'attributeValues',
+        'attributeValues.attributeValue',
+        'attributeValues.attributeValue.attribute',
+      ],
+    });
+
+    if (!product) {
+      throw new NotFoundException(`Product with slug '${slug}' not found`);
+    }
+
+    // Increment view count asynchronously
+    this.incrementViewCount(product.id).catch(() => {
+      // Silently fail - view count is not critical
+    });
+
+    return product;
+  }
+
+  async findBySKU(sku: string): Promise<Product> {
+    const product = await this.productRepository.findOne({
+      where: { sku },
+      relations: ['category', 'brand', 'images'],
+    });
+
+    if (!product) {
+      throw new NotFoundException(`Product with SKU '${sku}' not found`);
+    }
+
+    return product;
   }
 
   // Private helper methods

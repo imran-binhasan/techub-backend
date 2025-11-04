@@ -1,43 +1,4 @@
-import {
-  IsString,
-  IsNumber,
-  IsOptional,
-  IsArray,
-  Min,
-} from 'class-validator';
-import { Type } from 'class-transformer';
+import { PartialType } from '@nestjs/swagger';
+import { CreateProductDto } from './create-product.dto';
 
-export class UpdateProductDto {
-  @IsOptional()
-  @IsString()
-  name?: string;
-
-  @IsOptional()
-  @IsString()
-  description?: string;
-
-  @IsOptional()
-  @IsNumber()
-  @Min(0)
-  @Type(() => Number)
-  stock?: number;
-
-  @IsOptional()
-  @IsNumber()
-  @Min(0)
-  @Type(() => Number)
-  price?: number;
-
-  @IsOptional()
-  @IsNumber()
-  categoryId?: number | null;
-
-  @IsOptional()
-  @IsNumber()
-  brandId?: number | null;
-
-  @IsOptional()
-  @IsArray()
-  @IsNumber({}, { each: true })
-  attributeValueIds?: number[];
-}
+export class UpdateProductDto extends PartialType(CreateProductDto) {}
