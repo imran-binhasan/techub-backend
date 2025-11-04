@@ -97,18 +97,19 @@ export const PRODUCT_CACHE_TTL = {
  * Cache Keys
  */
 export const PRODUCT_CACHE_KEYS = {
-  SINGLE: (id: number) => `product:${id}`,
-  LIST: (filters: string) => `products:list:${filters}`,
-  FEATURED: () => `products:featured`,
-  POPULAR: (limit: number) => `products:popular:${limit}`,
-  TRENDING: (limit: number) => `products:trending:${limit}`,
-  RELATED: (id: number) => `products:related:${id}`,
-  LOW_STOCK: (threshold: number) => `products:low-stock:${threshold}`,
-  BY_CATEGORY: (categoryId: number) => `products:category:${categoryId}`,
-  BY_BRAND: (brandId: number) => `products:brand:${brandId}`,
-  BY_VENDOR: (vendorId: number) => `products:vendor:${vendorId}`,
-  COUNT: () => `products:count`,
-  STATS: () => `products:stats`,
+  SINGLE: `product`,
+  LIST: `products:list`,
+  FEATURED: `products:featured`,
+  POPULAR: `products:popular`,
+  TRENDING: `products:trending`,
+  RELATED: `products:related`,
+  SEARCH: `products:search`,
+  LOW_STOCK: `products:low-stock`,
+  BY_CATEGORY: `products:category`,
+  BY_BRAND: `products:brand`,
+  BY_VENDOR: `products:vendor`,
+  COUNT: `products:count`,
+  STATS: `products:stats`,
 } as const;
 
 /**

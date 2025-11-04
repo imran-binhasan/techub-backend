@@ -4,6 +4,7 @@ import {
   NotFoundException,
   ConflictException,
   BadRequestException,
+  Logger,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In, LessThan, MoreThan } from 'typeorm';
@@ -27,6 +28,8 @@ import {
   PRODUCT_DEFAULTS,
   STOCK_THRESHOLDS,
   PRODUCT_ANALYTICS,
+  PRODUCT_CACHE_TTL,
+  PRODUCT_CACHE_KEYS,
 } from '../constants/product.constants';
 import {
   generateSlug,
@@ -35,9 +38,12 @@ import {
   isValidSKU,
   isValidSlug,
 } from '../utils/slug.util';
+import { CacheService } from 'src/core/cache/service/cache.service';
 
 @Injectable()
 export class ProductService {
+  private readonly logger = new Logger(ProductService.name);
+
   constructor(
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
@@ -49,6 +55,7 @@ export class ProductService {
     private readonly brandRepository: Repository<Brand>,
     @InjectRepository(AttributeValue)
     private readonly attributeValueRepository: Repository<AttributeValue>,
+    private readonly cacheService: CacheService,
   ) {}
 
   async create(createProductDto: CreateProductDto): Promise<Product> {
@@ -195,6 +202,9 @@ export class ProductService {
       );
     }
 
+    // Invalidate related caches
+    await this.invalidateProductCaches(savedProduct.id, savedProduct);
+
     return this.findOne(savedProduct.id);
   }
 
@@ -290,6 +300,16 @@ export class ProductService {
   }
 
   async findOne(id: number): Promise<Product> {
+    // Try to get from cache first
+    const cacheKey = `${PRODUCT_CACHE_KEYS.SINGLE}:${id}`;
+    const cached = await this.cacheService.get<Product>('products', cacheKey);
+
+    if (cached) {
+      this.logger.debug(`Cache HIT for product ${id}`);
+      return cached;
+    }
+
+    this.logger.debug(`Cache MISS for product ${id}`);
     const product = await this.productRepository.findOne({
       where: { id },
       relations: [
@@ -305,6 +325,11 @@ export class ProductService {
     if (!product) {
       throw new NotFoundException(`Product with ID ${id} not found`);
     }
+
+    // Cache the product
+    await this.cacheService.set('products', cacheKey, product, {
+      ttl: PRODUCT_CACHE_TTL.SINGLE_PRODUCT,
+    });
 
     return product;
   }
@@ -417,6 +442,15 @@ export class ProductService {
       await this.updateAttributeValues(id, updateProductDto.attributeValueIds);
     }
 
+    // Invalidate caches
+    const updatedProduct = await this.productRepository.findOne({ 
+      where: { id },
+      relations: ['category', 'brand']
+    });
+    if (updatedProduct) {
+      await this.invalidateProductCaches(id, updatedProduct);
+    }
+
     return this.findOne(id);
   }
 
@@ -440,6 +474,9 @@ export class ProductService {
 
     // Soft delete the product (this will cascade to attribute values due to onDelete: 'CASCADE')
     await this.productRepository.softDelete(id);
+
+    // Invalidate caches
+    await this.invalidateProductCaches(id, product);
   }
 
   async restore(id: number): Promise<Product> {
@@ -457,6 +494,10 @@ export class ProductService {
     }
 
     await this.productRepository.restore(id);
+    
+    // Invalidate caches
+    await this.invalidateProductCaches(id, product);
+    
     return this.findOne(id);
   }
 
@@ -536,7 +577,16 @@ export class ProductService {
 
   // Featured, popular, and trending products
   async getFeaturedProducts(limit: number = 10): Promise<Product[]> {
-    return this.productRepository.find({
+    const cacheKey = `${PRODUCT_CACHE_KEYS.FEATURED}:${limit}`;
+    const cached = await this.cacheService.get<Product[]>('products', cacheKey);
+
+    if (cached) {
+      this.logger.debug(`Cache HIT for featured products`);
+      return cached;
+    }
+
+    this.logger.debug(`Cache MISS for featured products`);
+    const products = await this.productRepository.find({
       where: {
         isFeatured: true,
         isPublished: true,
@@ -546,10 +596,26 @@ export class ProductService {
       order: { viewCount: 'DESC' },
       take: limit,
     });
+
+    // Cache for 30 minutes
+    await this.cacheService.set('products', cacheKey, products, {
+      ttl: PRODUCT_CACHE_TTL.FEATURED_PRODUCTS,
+    });
+
+    return products;
   }
 
   async getPopularProducts(limit: number = 10): Promise<Product[]> {
-    return this.productRepository.find({
+    const cacheKey = `${PRODUCT_CACHE_KEYS.POPULAR}:${limit}`;
+    const cached = await this.cacheService.get<Product[]>('products', cacheKey);
+
+    if (cached) {
+      this.logger.debug(`Cache HIT for popular products`);
+      return cached;
+    }
+
+    this.logger.debug(`Cache MISS for popular products`);
+    const products = await this.productRepository.find({
       where: {
         isPublished: true,
         status: ProductStatus.ACTIVE,
@@ -558,13 +624,29 @@ export class ProductService {
       order: { viewCount: 'DESC' },
       take: limit,
     });
+
+    // Cache for 30 minutes
+    await this.cacheService.set('products', cacheKey, products, {
+      ttl: PRODUCT_CACHE_TTL.POPULAR_PRODUCTS,
+    });
+
+    return products;
   }
 
   async getTrendingProducts(limit: number = 10): Promise<Product[]> {
+    const cacheKey = `${PRODUCT_CACHE_KEYS.TRENDING}:${limit}`;
+    const cached = await this.cacheService.get<Product[]>('products', cacheKey);
+
+    if (cached) {
+      this.logger.debug(`Cache HIT for trending products`);
+      return cached;
+    }
+
+    this.logger.debug(`Cache MISS for trending products`);
     const daysAgo = new Date();
     daysAgo.setDate(daysAgo.getDate() - PRODUCT_ANALYTICS.TRENDING_PERIOD_DAYS);
 
-    return this.productRepository
+    const products = await this.productRepository
       .createQueryBuilder('product')
       .leftJoinAndSelect('product.category', 'category')
       .leftJoinAndSelect('product.brand', 'brand')
@@ -576,6 +658,13 @@ export class ProductService {
       .addOrderBy('product.viewCount', 'DESC')
       .take(limit)
       .getMany();
+
+    // Cache for 30 minutes
+    await this.cacheService.set('products', cacheKey, products, {
+      ttl: PRODUCT_CACHE_TTL.POPULAR_PRODUCTS,
+    });
+
+    return products;
   }
 
   async getRelatedProducts(productId: number, limit: number = 6): Promise<Product[]> {
@@ -693,6 +782,105 @@ export class ProductService {
     // Add new attribute values if provided
     if (attributeValueIds && attributeValueIds.length > 0) {
       await this.handleAttributeValues(productId, attributeValueIds);
+    }
+  }
+
+  /**
+   * Invalidate all caches related to a product
+   * This includes: single product, featured, popular, trending, category, brand lists
+   */
+  private async invalidateProductCaches(
+    productId: number,
+    product: Product,
+  ): Promise<void> {
+    try {
+      // Invalidate single product cache
+      const singleKey = `${PRODUCT_CACHE_KEYS.SINGLE}:${productId}`;
+      await this.cacheService.del('products', singleKey);
+      this.logger.debug(`Invalidated cache for product ${productId}`);
+
+      // Invalidate featured products cache if product is featured
+      if (product.isFeatured) {
+        await this.cacheService.deleteByPattern(
+          'products',
+          `${PRODUCT_CACHE_KEYS.FEATURED}:*`,
+        );
+        this.logger.debug(`Invalidated featured products cache`);
+      }
+
+      // Invalidate popular products cache
+      await this.cacheService.deleteByPattern(
+        'products',
+        `${PRODUCT_CACHE_KEYS.POPULAR}:*`,
+      );
+      this.logger.debug(`Invalidated popular products cache`);
+
+      // Invalidate trending products cache
+      await this.cacheService.deleteByPattern(
+        'products',
+        `${PRODUCT_CACHE_KEYS.TRENDING}:*`,
+      );
+      this.logger.debug(`Invalidated trending products cache`);
+
+      // Invalidate category-based caches if product has category
+      if (product.categoryId) {
+        await this.cacheService.deleteByPattern(
+          'products',
+          `category:${product.categoryId}:*`,
+        );
+        this.logger.debug(`Invalidated category ${product.categoryId} cache`);
+      }
+
+      // Invalidate brand-based caches if product has brand
+      if (product.brandId) {
+        await this.cacheService.deleteByPattern(
+          'products',
+          `brand:${product.brandId}:*`,
+        );
+        this.logger.debug(`Invalidated brand ${product.brandId} cache`);
+      }
+
+      // Invalidate search results cache (all search queries)
+      await this.cacheService.deleteByPattern(
+        'products',
+        `${PRODUCT_CACHE_KEYS.SEARCH}:*`,
+      );
+      this.logger.debug(`Invalidated search cache`);
+
+      // Invalidate slug and SKU caches
+      if (product.slug) {
+        await this.cacheService.del('products', `slug:${product.slug}`);
+      }
+      if (product.sku) {
+        await this.cacheService.del('products', `sku:${product.sku}`);
+      }
+    } catch (error) {
+      this.logger.error(`Failed to invalidate caches for product ${productId}`, error);
+      // Don't throw - cache invalidation failures shouldn't break the operation
+    }
+  }
+
+  /**
+   * Warm up cache for frequently accessed products
+   */
+  async warmUpCache(): Promise<void> {
+    this.logger.log('Starting cache warm-up...');
+
+    try {
+      // Warm up featured products
+      await this.getFeaturedProducts(10);
+      await this.getFeaturedProducts(20);
+
+      // Warm up popular products
+      await this.getPopularProducts(10);
+      await this.getPopularProducts(20);
+
+      // Warm up trending products
+      await this.getTrendingProducts(10);
+
+      this.logger.log('Cache warm-up completed successfully');
+    } catch (error) {
+      this.logger.error('Cache warm-up failed', error);
     }
   }
 }

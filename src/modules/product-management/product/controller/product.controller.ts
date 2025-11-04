@@ -481,4 +481,22 @@ export class ProductController {
       data: result,
     };
   }
+
+  // Cache management endpoint
+  @ApiOperation({ 
+    summary: 'Warm up product cache',
+    description: 'Pre-loads frequently accessed products into cache (featured, popular, trending). Requires manage:product permission.'
+  })
+  @ApiResponse({ status: 200, description: 'Cache warmed up successfully' })
+  @ApiBearerAuth()
+  @RequireResource('product', 'manage')
+  @Post('cache/warm-up')
+  @HttpCode(HttpStatus.OK)
+  async warmUpCache() {
+    await this.productService.warmUpCache();
+    return {
+      success: true,
+      message: 'Product cache warmed up successfully',
+    };
+  }
 }
