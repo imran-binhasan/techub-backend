@@ -80,7 +80,7 @@ export class CustomerAuthService extends AuthBaseService {
         },
         user: {
           id: customer.id,
-          email: user.email,
+          email: user.email || '',
           firstName: user.firstName,
           lastName: user.lastName,
           phone: user.phone,
@@ -155,7 +155,7 @@ export class CustomerAuthService extends AuthBaseService {
       },
       user: {
         id: user.customer.id,
-        email: user.email,
+        email: user.email || '',
         firstName: user.firstName,
         lastName: user.lastName,
         phone: user.phone,

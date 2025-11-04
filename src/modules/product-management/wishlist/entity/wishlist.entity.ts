@@ -17,6 +17,4 @@ export class Wishlist extends BaseEntity {
   })
   product: Product;
 
-  @DeleteDateColumn({ type: 'timestamptz' })
-  deletedAt: Date;
 }

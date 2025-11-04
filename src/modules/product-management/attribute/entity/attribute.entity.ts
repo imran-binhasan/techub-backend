@@ -30,6 +30,4 @@ export class Attribute extends BaseEntity {
   })
   values: AttributeValue[];
 
-  @DeleteDateColumn({ type: 'timestamptz' })
-  deletedAt: Date;
 }

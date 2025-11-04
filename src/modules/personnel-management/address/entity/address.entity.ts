@@ -47,7 +47,4 @@ export class Address extends BaseEntity {
     onDelete: 'CASCADE',
   })
   customer: Customer;
-
-  @DeleteDateColumn({ name: 'deleted_at', type: 'timestamptz' })
-  deletedAt?: Date;
 }

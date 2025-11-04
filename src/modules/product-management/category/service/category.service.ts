@@ -170,7 +170,7 @@ export class CategoryService {
     }
 
     // Verify new parent category exists if provided
-    let parentCategory: Category | null = existingCategory.parent;
+    let parentCategory: Category | null = existingCategory.parent || null;
     if (updateCategoryDto.parentId !== undefined) {
       if (updateCategoryDto.parentId === null) {
         parentCategory = null;
@@ -196,12 +196,12 @@ export class CategoryService {
     }
 
     // Prepare update data
-    const updateData: Partial<Category> = {
+    const updateData: any = {
       ...(updateCategoryDto.name && { name: updateCategoryDto.name }),
       ...(updateCategoryDto.parentId !== undefined &&
         parentCategory !== null && { parent: parentCategory }),
       ...(updateCategoryDto.parentId !== undefined &&
-        parentCategory === null && { parent: undefined }),
+        parentCategory === null && { parent: null }),
     };
 
     // Update category

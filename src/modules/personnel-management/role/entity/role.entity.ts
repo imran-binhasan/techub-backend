@@ -25,9 +25,6 @@ export class Role extends BaseEntity {
   @Column({ name: 'is_system_role', type: 'boolean', default: false })
   isSystemRole: boolean; // Prevents deletion of critical roles
 
-  @OneToMany(() => User, (user) => user.role)
-  users: User[];
-
   @ManyToMany(() => Permission, (permission) => permission.roles, {
     eager: false,
   })

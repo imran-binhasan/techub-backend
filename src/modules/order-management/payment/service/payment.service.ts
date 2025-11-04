@@ -91,7 +91,7 @@ export class PaymentService {
     await this.orderService.updatePaymentStatus(
       payment.orderId,
       status as any,
-      payment.gateway,
+      payment.gateway as any,
       payment.gatewayTransactionId,
     );
 
@@ -131,7 +131,7 @@ export class PaymentService {
     originalPaymentId: number,
     refundAmount: number,
     reason?: string,
-    gatewayRefundId?: number,
+    gatewayRefundId?: string,
   ): Promise<Payment> {
     const originalPayment = await this.paymentRepository.findOne({
       where: { id: originalPaymentId },
@@ -153,7 +153,7 @@ export class PaymentService {
     // Check existing refunds
     const existingRefunds = await this.paymentRepository.find({
       where: { 
-        parentPaymentId: originalPaymentId,
+        parentPaymentId: originalPaymentId.toString(),
         status: PaymentStatus.COMPLETED,
       },
     });
@@ -164,16 +164,16 @@ export class PaymentService {
     }
 
     const refundPayment = this.paymentRepository.create({
-      orderId: originalPayment.orderId,
+      order: originalPayment.order,
       gateway: originalPayment.gateway,
       amount: refundAmount,
       currency: originalPayment.currency,
       status: PaymentStatus.PENDING,
       type: PaymentType.REFUND,
-      parentPaymentId: originalPaymentId,
+      parentPaymentId: originalPaymentId.toString(),
       gatewayTransactionId: gatewayRefundId || `refund_${Date.now()}`,
       failureReason: reason,
-    });
+    } as any);
 
     const savedRefund = await this.paymentRepository.save(refundPayment);
 

@@ -21,6 +21,4 @@ export class ProductImage extends BaseEntity {
   })
   product: Product;
 
-  @DeleteDateColumn({ type: 'timestamptz' })
-  deletedAt: Date;
 }

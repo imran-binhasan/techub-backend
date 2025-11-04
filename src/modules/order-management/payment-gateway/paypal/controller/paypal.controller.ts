@@ -44,7 +44,7 @@ export class PayPalController {
   }
 
   @Post('orders/:id/authorize')
-  async authorizeOrder(@Param('id') orderId: number) {
+  async authorizeOrder(@Param('id') orderId: string) {
     const result = await this.paypalService.authorizeOrder(orderId);
     return {
       success: true,
@@ -54,7 +54,7 @@ export class PayPalController {
   }
 
   @Get('orders/:id')
-  async getOrder(@Param('id') orderId: number) {
+  async getOrder(@Param('id') orderId: string) {
     const result = await this.paypalService.getOrder(orderId);
     return {
       success: true,

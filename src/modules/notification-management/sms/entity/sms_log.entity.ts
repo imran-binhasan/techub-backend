@@ -32,9 +32,6 @@ export class SmsLog extends BaseEntity {
 
   @Column({ type: 'text', nullable: true })
   errorMessage: string | null;
-
-  @DeleteDateColumn()
-  deletedAt:Date | never
 }
 
 // src/sms/dto/send-sms.dto.ts

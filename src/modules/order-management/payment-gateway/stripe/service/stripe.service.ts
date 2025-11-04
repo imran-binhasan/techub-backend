@@ -263,7 +263,7 @@ export class StripeService {
   async listPaymentMethods(customerId: number): Promise<Stripe.PaymentMethod[]> {
     try {
       const paymentMethods = await this.stripe.paymentMethods.list({
-        customer: customerId,
+        customer: customerId.toString(),
         type: 'card',
       });
 

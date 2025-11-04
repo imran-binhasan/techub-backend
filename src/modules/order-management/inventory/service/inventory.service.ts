@@ -343,14 +343,14 @@ export class InventoryService {
     newStock?: number,
   ): Promise<void> {
     const transaction = this.transactionRepository.create({
-      inventory,
+      inventory: inventory,
       type: data.type,
       quantity: data.quantity,
       previousStock: previousStock ?? inventory.currentStock,
       newStock: newStock ?? inventory.currentStock,
       reason: data.reason,
       referenceId: data.referenceId,
-    });
+    } as any);
 
     await this.transactionRepository.save(transaction);
   }

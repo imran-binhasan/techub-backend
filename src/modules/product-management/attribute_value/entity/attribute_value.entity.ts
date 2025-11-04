@@ -16,6 +16,4 @@ export class AttributeValue extends BaseEntity {
   @OneToMany(() => ProductAttributeValue, (pav) => pav.attributeValue)
   productAttributeValues: ProductAttributeValue[];
 
-  @DeleteDateColumn({ type: 'timestamptz' })
-  deletedAt: Date;
 }

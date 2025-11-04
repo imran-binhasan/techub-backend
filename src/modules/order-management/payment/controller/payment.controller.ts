@@ -111,7 +111,7 @@ export class PaymentController {
     data: Payment;
   }> {
     const refund = await this.paymentService.createRefund(
-      paymentId,
+      parseInt(paymentId),
       refundData.amount,
       refundData.reason,
       refundData.gatewayRefundId,

@@ -26,7 +26,4 @@ export class CustomerNotification extends BaseEntity {
   )
   @JoinColumn({ name: 'notificationId' })
   notification: Notification;
-
-  @DeleteDateColumn()
-  deletedAt: Date | null;
 }

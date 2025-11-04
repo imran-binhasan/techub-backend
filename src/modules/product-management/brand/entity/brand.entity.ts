@@ -16,6 +16,4 @@ export class Brand extends BaseEntity {
   @OneToMany(() => Product, (product) => product.brand)
   products: Product[];
 
-  @DeleteDateColumn({ type: 'timestamptz' })
-  deletedAt: Date;
 }

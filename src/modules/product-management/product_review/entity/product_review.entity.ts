@@ -20,6 +20,4 @@ export class ProductReview extends BaseEntity {
   @JoinColumn({ name: 'productId' })
   product: Product;
 
-  @DeleteDateColumn({ type: 'timestamptz' })
-  deletedAt: Date;
 }

@@ -19,7 +19,4 @@ export class Notification extends BaseEntity {
     },
   )
   customerNotifications: CustomerNotification[];
-
-    @DeleteDateColumn()
-    deletedAt: Date | null;
 }
