@@ -1,11 +1,5 @@
 import { BaseEntity } from 'src/shared/entity/base.entity';
-import {
-  Column,
-  Entity,
-  OneToOne,
-  JoinColumn,
-  ManyToOne,
-} from 'typeorm';
+import { Column, Entity, OneToOne, JoinColumn, ManyToOne } from 'typeorm';
 import { User } from '../../user/entity/user.entity';
 import { Role } from '../../role/entity/role.entity';
 

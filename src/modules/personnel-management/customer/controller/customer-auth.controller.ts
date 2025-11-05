@@ -1,10 +1,10 @@
-import { Body, Controller, Post } from "@nestjs/common";
-import { CustomerAuthService } from "../service/customer-auth.service";
-import { CustomerRegisterDto } from "../dto/customer-register.dto";
-import { CustomerLoginDto } from "../dto/customer-login.dto";
-import { CustomerAuthResponseDto } from "../dto/customer-auth-response.dto";
-import { Public } from "src/core/auth/decorator/auth.decorator";
-import { ApiOperation, ApiResponse } from "@nestjs/swagger";
+import { Body, Controller, Post } from '@nestjs/common';
+import { CustomerAuthService } from '../service/customer-auth.service';
+import { CustomerRegisterDto } from '../dto/customer-register.dto';
+import { CustomerLoginDto } from '../dto/customer-login.dto';
+import { CustomerAuthResponseDto } from '../dto/customer-auth-response.dto';
+import { Public } from 'src/core/auth/decorator/auth.decorator';
+import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 
 @Controller({ path: 'auth/customer', version: '1' })
 export class CustomerAuthController {
@@ -13,8 +13,8 @@ export class CustomerAuthController {
   @Post('register')
   @Public()
   @ApiOperation({ summary: 'Register new customer account' })
-  @ApiResponse({ 
-    status: 201, 
+  @ApiResponse({
+    status: 201,
     description: 'Customer registered successfully',
     schema: {
       properties: {
@@ -52,7 +52,7 @@ export class CustomerAuthController {
   @Post('login')
   @Public()
   @ApiOperation({ summary: 'Customer login' })
-  @ApiResponse({ 
+  @ApiResponse({
     status: 200,
     description: 'Customer logged in successfully',
     schema: {
@@ -82,9 +82,7 @@ export class CustomerAuthController {
       },
     },
   })
-  async login(
-    @Body() dto: CustomerLoginDto,
-  ): Promise<CustomerAuthResponseDto> {
+  async login(@Body() dto: CustomerLoginDto): Promise<CustomerAuthResponseDto> {
     return this.customerAuthService.login(dto);
   }
 }

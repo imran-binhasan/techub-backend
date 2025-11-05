@@ -1,7 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import sharp from 'sharp';
 import { ImageCategory, ImageVariant } from '../enum/upload.enum';
-import { IMAGE_VARIANTS, IMAGE_DIMENSION_LIMITS } from '../constants/upload.constants';
+import {
+  IMAGE_VARIANTS,
+  IMAGE_DIMENSION_LIMITS,
+} from '../constants/upload.constants';
 import { ImageVariantDto } from '../dto/upload-response.dto';
 
 /**
@@ -111,7 +114,7 @@ export class ImageOptimizationService {
         width: metadata.width || 1200,
         height: metadata.height || 1200,
         quality,
-        format: format as 'jpeg' | 'png' | 'webp',
+        format: format,
         fit: 'inside',
       };
 
@@ -158,8 +161,8 @@ export class ImageOptimizationService {
   async compressImage(buffer: Buffer, quality: number = 85): Promise<Buffer> {
     try {
       const metadata = await this.getMetadata(buffer);
-      
-      let pipeline = sharp(buffer);
+
+      const pipeline = sharp(buffer);
 
       if (metadata.format === 'jpeg') {
         return pipeline.jpeg({ quality, progressive: true }).toBuffer();

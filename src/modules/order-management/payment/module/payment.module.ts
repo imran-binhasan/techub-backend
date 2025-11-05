@@ -12,7 +12,7 @@ import { OrderModule } from '../../order/module/order.module';
     TypeOrmModule.forFeature([Payment]),
     forwardRef(() => OrderModule),
     EventEmitterModule.forRoot(),
-    AuthModule
+    AuthModule,
   ],
   controllers: [PaymentController],
   providers: [PaymentService],

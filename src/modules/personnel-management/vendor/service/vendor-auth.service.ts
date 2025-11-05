@@ -1,4 +1,10 @@
-import { Injectable, ConflictException, BadRequestException, UnauthorizedException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  BadRequestException,
+  UnauthorizedException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { Vendor, VendorStatus } from '../entity/vendor.entity';
@@ -29,15 +35,14 @@ export class VendorAuthService extends AuthBaseService {
       // Validate shop slug format (lowercase alphanumeric with hyphens)
       const slugRegex = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
       if (!slugRegex.test(dto.shopSlug.toLowerCase())) {
-        throw new BadRequestException('Shop slug can only contain lowercase letters, numbers, and hyphens');
+        throw new BadRequestException(
+          'Shop slug can only contain lowercase letters, numbers, and hyphens',
+        );
       }
 
       // Check uniqueness
       const existing = await manager.findOne(User, {
-        where: [
-          { email: dto.email },
-          { phone: dto.phone },
-        ].filter(Boolean),
+        where: [{ email: dto.email }, { phone: dto.phone }].filter(Boolean),
       });
 
       if (existing) {
@@ -59,7 +64,9 @@ export class VendorAuthService extends AuthBaseService {
 
       // Validate business email if provided
       if (dto.businessEmail && dto.businessEmail === dto.email) {
-        throw new BadRequestException('Business email should be different from personal email');
+        throw new BadRequestException(
+          'Business email should be different from personal email',
+        );
       }
 
       // Create user
@@ -83,7 +90,7 @@ export class VendorAuthService extends AuthBaseService {
         businessEmail: dto.businessEmail,
         businessPhone: dto.businessPhone,
         status: VendorStatus.PENDING_VERIFICATION,
-        commissionRate: 15.00, // Default platform commission
+        commissionRate: 15.0, // Default platform commission
       });
       await manager.save(vendor);
 
@@ -114,7 +121,9 @@ export class VendorAuthService extends AuthBaseService {
           status: vendor.status,
           commissionRate: parseFloat(vendor.commissionRate.toString()),
           totalSales: parseFloat(vendor.totalSales.toString()),
-          averageRating: vendor.averageRating ? parseFloat(vendor.averageRating.toString()) : undefined,
+          averageRating: vendor.averageRating
+            ? parseFloat(vendor.averageRating.toString())
+            : undefined,
         },
         userType: 'vendor',
       };
@@ -134,7 +143,9 @@ export class VendorAuthService extends AuthBaseService {
       return this.loginWithPassword((dto.email || dto.phone)!, dto.password);
     }
 
-    throw new BadRequestException('Invalid login method. Provide email/phone with password or phone with OTP');
+    throw new BadRequestException(
+      'Invalid login method. Provide email/phone with password or phone with OTP',
+    );
   }
 
   private async loginWithPassword(
@@ -148,9 +159,12 @@ export class VendorAuthService extends AuthBaseService {
       .createQueryBuilder('user')
       .leftJoinAndSelect('user.vendor', 'vendor')
       .addSelect('user.password')
-      .where(isEmail ? 'user.email = :emailOrPhone' : 'user.phone = :emailOrPhone', {
-        emailOrPhone: isEmail ? emailOrPhone.toLowerCase() : emailOrPhone,
-      })
+      .where(
+        isEmail ? 'user.email = :emailOrPhone' : 'user.phone = :emailOrPhone',
+        {
+          emailOrPhone: isEmail ? emailOrPhone.toLowerCase() : emailOrPhone,
+        },
+      )
       .andWhere('user.userType = :userType', { userType: UserType.VENDOR })
       .andWhere('user.deletedAt IS NULL')
       .getOne();
@@ -161,8 +175,12 @@ export class VendorAuthService extends AuthBaseService {
     }
 
     // Check if vendor is suspended or banned
-    if ([VendorStatus.SUSPENDED, VendorStatus.BANNED].includes(user.vendor.status)) {
-      throw new UnauthorizedException(`Account is ${user.vendor.status}. Please contact support`);
+    if (
+      [VendorStatus.SUSPENDED, VendorStatus.BANNED].includes(user.vendor.status)
+    ) {
+      throw new UnauthorizedException(
+        `Account is ${user.vendor.status}. Please contact support`,
+      );
     }
 
     const isValid = await this.verifyPassword(password, user.password);
@@ -200,7 +218,9 @@ export class VendorAuthService extends AuthBaseService {
         status: user.vendor.status,
         commissionRate: parseFloat(user.vendor.commissionRate.toString()),
         totalSales: parseFloat(user.vendor.totalSales.toString()),
-        averageRating: user.vendor.averageRating ? parseFloat(user.vendor.averageRating.toString()) : undefined,
+        averageRating: user.vendor.averageRating
+          ? parseFloat(user.vendor.averageRating.toString())
+          : undefined,
       },
       userType: 'vendor',
     };
@@ -216,20 +236,24 @@ export class VendorAuthService extends AuthBaseService {
 
   async forgotPassword(email: string): Promise<{ message: string }> {
     const resetToken = await this.generateResetToken(email);
-    
+
     // TODO: Send email with reset link containing token
     // await this.emailService.sendPasswordResetEmail(email, resetToken);
-    
+
     return {
       message: 'If the email exists, a password reset link has been sent',
     };
   }
 
-  async resetPassword(token: string, newPassword: string): Promise<{ message: string }> {
+  async resetPassword(
+    token: string,
+    newPassword: string,
+  ): Promise<{ message: string }> {
     await this.resetPasswordWithToken(token, newPassword);
-    
+
     return {
-      message: 'Password has been reset successfully. Please login with your new password.',
+      message:
+        'Password has been reset successfully. Please login with your new password.',
     };
   }
 }

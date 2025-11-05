@@ -1,4 +1,9 @@
-import { Injectable, UnauthorizedException, BadRequestException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from 'src/modules/personnel-management/user/entity/user.entity';
@@ -7,11 +12,10 @@ import { PasswordUtil } from 'src/shared/utils/password.util';
 import { TokenService } from './token-service';
 import { randomBytes } from 'crypto';
 
-
 @Injectable()
 export abstract class AuthBaseService {
   protected readonly MAX_LOGIN_ATTEMPTS = 10;
-  protected readonly LOCKOUT_DURATION = 1500; 
+  protected readonly LOCKOUT_DURATION = 1500;
 
   constructor(
     @InjectRepository(User)
@@ -20,11 +24,10 @@ export abstract class AuthBaseService {
     protected redisService: RedisService,
   ) {}
 
-
   protected async checkAccountLockout(email: string): Promise<void> {
     const lockoutKey = `lockout:${email}`;
     const ttl = await this.redisService.ttl(lockoutKey);
-    
+
     if (ttl > 0) {
       throw new UnauthorizedException(
         `Account locked. Try again in ${Math.ceil(ttl / 60)} minutes`,
@@ -51,7 +54,10 @@ export abstract class AuthBaseService {
     await this.redisService.del(`attempts:${email}`);
   }
 
-  protected async storeRefreshToken(userId: number, token: string): Promise<void> {
+  protected async storeRefreshToken(
+    userId: number,
+    token: string,
+  ): Promise<void> {
     const ttl = 7 * 24 * 60 * 60; // 7 days
     await this.redisService.set(`refresh:${userId}`, token, { ttl });
   }
@@ -83,7 +89,9 @@ export abstract class AuthBaseService {
 
     if (!user) {
       // Don't reveal if user exists or not for security
-      throw new NotFoundException('If the email exists, a reset link will be sent');
+      throw new NotFoundException(
+        'If the email exists, a reset link will be sent',
+      );
     }
 
     // Generate cryptographically secure token
@@ -100,11 +108,7 @@ export abstract class AuthBaseService {
     });
 
     // Store in Redis for fast validation (1 hour TTL)
-    await this.redisService.set(
-      `reset:${user.id}`,
-      hashedToken,
-      { ttl: 3600 }
-    );
+    await this.redisService.set(`reset:${user.id}`, hashedToken, { ttl: 3600 });
 
     return resetToken; // Return plain token to send via email
   }
@@ -128,7 +132,12 @@ export abstract class AuthBaseService {
     // Find user with valid reset token
     const user = await this.userRepository
       .createQueryBuilder('user')
-      .addSelect(['user.resetPasswordToken', 'user.resetPasswordExpires', 'user.password', 'user.email'])
+      .addSelect([
+        'user.resetPasswordToken',
+        'user.resetPasswordExpires',
+        'user.password',
+        'user.email',
+      ])
       .where('user.resetPasswordExpires > :now', { now: new Date() })
       .andWhere('user.deletedAt IS NULL')
       .getMany(); // Get all valid tokens, we'll verify in code
@@ -154,9 +163,14 @@ export abstract class AuthBaseService {
     }
 
     // Ensure new password is different from old one
-    const isSamePassword = await PasswordUtil.compare(newPassword, matchedUser.password);
+    const isSamePassword = await PasswordUtil.compare(
+      newPassword,
+      matchedUser.password,
+    );
     if (isSamePassword) {
-      throw new BadRequestException('New password must be different from the current password');
+      throw new BadRequestException(
+        'New password must be different from the current password',
+      );
     }
 
     // Hash new password and clear reset token

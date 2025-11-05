@@ -52,14 +52,7 @@ export class AddressService {
   async findAll(
     query: AddressQueryDto,
   ): Promise<PaginatedServiceResponse<Address>> {
-    const {
-      page = 1,
-      limit = 10,
-      search,
-      customerId,
-      type,
-      isDefault,
-    } = query;
+    const { page = 1, limit = 10, search, customerId, type, isDefault } = query;
 
     // Validate pagination parameters
     if (page < 1 || limit < 1 || limit > 100) {
@@ -102,7 +95,6 @@ export class AddressService {
     if (type) {
       queryBuilder.andWhere('address.type = :type', { type });
     }
-
 
     if (isDefault !== undefined) {
       queryBuilder.andWhere('address.isDefault = :isDefault', { isDefault });

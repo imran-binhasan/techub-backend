@@ -1,4 +1,3 @@
-
 import { BaseEntity } from 'src/shared/entity/base.entity';
 import { Column, DeleteDateColumn, Entity, OneToMany } from 'typeorm';
 import { AttributeValue } from '../../attribute_value/entity/attribute_value.entity';
@@ -29,5 +28,4 @@ export class Attribute extends BaseEntity {
     onDelete: 'CASCADE',
   })
   values: AttributeValue[];
-
 }

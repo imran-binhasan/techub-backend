@@ -66,7 +66,7 @@ export class PayPalController {
   @Post('captures/:id/refund')
   async refundCapture(
     @Param('id') captureId: string,
-    @Body() refundData: Omit<PayPalRefundDto, 'captureId'>
+    @Body() refundData: Omit<PayPalRefundDto, 'captureId'>,
   ) {
     const result = await this.paypalService.refundCapture({
       ...refundData,
@@ -164,18 +164,24 @@ export class PayPalController {
   async handleReturn(@Query() query: any, @Res() res: Response) {
     try {
       console.log('PayPal return callback:', query);
-      
+
       const { token, PayerID } = query;
-      
+
       if (token && PayerID) {
         // Payment was successful, redirect to success page
-        return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/payment/success?token=${token}&payerId=${PayerID}`);
+        return res.redirect(
+          `${process.env.FRONTEND_URL || 'http://localhost:3000'}/payment/success?token=${token}&payerId=${PayerID}`,
+        );
       }
 
-      return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/payment/error`);
+      return res.redirect(
+        `${process.env.FRONTEND_URL || 'http://localhost:3000'}/payment/error`,
+      );
     } catch (error) {
       console.error('Error in PayPal return handler:', error);
-      return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/payment/error`);
+      return res.redirect(
+        `${process.env.FRONTEND_URL || 'http://localhost:3000'}/payment/error`,
+      );
     }
   }
 
@@ -183,7 +189,9 @@ export class PayPalController {
   @Get('cancel')
   async handleCancel(@Query() query: any, @Res() res: Response) {
     console.log('PayPal cancel callback:', query);
-    
-    return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/payment/cancelled?token=${query.token}`);
+
+    return res.redirect(
+      `${process.env.FRONTEND_URL || 'http://localhost:3000'}/payment/cancelled?token=${query.token}`,
+    );
   }
 }

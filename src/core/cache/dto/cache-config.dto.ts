@@ -1,4 +1,12 @@
-import { IsNumber, IsOptional, IsString, IsArray, IsEnum, Min, Max } from 'class-validator';
+import {
+  IsNumber,
+  IsOptional,
+  IsString,
+  IsArray,
+  IsEnum,
+  Min,
+  Max,
+} from 'class-validator';
 import { CacheStrategy, CachePriority } from '../enum/cache.enum';
 
 /**

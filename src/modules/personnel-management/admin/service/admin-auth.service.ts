@@ -1,4 +1,10 @@
-import { Injectable, ConflictException, UnauthorizedException, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  UnauthorizedException,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { Admin } from '../entity/admin.entity';
@@ -31,10 +37,7 @@ export class AdminAuthService extends AuthBaseService {
     return await this.dataSource.transaction(async (manager) => {
       // Check uniqueness
       const existing = await manager.findOne(User, {
-        where: [
-          { email: dto.email },
-          { phone: dto.phone },
-        ].filter(Boolean),
+        where: [{ email: dto.email }, { phone: dto.phone }].filter(Boolean),
       });
 
       if (existing) {
@@ -76,7 +79,9 @@ export class AdminAuthService extends AuthBaseService {
       });
       await manager.save(admin);
 
-      const permissions = role.permissions.map((p) => `${p.action}:${p.resource}`);
+      const permissions = role.permissions.map(
+        (p) => `${p.action}:${p.resource}`,
+      );
 
       // Generate tokens
       const tokens = this.tokenService.generateTokenPair({

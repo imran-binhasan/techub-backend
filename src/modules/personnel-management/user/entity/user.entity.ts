@@ -47,7 +47,7 @@ export class User extends BaseEntity {
   @Column({ name: 'image', type: 'varchar', length: 500, nullable: true })
   image?: string;
 
-  @Column({ name:'user_type', type: 'enum', enum: UserType })
+  @Column({ name: 'user_type', type: 'enum', enum: UserType })
   userType: UserType;
 
   @Column({ name: 'last_login_at', type: 'timestamptz', nullable: true })
@@ -56,10 +56,21 @@ export class User extends BaseEntity {
   @Column({ name: 'failed_login_attempts', type: 'int', default: 0 })
   failedLoginAttempts: number;
 
-  @Column({ name: 'reset_password_token', type: 'varchar', length: 255, nullable: true, select: false })
+  @Column({
+    name: 'reset_password_token',
+    type: 'varchar',
+    length: 255,
+    nullable: true,
+    select: false,
+  })
   resetPasswordToken?: string;
 
-  @Column({ name: 'reset_password_expires', type: 'timestamptz', nullable: true, select: false })
+  @Column({
+    name: 'reset_password_expires',
+    type: 'timestamptz',
+    nullable: true,
+    select: false,
+  })
   resetPasswordExpires?: Date;
 
   @Column({ name: 'account_locked_until', type: 'timestamptz', nullable: true })

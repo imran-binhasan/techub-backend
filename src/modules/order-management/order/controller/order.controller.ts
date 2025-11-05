@@ -12,23 +12,31 @@ import {
   HttpStatus,
   HttpCode,
 } from '@nestjs/common';
-import { 
-  ApiTags, 
-  ApiOperation, 
-  ApiResponse, 
-  ApiBearerAuth, 
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
   ApiQuery,
   ApiParam,
   ApiBody,
 } from '@nestjs/swagger';
 import type { Request } from 'express';
 import { OrderService } from '../service/order.service';
-import { CreateOrderDto, UpdateOrderDto, QueryOrderDto, OrderResponse } from '../dto';
+import {
+  CreateOrderDto,
+  UpdateOrderDto,
+  QueryOrderDto,
+  OrderResponse,
+} from '../dto';
 import { JwtAuthGuard } from '../../../../core/auth/guard/jwt-auth-guard';
-import { AdminOnly, Auth } from '../../../../core/auth/decorator/auth.decorator';
-import { 
-  OrderStatus, 
-  PaymentStatus, 
+import {
+  AdminOnly,
+  Auth,
+} from '../../../../core/auth/decorator/auth.decorator';
+import {
+  OrderStatus,
+  PaymentStatus,
   PaymentMethod,
   ShippingStatus,
   ReturnStatus,
@@ -44,22 +52,23 @@ export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
   @Post()
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Create a new order',
-    description: 'Create a new order with order items, addresses, and payment details. Order number is auto-generated. Stock is automatically reduced upon order creation.',
+    description:
+      'Create a new order with order items, addresses, and payment details. Order number is auto-generated. Stock is automatically reduced upon order creation.',
   })
   @ApiBody({ type: CreateOrderDto })
-  @ApiResponse({ 
-    status: 201, 
+  @ApiResponse({
+    status: 201,
     description: 'Order created successfully',
     type: OrderResponse,
   })
-  @ApiResponse({ 
-    status: 400, 
+  @ApiResponse({
+    status: 400,
     description: 'Bad Request - Invalid order data or insufficient stock',
   })
-  @ApiResponse({ 
-    status: 404, 
+  @ApiResponse({
+    status: 404,
     description: 'Customer, Product, or Address not found',
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
@@ -77,121 +86,122 @@ export class OrderController {
 
   @Get()
   @AdminOnly()
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Get all orders with filtering and pagination',
-    description: 'Retrieve all orders with advanced filtering options. Admin only. Results are cached for 1 hour.',
+    description:
+      'Retrieve all orders with advanced filtering options. Admin only. Results are cached for 1 hour.',
   })
-  @ApiQuery({ 
-    name: 'page', 
-    required: false, 
+  @ApiQuery({
+    name: 'page',
+    required: false,
     type: Number,
     description: 'Page number (default: 1)',
     example: 1,
   })
-  @ApiQuery({ 
-    name: 'limit', 
-    required: false, 
+  @ApiQuery({
+    name: 'limit',
+    required: false,
     type: Number,
     description: 'Items per page (default: 10, max: 100)',
     example: 10,
   })
-  @ApiQuery({ 
-    name: 'search', 
-    required: false, 
+  @ApiQuery({
+    name: 'search',
+    required: false,
     type: String,
     description: 'Search by order number, customer name, or email',
     example: 'ORD-20240115',
   })
-  @ApiQuery({ 
-    name: 'customerId', 
-    required: false, 
+  @ApiQuery({
+    name: 'customerId',
+    required: false,
     type: Number,
     description: 'Filter by customer ID',
     example: 1,
   })
-  @ApiQuery({ 
-    name: 'status', 
-    required: false, 
+  @ApiQuery({
+    name: 'status',
+    required: false,
     enum: OrderStatus,
     description: 'Filter by order status',
     example: OrderStatus.PROCESSING,
   })
-  @ApiQuery({ 
-    name: 'paymentStatus', 
-    required: false, 
+  @ApiQuery({
+    name: 'paymentStatus',
+    required: false,
     enum: PaymentStatus,
     description: 'Filter by payment status',
     example: PaymentStatus.PAID,
   })
-  @ApiQuery({ 
-    name: 'shippingStatus', 
-    required: false, 
+  @ApiQuery({
+    name: 'shippingStatus',
+    required: false,
     enum: ShippingStatus,
     description: 'Filter by shipping status',
     example: ShippingStatus.SHIPPED,
   })
-  @ApiQuery({ 
-    name: 'returnStatus', 
-    required: false, 
+  @ApiQuery({
+    name: 'returnStatus',
+    required: false,
     enum: ReturnStatus,
     description: 'Filter by return status',
   })
-  @ApiQuery({ 
-    name: 'orderSource', 
-    required: false, 
+  @ApiQuery({
+    name: 'orderSource',
+    required: false,
     enum: OrderSource,
     description: 'Filter by order source',
   })
-  @ApiQuery({ 
-    name: 'priority', 
-    required: false, 
+  @ApiQuery({
+    name: 'priority',
+    required: false,
     enum: OrderPriority,
     description: 'Filter by order priority',
   })
-  @ApiQuery({ 
-    name: 'orderDateFrom', 
-    required: false, 
+  @ApiQuery({
+    name: 'orderDateFrom',
+    required: false,
     type: Date,
     description: 'Filter orders from this date',
     example: '2024-01-01',
   })
-  @ApiQuery({ 
-    name: 'orderDateTo', 
-    required: false, 
+  @ApiQuery({
+    name: 'orderDateTo',
+    required: false,
     type: Date,
     description: 'Filter orders until this date',
     example: '2024-12-31',
   })
-  @ApiQuery({ 
-    name: 'minTotal', 
-    required: false, 
+  @ApiQuery({
+    name: 'minTotal',
+    required: false,
     type: Number,
     description: 'Minimum order total amount',
     example: 100,
   })
-  @ApiQuery({ 
-    name: 'maxTotal', 
-    required: false, 
+  @ApiQuery({
+    name: 'maxTotal',
+    required: false,
     type: Number,
     description: 'Maximum order total amount',
     example: 1000,
   })
-  @ApiQuery({ 
-    name: 'sortBy', 
-    required: false, 
+  @ApiQuery({
+    name: 'sortBy',
+    required: false,
     type: String,
     description: 'Sort by field (default: createdAt)',
     example: 'createdAt',
   })
-  @ApiQuery({ 
-    name: 'sortOrder', 
-    required: false, 
+  @ApiQuery({
+    name: 'sortOrder',
+    required: false,
     enum: ['ASC', 'DESC'],
     description: 'Sort order (default: DESC)',
     example: 'DESC',
   })
-  @ApiResponse({ 
-    status: 200, 
+  @ApiResponse({
+    status: 200,
     description: 'Orders retrieved successfully',
     type: OrderResponse,
     isArray: true,
@@ -222,32 +232,33 @@ export class OrderController {
   }
 
   @Get('customer/:customerId')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Get orders by customer ID',
-    description: 'Retrieve all orders for a specific customer with pagination. Cached for 30 minutes. Admin only.',
+    description:
+      'Retrieve all orders for a specific customer with pagination. Cached for 30 minutes. Admin only.',
   })
-  @ApiParam({ 
-    name: 'customerId', 
+  @ApiParam({
+    name: 'customerId',
     type: 'number',
     description: 'Customer ID',
     example: 1,
   })
-  @ApiQuery({ 
-    name: 'page', 
-    required: false, 
+  @ApiQuery({
+    name: 'page',
+    required: false,
     type: Number,
     description: 'Page number (default: 1)',
     example: 1,
   })
-  @ApiQuery({ 
-    name: 'limit', 
-    required: false, 
+  @ApiQuery({
+    name: 'limit',
+    required: false,
     type: Number,
     description: 'Items per page (default: 10)',
     example: 10,
   })
-  @ApiResponse({ 
-    status: 200, 
+  @ApiResponse({
+    status: 200,
     description: 'Customer orders retrieved successfully',
     type: OrderResponse,
     isArray: true,
@@ -268,7 +279,11 @@ export class OrderController {
       totalPages: number;
     };
   }> {
-    const result = await this.orderService.getOrdersByCustomerId(customerId, page, limit);
+    const result = await this.orderService.getOrdersByCustomerId(
+      customerId,
+      page,
+      limit,
+    );
     return {
       message: 'Customer orders retrieved successfully',
       data: result.data,
@@ -282,26 +297,27 @@ export class OrderController {
   }
 
   @Get('my-orders')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Get current customer orders',
-    description: 'Retrieve all orders for the authenticated customer with pagination. Cached for 30 minutes.',
+    description:
+      'Retrieve all orders for the authenticated customer with pagination. Cached for 30 minutes.',
   })
-  @ApiQuery({ 
-    name: 'page', 
-    required: false, 
+  @ApiQuery({
+    name: 'page',
+    required: false,
     type: Number,
     description: 'Page number (default: 1)',
     example: 1,
   })
-  @ApiQuery({ 
-    name: 'limit', 
-    required: false, 
+  @ApiQuery({
+    name: 'limit',
+    required: false,
     type: Number,
     description: 'Items per page (default: 10)',
     example: 10,
   })
-  @ApiResponse({ 
-    status: 200, 
+  @ApiResponse({
+    status: 200,
     description: 'Orders retrieved successfully',
     type: OrderResponse,
     isArray: true,
@@ -322,7 +338,11 @@ export class OrderController {
     };
   }> {
     const customerId = (req as any).user.sub; // Assuming JWT payload has sub field with customer ID
-    const result = await this.orderService.getOrdersByCustomerId(customerId, page, limit);
+    const result = await this.orderService.getOrdersByCustomerId(
+      customerId,
+      page,
+      limit,
+    );
     return {
       message: 'Your orders retrieved successfully',
       data: result.data,
@@ -336,18 +356,19 @@ export class OrderController {
   }
 
   @Get(':id')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Get order by ID',
-    description: 'Retrieve a single order by its ID. Returns detailed order information including items, addresses, and customer details. Cached for 30 minutes.',
+    description:
+      'Retrieve a single order by its ID. Returns detailed order information including items, addresses, and customer details. Cached for 30 minutes.',
   })
-  @ApiParam({ 
-    name: 'id', 
+  @ApiParam({
+    name: 'id',
     type: 'number',
     description: 'Order ID',
     example: 1,
   })
-  @ApiResponse({ 
-    status: 200, 
+  @ApiResponse({
+    status: 200,
     description: 'Order retrieved successfully',
     type: OrderResponse,
   })
@@ -366,25 +387,26 @@ export class OrderController {
 
   @Patch(':id')
   @AdminOnly()
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Update order',
-    description: 'Update order details including status, payment, shipping information. Status transitions are validated. Invalidates all related caches. Admin only.',
+    description:
+      'Update order details including status, payment, shipping information. Status transitions are validated. Invalidates all related caches. Admin only.',
   })
-  @ApiParam({ 
-    name: 'id', 
+  @ApiParam({
+    name: 'id',
     type: 'number',
     description: 'Order ID',
     example: 1,
   })
   @ApiBody({ type: UpdateOrderDto })
-  @ApiResponse({ 
-    status: 200, 
+  @ApiResponse({
+    status: 200,
     description: 'Order updated successfully',
     type: OrderResponse,
   })
   @ApiResponse({ status: 404, description: 'Order not found' })
-  @ApiResponse({ 
-    status: 400, 
+  @ApiResponse({
+    status: 400,
     description: 'Invalid status transition or invalid data',
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
@@ -404,25 +426,27 @@ export class OrderController {
   }
 
   @Patch(':id/cancel')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Cancel order',
-    description: 'Cancel an order. Orders can only be cancelled within 24 hours of creation and if status is PENDING, CONFIRMED, or PROCESSING. Invalidates all related caches.',
+    description:
+      'Cancel an order. Orders can only be cancelled within 24 hours of creation and if status is PENDING, CONFIRMED, or PROCESSING. Invalidates all related caches.',
   })
-  @ApiParam({ 
-    name: 'id', 
+  @ApiParam({
+    name: 'id',
     type: 'number',
     description: 'Order ID',
     example: 1,
   })
-  @ApiResponse({ 
-    status: 200, 
+  @ApiResponse({
+    status: 200,
     description: 'Order cancelled successfully',
     type: OrderResponse,
   })
   @ApiResponse({ status: 404, description: 'Order not found' })
-  @ApiResponse({ 
-    status: 400, 
-    description: 'Cannot cancel order - either outside cancellation window (24h) or invalid status',
+  @ApiResponse({
+    status: 400,
+    description:
+      'Cannot cancel order - either outside cancellation window (24h) or invalid status',
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   async cancel(@Param('id') id: number): Promise<{
@@ -438,12 +462,13 @@ export class OrderController {
 
   @Patch(':id/payment-status')
   @AdminOnly()
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Update payment status',
-    description: 'Update the payment status of an order. When status is set to PAID, the order status will automatically be updated to PROCESSING.',
+    description:
+      'Update the payment status of an order. When status is set to PAID, the order status will automatically be updated to PROCESSING.',
   })
-  @ApiParam({ 
-    name: 'id', 
+  @ApiParam({
+    name: 'id',
     type: 'number',
     description: 'Order ID',
     example: 1,
@@ -473,21 +498,28 @@ export class OrderController {
       required: ['paymentStatus'],
     },
   })
-  @ApiResponse({ 
-    status: 200, 
+  @ApiResponse({
+    status: 200,
     description: 'Payment status updated successfully',
     schema: {
       type: 'object',
       properties: {
-        message: { type: 'string', example: 'Payment status updated successfully' },
+        message: {
+          type: 'string',
+          example: 'Payment status updated successfully',
+        },
       },
     },
   })
   @ApiResponse({ status: 404, description: 'Order not found' })
-  @ApiResponse({ status: 400, description: 'Invalid payment status transition' })
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid payment status transition',
+  })
   async updatePaymentStatus(
     @Param('id') id: number,
-    @Body() updateData: {
+    @Body()
+    updateData: {
       paymentStatus: PaymentStatus;
       paymentMethod?: PaymentMethod;
       transactionId?: string;

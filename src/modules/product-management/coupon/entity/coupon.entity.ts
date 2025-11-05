@@ -47,5 +47,4 @@ export class Coupon extends BaseEntity {
 
   @Column({ type: 'boolean', default: true })
   isActive: boolean;
-
 }

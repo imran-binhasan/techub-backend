@@ -1,4 +1,9 @@
-import { Injectable, ConflictException, BadRequestException, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  BadRequestException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { Customer } from '../entity/customer.entity';
@@ -28,10 +33,12 @@ export class CustomerAuthService extends AuthBaseService {
     return await this.dataSource.transaction(async (manager) => {
       // Normalize email
       const normalizedEmail = dto.email.toLowerCase().trim();
-      
+
       // Check uniqueness
       const existing = await manager.findOne(User, {
-        where: [{ email: normalizedEmail }, { phone: dto.phone }].filter(Boolean),
+        where: [{ email: normalizedEmail }, { phone: dto.phone }].filter(
+          Boolean,
+        ),
       });
 
       if (existing) {
@@ -126,7 +133,9 @@ export class CustomerAuthService extends AuthBaseService {
 
     // Check customer status
     if (['suspended', 'blacklisted'].includes(user.customer.status)) {
-      throw new UnauthorizedException(`Your account is ${user.customer.status}. Please contact support`);
+      throw new UnauthorizedException(
+        `Your account is ${user.customer.status}. Please contact support`,
+      );
     }
 
     const isValid = await this.verifyPassword(password, user.password);
@@ -176,20 +185,24 @@ export class CustomerAuthService extends AuthBaseService {
 
   async forgotPassword(email: string): Promise<{ message: string }> {
     const resetToken = await this.generateResetToken(email);
-    
+
     // TODO: Send email with reset link containing token
     // await this.emailService.sendPasswordResetEmail(email, resetToken);
-    
+
     return {
       message: 'If the email exists, a password reset link has been sent',
     };
   }
 
-  async resetPassword(token: string, newPassword: string): Promise<{ message: string }> {
+  async resetPassword(
+    token: string,
+    newPassword: string,
+  ): Promise<{ message: string }> {
     await this.resetPasswordWithToken(token, newPassword);
-    
+
     return {
-      message: 'Password has been reset successfully. Please login with your new password.',
+      message:
+        'Password has been reset successfully. Please login with your new password.',
     };
   }
 }

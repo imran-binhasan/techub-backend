@@ -1,12 +1,15 @@
-
-import { Injectable, NotFoundException, BadRequestException, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+  Logger,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
 import { SmsLog } from '../entity/sms_log.entity';
 import { SmsProvider } from '../provider/sms.provider';
 import { SendSmsDto } from '../dto/send-sms.dto';
 import { SmsQueryDto } from '../dto/query-sms.dto';
-
 
 @Injectable()
 export class SmsService {
@@ -22,7 +25,7 @@ export class SmsService {
     try {
       // Validate phone number
       const formattedRecipient = this.formatPhoneNumber(sendSmsDto.recipient);
-      
+
       if (!this.isValidPhoneNumber(formattedRecipient)) {
         throw new BadRequestException('Invalid phone number format');
       }
@@ -60,7 +63,7 @@ export class SmsService {
       return await this.smsLogRepository.save(smsLog);
     } catch (error) {
       this.logger.error(`Error in SMS service: ${error.message}`, error.stack);
-      
+
       // Create failed log entry if it doesn't exist
       const failedSmsLog = this.smsLogRepository.create({
         recipient: sendSmsDto.recipient,
@@ -98,7 +101,7 @@ export class SmsService {
     if (search) {
       queryBuilder.andWhere(
         '(sms.recipient ILIKE :search OR sms.message ILIKE :search OR sms.reference ILIKE :search)',
-        { search: `%${search}%` }
+        { search: `%${search}%` },
       );
     }
 
@@ -127,7 +130,13 @@ export class SmsService {
     }
 
     // Sorting
-    const allowedSortFields = ['createdAt', 'updatedAt', 'status', 'recipient', 'deliveredAt'];
+    const allowedSortFields = [
+      'createdAt',
+      'updatedAt',
+      'status',
+      'recipient',
+      'deliveredAt',
+    ];
     if (allowedSortFields.includes(sortBy)) {
       queryBuilder.orderBy(`sms.${sortBy}`, sortOrder);
     } else {
@@ -170,7 +179,7 @@ export class SmsService {
 
   async restore(id: number): Promise<SmsLog> {
     const result = await this.smsLogRepository.restore(id);
-    
+
     if (result.affected === 0) {
       throw new NotFoundException('SMS log not found or not deleted');
     }
@@ -178,7 +187,10 @@ export class SmsService {
     return await this.findOne(id);
   }
 
-  async updateDeliveryStatus(messageId: string, status: string): Promise<SmsLog> {
+  async updateDeliveryStatus(
+    messageId: string,
+    status: string,
+  ): Promise<SmsLog> {
     const smsLog = await this.smsLogRepository.findOne({
       where: { messageId },
     });
@@ -199,7 +211,7 @@ export class SmsService {
 
   async resendSms(id: number): Promise<SmsLog> {
     const originalSms = await this.findOne(id);
-    
+
     if (originalSms.status === 'sent' && originalSms.delivered) {
       throw new BadRequestException('SMS was already successfully delivered');
     }
@@ -232,10 +244,18 @@ export class SmsService {
     deliveryRate: number;
     successRate: number;
   }> {
-    const total = await this.smsLogRepository.count({ where: { deletedAt: IsNull() } });
-    const sent = await this.smsLogRepository.count({ where: { status: 'sent', deletedAt: IsNull() } });
-    const delivered = await this.smsLogRepository.count({ where: { delivered: true, deletedAt: IsNull() } });
-    const failed = await this.smsLogRepository.count({ where: { status: 'failed', deletedAt: IsNull() } });
+    const total = await this.smsLogRepository.count({
+      where: { deletedAt: IsNull() },
+    });
+    const sent = await this.smsLogRepository.count({
+      where: { status: 'sent', deletedAt: IsNull() },
+    });
+    const delivered = await this.smsLogRepository.count({
+      where: { delivered: true, deletedAt: IsNull() },
+    });
+    const failed = await this.smsLogRepository.count({
+      where: { status: 'failed', deletedAt: IsNull() },
+    });
 
     const deliveryRate = sent > 0 ? (delivered / sent) * 100 : 0;
     const successRate = total > 0 ? (sent / total) * 100 : 0;
@@ -254,11 +274,13 @@ export class SmsService {
     return await this.findAll({ ...query, status: 'failed' });
   }
 
-  async validatePhone(phone: string): Promise<{ isValid: boolean; formatted: string; message: string }> {
+  async validatePhone(
+    phone: string,
+  ): Promise<{ isValid: boolean; formatted: string; message: string }> {
     try {
       const formatted = this.formatPhoneNumber(phone);
       const isValid = this.isValidPhoneNumber(formatted);
-      
+
       return {
         isValid,
         formatted,

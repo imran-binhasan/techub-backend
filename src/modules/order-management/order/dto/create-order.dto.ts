@@ -74,7 +74,11 @@ export class CreateOrderDto {
     description: 'Array of order items',
     type: [OrderItemDto],
     example: [
-      { productId: 1, quantity: 2, selectedAttributes: { size: 'L', color: 'Blue' } },
+      {
+        productId: 1,
+        quantity: 2,
+        selectedAttributes: { size: 'L', color: 'Blue' },
+      },
       { productId: 2, quantity: 1 },
     ],
   })
@@ -201,7 +205,7 @@ export class CreateOrderDto {
 
   @ApiPropertyOptional({
     description: 'Tax amount (calculated)',
-    example: 5.50,
+    example: 5.5,
     minimum: 0,
   })
   @IsOptional()
@@ -225,7 +229,7 @@ export class CreateOrderDto {
 
   @ApiPropertyOptional({
     description: 'Shipping cost',
-    example: 10.00,
+    example: 10.0,
     minimum: 0,
   })
   @IsOptional()
@@ -276,13 +280,19 @@ export class OrderItemResponse {
   @ApiProperty({ description: 'Product ID', example: 1 })
   productId: number;
 
-  @ApiProperty({ description: 'Product name at time of order', example: 'Premium Headphones' })
+  @ApiProperty({
+    description: 'Product name at time of order',
+    example: 'Premium Headphones',
+  })
   productName: string;
 
   @ApiPropertyOptional({ description: 'Product SKU', example: 'HDPH-001' })
   productSku?: string;
 
-  @ApiPropertyOptional({ description: 'Product image URL', example: 'https://...' })
+  @ApiPropertyOptional({
+    description: 'Product image URL',
+    example: 'https://...',
+  })
   productImage?: string;
 
   @ApiProperty({ description: 'Quantity ordered', example: 2 })
@@ -294,7 +304,10 @@ export class OrderItemResponse {
   @ApiProperty({ description: 'Total price for this item', example: 199.98 })
   totalPrice: number;
 
-  @ApiPropertyOptional({ description: 'Selected product attributes', example: { size: 'L', color: 'Blue' } })
+  @ApiPropertyOptional({
+    description: 'Selected product attributes',
+    example: { size: 'L', color: 'Blue' },
+  })
   productAttributes?: Record<string, any>;
 }
 
@@ -316,26 +329,32 @@ export class OrderResponse {
   @ApiProperty({ description: 'Order ID', example: 1 })
   id: number;
 
-  @ApiProperty({ description: 'Unique order number', example: 'ORD-20251104-0001' })
+  @ApiProperty({
+    description: 'Unique order number',
+    example: 'ORD-20251104-0001',
+  })
   orderNumber: string;
 
   @ApiProperty({ description: 'Customer ID', example: 1 })
   customerId: number;
 
-  @ApiPropertyOptional({ description: 'Customer summary', type: CustomerSummary })
+  @ApiPropertyOptional({
+    description: 'Customer summary',
+    type: CustomerSummary,
+  })
   customer?: CustomerSummary;
 
   // Amounts
   @ApiProperty({ description: 'Subtotal amount', example: 199.98 })
   subtotal: number;
 
-  @ApiProperty({ description: 'Tax amount', example: 20.00 })
+  @ApiProperty({ description: 'Tax amount', example: 20.0 })
   taxAmount: number;
 
-  @ApiProperty({ description: 'Shipping amount', example: 10.00 })
+  @ApiProperty({ description: 'Shipping amount', example: 10.0 })
   shippingAmount: number;
 
-  @ApiProperty({ description: 'Discount amount', example: 0.00 })
+  @ApiProperty({ description: 'Discount amount', example: 0.0 })
   discountAmount: number;
 
   @ApiProperty({ description: 'Total order amount', example: 229.98 })
@@ -345,56 +364,110 @@ export class OrderResponse {
   currency: Currency;
 
   // Status fields
-  @ApiProperty({ description: 'Order status', example: OrderStatus.PROCESSING, enum: OrderStatus })
+  @ApiProperty({
+    description: 'Order status',
+    example: OrderStatus.PROCESSING,
+    enum: OrderStatus,
+  })
   status: OrderStatus;
 
-  @ApiProperty({ description: 'Payment status', example: PaymentStatus.PAID, enum: PaymentStatus })
+  @ApiProperty({
+    description: 'Payment status',
+    example: PaymentStatus.PAID,
+    enum: PaymentStatus,
+  })
   paymentStatus: PaymentStatus;
 
-  @ApiPropertyOptional({ description: 'Payment method', example: PaymentMethod.CREDIT_CARD, enum: PaymentMethod })
+  @ApiPropertyOptional({
+    description: 'Payment method',
+    example: PaymentMethod.CREDIT_CARD,
+    enum: PaymentMethod,
+  })
   paymentMethod?: PaymentMethod;
 
-  @ApiPropertyOptional({ description: 'Payment transaction ID', example: 'pi_1234567890' })
+  @ApiPropertyOptional({
+    description: 'Payment transaction ID',
+    example: 'pi_1234567890',
+  })
   paymentTransactionId?: string;
 
-  @ApiPropertyOptional({ description: 'Shipping status', example: ShippingStatus.SHIPPED, enum: ShippingStatus })
+  @ApiPropertyOptional({
+    description: 'Shipping status',
+    example: ShippingStatus.SHIPPED,
+    enum: ShippingStatus,
+  })
   shippingStatus?: ShippingStatus;
 
-  @ApiPropertyOptional({ description: 'Shipping method', example: ShippingMethod.STANDARD, enum: ShippingMethod })
+  @ApiPropertyOptional({
+    description: 'Shipping method',
+    example: ShippingMethod.STANDARD,
+    enum: ShippingMethod,
+  })
   shippingMethod?: ShippingMethod;
 
-  @ApiPropertyOptional({ description: 'Tracking number', example: 'DHL1234567890' })
+  @ApiPropertyOptional({
+    description: 'Tracking number',
+    example: 'DHL1234567890',
+  })
   trackingNumber?: string;
 
   @ApiPropertyOptional({ description: 'Shipping carrier', example: 'DHL' })
   shippingCarrier?: string;
 
-  @ApiPropertyOptional({ description: 'Return status', example: ReturnStatus.NOT_REQUESTED, enum: ReturnStatus })
+  @ApiPropertyOptional({
+    description: 'Return status',
+    example: ReturnStatus.NOT_REQUESTED,
+    enum: ReturnStatus,
+  })
   returnStatus?: ReturnStatus;
 
-  @ApiProperty({ description: 'Order priority', example: OrderPriority.NORMAL, enum: OrderPriority })
+  @ApiProperty({
+    description: 'Order priority',
+    example: OrderPriority.NORMAL,
+    enum: OrderPriority,
+  })
   priority: OrderPriority;
 
-  @ApiProperty({ description: 'Order source', example: OrderSource.WEB, enum: OrderSource })
+  @ApiProperty({
+    description: 'Order source',
+    example: OrderSource.WEB,
+    enum: OrderSource,
+  })
   orderSource: OrderSource;
 
-  @ApiProperty({ description: 'Order type', example: OrderType.STANDARD, enum: OrderType })
+  @ApiProperty({
+    description: 'Order type',
+    example: OrderType.STANDARD,
+    enum: OrderType,
+  })
   orderType: OrderType;
 
   // Dates
-  @ApiProperty({ description: 'Order creation date', example: '2025-11-04T10:30:00Z' })
+  @ApiProperty({
+    description: 'Order creation date',
+    example: '2025-11-04T10:30:00Z',
+  })
   orderDate: Date;
 
-  @ApiPropertyOptional({ description: 'Order confirmed date', example: '2025-11-04T10:35:00Z' })
+  @ApiPropertyOptional({
+    description: 'Order confirmed date',
+    example: '2025-11-04T10:35:00Z',
+  })
   confirmedAt?: Date;
 
   @ApiPropertyOptional({ description: 'Order packed date' })
   packedAt?: Date;
 
-  @ApiPropertyOptional({ description: 'Order shipped date', example: '2025-11-05T09:00:00Z' })
+  @ApiPropertyOptional({
+    description: 'Order shipped date',
+    example: '2025-11-05T09:00:00Z',
+  })
   shippedAt?: Date;
 
-  @ApiPropertyOptional({ description: 'Order delivered date', example: '2025-11-07T14:30:00Z' })
+  @ApiPropertyOptional({
+    description: 'Order delivered date',
+    example: '2025-11-07T14:30:00Z',
+  })
   deliveredAt?: Date;
 
   @ApiPropertyOptional({ description: 'Order cancelled date' })
@@ -430,7 +503,10 @@ export class OrderResponse {
   @ApiProperty({ description: 'Number of items in order', example: 2 })
   itemCount: number;
 
-  @ApiPropertyOptional({ description: 'Processing time in minutes', example: 45 })
+  @ApiPropertyOptional({
+    description: 'Processing time in minutes',
+    example: 45,
+  })
   processingTimeMinutes?: number;
 
   @ApiPropertyOptional({ description: 'Delivery time in hours', example: 48 })

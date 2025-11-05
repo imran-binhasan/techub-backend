@@ -20,5 +20,4 @@ export class ProductImage extends BaseEntity {
     onDelete: 'CASCADE',
   })
   product: Product;
-
 }

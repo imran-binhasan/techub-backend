@@ -11,7 +11,10 @@ import {
   HttpStatus,
   ParseIntPipe,
 } from '@nestjs/common';
-import { Public, RequireResource } from 'src/core/auth/decorator/auth.decorator';
+import {
+  Public,
+  RequireResource,
+} from 'src/core/auth/decorator/auth.decorator';
 import { ProductImageService } from '../service/product_image.service';
 import { CreateProductImageDto } from '../dto/create-product_image.dto';
 import { UpdateProductImageDto } from '../dto/update-product_image.dto';

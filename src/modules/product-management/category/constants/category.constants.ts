@@ -79,7 +79,8 @@ export const CATEGORY_DEFAULTS = {
 export const CATEGORY_ERROR_MESSAGES = {
   NOT_FOUND: 'Category not found',
   ALREADY_EXISTS: 'Category with this name or slug already exists',
-  INVALID_SLUG: 'Invalid slug format. Use lowercase letters, numbers, and dashes only',
+  INVALID_SLUG:
+    'Invalid slug format. Use lowercase letters, numbers, and dashes only',
   HAS_CHILDREN: 'Cannot delete category that has child categories',
   HAS_PRODUCTS: 'Cannot delete category that has associated products',
   CIRCULAR_DEPENDENCY: 'Circular dependency detected in category hierarchy',

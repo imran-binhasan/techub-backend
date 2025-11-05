@@ -1,5 +1,12 @@
 import { BaseEntity } from 'src/shared/entity/base.entity';
-import { Column, Entity, ManyToOne, OneToMany, Unique, DeleteDateColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  Unique,
+  DeleteDateColumn,
+} from 'typeorm';
 import { Attribute } from '../../attribute/entity/attribute.entity';
 import { ProductAttributeValue } from '../../product/entity/product_attribute_value.entity';
 
@@ -15,5 +22,4 @@ export class AttributeValue extends BaseEntity {
 
   @OneToMany(() => ProductAttributeValue, (pav) => pav.attributeValue)
   productAttributeValues: ProductAttributeValue[];
-
 }

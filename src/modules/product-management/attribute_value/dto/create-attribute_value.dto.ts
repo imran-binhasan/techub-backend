@@ -9,7 +9,6 @@ export class CreateAttributeValueDto {
   @Transform(({ value }) => value?.trim())
   value: string;
 
-
   @IsNotEmpty({ message: 'Attribute ID is required' })
   attributeId: number;
 }

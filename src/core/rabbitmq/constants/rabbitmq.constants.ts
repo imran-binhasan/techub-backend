@@ -105,23 +105,23 @@ export const ROUTING_KEYS = {
   userCreated: 'user.created',
   userUpdated: 'user.updated',
   userDeleted: 'user.deleted',
-  
+
   // Order events
   orderCreated: 'order.created',
   orderUpdated: 'order.updated',
   orderCancelled: 'order.cancelled',
   orderCompleted: 'order.completed',
-  
+
   // Payment events
   paymentProcessed: 'payment.processed',
   paymentFailed: 'payment.failed',
   paymentRefunded: 'payment.refunded',
-  
+
   // Inventory events
   inventoryUpdated: 'inventory.updated',
   inventoryLow: 'inventory.low',
   inventoryOut: 'inventory.out',
-  
+
   // Notification events
   emailSend: 'notification.email',
   smsSend: 'notification.sms',

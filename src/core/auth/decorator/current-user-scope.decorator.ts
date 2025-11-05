@@ -4,7 +4,7 @@ import { UserScope } from '../guard/scope-permission.guard';
 /**
  * Extract user scope from request
  * Use this in controllers/services to determine what data the user can access
- * 
+ *
  * @example
  * async getAttendance(@CurrentUserScope() userScope: UserScope) {
  *   if (userScope.hasAllAccess) {

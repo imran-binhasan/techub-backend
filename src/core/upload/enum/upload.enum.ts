@@ -1,6 +1,6 @@
 /**
  * Upload Module Enums
- * 
+ *
  * Defines all enum types for file uploads, user types, and file statuses.
  */
 
@@ -43,11 +43,11 @@ export enum UploaderType {
  * Image variants/sizes
  */
 export enum ImageVariant {
-  THUMBNAIL = 'thumbnail',   // 150x150
-  SMALL = 'small',           // 300x300
-  MEDIUM = 'medium',         // 600x600
-  LARGE = 'large',           // 1200x1200
-  ORIGINAL = 'original',     // Original size
+  THUMBNAIL = 'thumbnail', // 150x150
+  SMALL = 'small', // 300x300
+  MEDIUM = 'medium', // 600x600
+  LARGE = 'large', // 1200x1200
+  ORIGINAL = 'original', // Original size
 }
 
 /**
@@ -61,19 +61,19 @@ export enum SupportedMimeType {
   WEBP = 'image/webp',
   GIF = 'image/gif',
   SVG = 'image/svg+xml',
-  
+
   // Documents
   PDF = 'application/pdf',
   DOC = 'application/msword',
   DOCX = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
   XLS = 'application/vnd.ms-excel',
   XLSX = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-  
+
   // Videos
   MP4 = 'video/mp4',
   AVI = 'video/x-msvideo',
   MOV = 'video/quicktime',
-  
+
   // Audio
   MP3 = 'audio/mpeg',
   WAV = 'audio/wav',

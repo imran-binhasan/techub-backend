@@ -95,7 +95,7 @@ export class AuthController {
   @Post('refresh')
   async refreshToken(@Body() dto: RefreshTokenDto) {
     const payload = this.tokenService.verifyRefreshToken(dto.refreshToken);
-    
+
     // Generate new token pair
     const tokens = this.tokenService.generateTokenPair({
       sub: payload.sub,

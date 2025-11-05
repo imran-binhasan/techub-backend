@@ -1,4 +1,3 @@
-
 import {
   IsString,
   IsNotEmpty,
@@ -10,7 +9,6 @@ import {
 import { AddressType } from '../entity/address.entity';
 
 export class CreateAddressDto {
-  
   @IsNotEmpty()
   customerId: number;
 
@@ -36,7 +34,6 @@ export class CreateAddressDto {
 
   @IsEnum(AddressType)
   type: AddressType;
-
 
   @IsOptional()
   @IsBoolean()

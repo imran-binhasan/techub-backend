@@ -38,7 +38,7 @@ describe('CacheService', () => {
     }).compile();
 
     service = module.get<CacheService>(CacheService);
-    redisService = module.get(RedisService) as jest.Mocked<RedisService>;
+    redisService = module.get(RedisService);
 
     // Clear all mocks before each test
     jest.clearAllMocks();
@@ -301,24 +301,16 @@ describe('CacheService', () => {
     it('should delete all keys matching pattern', async () => {
       redisService.deleteByPattern.mockResolvedValue(5);
 
-      const result = await service.deleteByPattern(
-        CacheDomain.USERS,
-        'user:*',
-      );
+      const result = await service.deleteByPattern(CacheDomain.USERS, 'user:*');
 
       expect(result).toBe(5);
       expect(redisService.deleteByPattern).toHaveBeenCalledWith('user:user:*');
     });
 
     it('should return 0 on error', async () => {
-      redisService.deleteByPattern.mockRejectedValue(
-        new Error('Redis error'),
-      );
+      redisService.deleteByPattern.mockRejectedValue(new Error('Redis error'));
 
-      const result = await service.deleteByPattern(
-        CacheDomain.USERS,
-        'user:*',
-      );
+      const result = await service.deleteByPattern(CacheDomain.USERS, 'user:*');
 
       expect(result).toBe(0);
     });
@@ -420,13 +412,11 @@ describe('CacheService', () => {
     it('should get multiple keys in bulk', async () => {
       const mockPipeline = {
         get: jest.fn().mockReturnThis(),
-        exec: jest
-          .fn()
-          .mockResolvedValue([
-            [null, JSON.stringify({ id: 1 })],
-            [null, JSON.stringify({ id: 2 })],
-            [null, JSON.stringify({ id: 3 })],
-          ]),
+        exec: jest.fn().mockResolvedValue([
+          [null, JSON.stringify({ id: 1 })],
+          [null, JSON.stringify({ id: 2 })],
+          [null, JSON.stringify({ id: 3 })],
+        ]),
       };
 
       redisService.getClient.mockReturnValue({
@@ -449,9 +439,10 @@ describe('CacheService', () => {
     it('should handle null values in bulk get', async () => {
       const mockPipeline = {
         get: jest.fn().mockReturnThis(),
-        exec: jest
-          .fn()
-          .mockResolvedValue([[null, JSON.stringify({ id: 1 })], [null, null]]),
+        exec: jest.fn().mockResolvedValue([
+          [null, JSON.stringify({ id: 1 })],
+          [null, null],
+        ]),
       };
 
       redisService.getClient.mockReturnValue({

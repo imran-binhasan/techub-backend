@@ -27,7 +27,6 @@ export class UpdateAddressDto {
   @IsEnum(AddressType)
   type?: AddressType;
 
-
   @IsOptional()
   @IsBoolean()
   isDefault?: boolean;

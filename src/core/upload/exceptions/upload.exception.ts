@@ -5,7 +5,10 @@ import { UPLOAD_ERROR_MESSAGES } from '../constants/upload.constants';
  * Base class for all upload-related exceptions
  */
 export class UploadException extends HttpException {
-  constructor(message: string, statusCode: HttpStatus = HttpStatus.BAD_REQUEST) {
+  constructor(
+    message: string,
+    statusCode: HttpStatus = HttpStatus.BAD_REQUEST,
+  ) {
     super(message, statusCode);
   }
 }
@@ -38,7 +41,14 @@ export class InvalidFileTypeException extends UploadException {
  * Thrown when image dimensions don't meet requirements
  */
 export class InvalidImageDimensionsException extends UploadException {
-  constructor(width: number, height: number, minWidth: number, minHeight: number, maxWidth: number, maxHeight: number) {
+  constructor(
+    width: number,
+    height: number,
+    minWidth: number,
+    minHeight: number,
+    maxWidth: number,
+    maxHeight: number,
+  ) {
     super(
       `${UPLOAD_ERROR_MESSAGES.INVALID_DIMENSIONS}. Got: ${width}x${height}, Required: ${minWidth}x${minHeight} to ${maxWidth}x${maxHeight}`,
       HttpStatus.BAD_REQUEST,

@@ -1,6 +1,12 @@
 import { BaseEntity } from 'src/shared/entity/base.entity';
 import { Notification } from './notification.entity';
-import { Column, Entity, ManyToOne, JoinColumn, DeleteDateColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  JoinColumn,
+  DeleteDateColumn,
+} from 'typeorm';
 import { Customer } from 'src/modules/personnel-management/customer/entity/customer.entity';
 
 @Entity('customer_notification')

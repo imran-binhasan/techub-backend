@@ -1,9 +1,17 @@
-import { IsNotEmpty, IsString, Length, IsOptional, MaxLength } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  Length,
+  IsOptional,
+  MaxLength,
+} from 'class-validator';
 
 export class SendSmsDto {
   @IsNotEmpty()
   @IsString()
-  @Length(11, 20, { message: 'Phone number must be between 11 and 20 characters' })
+  @Length(11, 20, {
+    message: 'Phone number must be between 11 and 20 characters',
+  })
   recipient: string;
 
   @IsNotEmpty()

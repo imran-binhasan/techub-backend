@@ -66,7 +66,9 @@ export class ProductService {
     });
 
     if (existingProduct) {
-      throw new ConflictException(`Product with name '${createProductDto.name}' already exists`);
+      throw new ConflictException(
+        `Product with name '${createProductDto.name}' already exists`,
+      );
     }
 
     // Generate or validate SKU
@@ -101,7 +103,9 @@ export class ProductService {
     if (slug) {
       // Validate provided slug
       if (!isValidSlug(slug)) {
-        throw new BadRequestException(`Invalid slug format: ${slug}. Must be lowercase with hyphens only`);
+        throw new BadRequestException(
+          `Invalid slug format: ${slug}. Must be lowercase with hyphens only`,
+        );
       }
       // Check slug uniqueness
       const existingSlug = await this.productRepository.findOne({
@@ -109,7 +113,9 @@ export class ProductService {
         withDeleted: true,
       });
       if (existingSlug) {
-        throw new ConflictException(`Product with slug '${slug}' already exists`);
+        throw new ConflictException(
+          `Product with slug '${slug}' already exists`,
+        );
       }
     } else {
       // Auto-generate unique slug from name
@@ -154,7 +160,9 @@ export class ProductService {
       });
 
       if (!brand) {
-        throw new NotFoundException(`Brand with ID ${createProductDto.brandId} not found`);
+        throw new NotFoundException(
+          `Brand with ID ${createProductDto.brandId} not found`,
+        );
       }
     }
 
@@ -164,20 +172,26 @@ export class ProductService {
       description: createProductDto.description,
       sku,
       slug,
-      status: (createProductDto.status || PRODUCT_DEFAULTS.STATUS) as ProductStatus,
-      condition: (createProductDto.condition || PRODUCT_DEFAULTS.CONDITION) as ProductCondition,
-      visibility: (createProductDto.visibility || PRODUCT_DEFAULTS.VISIBILITY) as ProductVisibility,
+      status: (createProductDto.status ||
+        PRODUCT_DEFAULTS.STATUS) as ProductStatus,
+      condition: (createProductDto.condition ||
+        PRODUCT_DEFAULTS.CONDITION) as ProductCondition,
+      visibility: (createProductDto.visibility ||
+        PRODUCT_DEFAULTS.VISIBILITY) as ProductVisibility,
       stock: createProductDto.stock,
       price: createProductDto.price,
       compareAtPrice: createProductDto.compareAtPrice,
       costPerItem: createProductDto.costPerItem,
-      discountType: (createProductDto.discountType || PRODUCT_DEFAULTS.DISCOUNT_TYPE) as DiscountType,
-      discountValue: createProductDto.discountValue || PRODUCT_DEFAULTS.DISCOUNT_VALUE,
+      discountType: (createProductDto.discountType ||
+        PRODUCT_DEFAULTS.DISCOUNT_TYPE) as DiscountType,
+      discountValue:
+        createProductDto.discountValue || PRODUCT_DEFAULTS.DISCOUNT_VALUE,
       metaTitle: createProductDto.metaTitle,
       metaDescription: createProductDto.metaDescription,
       keywords: createProductDto.keywords,
       isFeatured: createProductDto.isFeatured || PRODUCT_DEFAULTS.IS_FEATURED,
-      isPublished: createProductDto.isPublished || PRODUCT_DEFAULTS.IS_PUBLISHED,
+      isPublished:
+        createProductDto.isPublished || PRODUCT_DEFAULTS.IS_PUBLISHED,
       avgRating: PRODUCT_DEFAULTS.AVG_RATING,
       reviewCount: PRODUCT_DEFAULTS.REVIEW_COUNT,
       viewCount: PRODUCT_DEFAULTS.VIEW_COUNT,
@@ -372,7 +386,8 @@ export class ProductService {
     }
 
     // Validate and fetch category if being updated
-    let category: Category | undefined | null = existingProduct.category || null;
+    let category: Category | undefined | null =
+      existingProduct.category || null;
     if (updateProductDto.categoryId !== undefined) {
       if (updateProductDto.categoryId === null) {
         category = null;
@@ -443,9 +458,9 @@ export class ProductService {
     }
 
     // Invalidate caches
-    const updatedProduct = await this.productRepository.findOne({ 
+    const updatedProduct = await this.productRepository.findOne({
       where: { id },
-      relations: ['category', 'brand']
+      relations: ['category', 'brand'],
     });
     if (updatedProduct) {
       await this.invalidateProductCaches(id, updatedProduct);
@@ -494,10 +509,10 @@ export class ProductService {
     }
 
     await this.productRepository.restore(id);
-    
+
     // Invalidate caches
     await this.invalidateProductCaches(id, product);
-    
+
     return this.findOne(id);
   }
 
@@ -667,14 +682,19 @@ export class ProductService {
     return products;
   }
 
-  async getRelatedProducts(productId: number, limit: number = 6): Promise<Product[]> {
+  async getRelatedProducts(
+    productId: number,
+    limit: number = 6,
+  ): Promise<Product[]> {
     const product = await this.findOne(productId);
 
     return this.productRepository
       .createQueryBuilder('product')
       .leftJoinAndSelect('product.images', 'images')
       .where('product.id != :productId', { productId })
-      .andWhere('product.categoryId = :categoryId', { categoryId: product.categoryId })
+      .andWhere('product.categoryId = :categoryId', {
+        categoryId: product.categoryId,
+      })
       .andWhere('product.isPublished = :isPublished', { isPublished: true })
       .andWhere('product.status = :status', { status: ProductStatus.ACTIVE })
       .orderBy('product.avgRating', 'DESC')
@@ -684,7 +704,10 @@ export class ProductService {
   }
 
   // Search and lookup methods
-  async searchProducts(searchTerm: string, limit: number = 20): Promise<Product[]> {
+  async searchProducts(
+    searchTerm: string,
+    limit: number = 20,
+  ): Promise<Product[]> {
     return this.productRepository
       .createQueryBuilder('product')
       .leftJoinAndSelect('product.category', 'category')
@@ -855,7 +878,10 @@ export class ProductService {
         await this.cacheService.del('products', `sku:${product.sku}`);
       }
     } catch (error) {
-      this.logger.error(`Failed to invalidate caches for product ${productId}`, error);
+      this.logger.error(
+        `Failed to invalidate caches for product ${productId}`,
+        error,
+      );
       // Don't throw - cache invalidation failures shouldn't break the operation
     }
   }

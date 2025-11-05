@@ -23,7 +23,7 @@ import { AddressModule } from 'src/modules/personnel-management/address/module/a
     forwardRef(() => AddressModule),
     forwardRef(() => InventoryModule),
     EventEmitterModule.forRoot(),
-    AuthModule
+    AuthModule,
   ],
   controllers: [OrderController],
   providers: [OrderService],

@@ -12,5 +12,4 @@ import { CloudinaryService } from 'src/core/upload/service/cloudinary.service';
 import { Role } from '../../role/entity/role.entity';
 
 @Injectable()
-export class AdminService {
-}
+export class AdminService {}

@@ -6,9 +6,8 @@ import { SmsProvider } from '../provider/sms.provider';
 import { SmsLog } from '../entity/sms_log.entity';
 import { AuthModule } from 'src/core/auth/module/auth.module';
 
-
 @Module({
-  imports: [TypeOrmModule.forFeature([SmsLog]),AuthModule],
+  imports: [TypeOrmModule.forFeature([SmsLog]), AuthModule],
   controllers: [SmsController],
   providers: [SmsService, SmsProvider],
   exports: [SmsService, SmsProvider],

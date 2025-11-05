@@ -5,7 +5,10 @@ import { CACHE_ERROR_MESSAGES } from '../constants/cache.constants';
  * Base class for all cache-related exceptions
  */
 export class CacheException extends HttpException {
-  constructor(message: string, statusCode: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR) {
+  constructor(
+    message: string,
+    statusCode: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR,
+  ) {
     super(message, statusCode);
   }
 }

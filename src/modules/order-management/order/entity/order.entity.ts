@@ -1,5 +1,12 @@
 import { BaseEntity } from 'src/shared/entity/base.entity';
-import { Column, Entity, ManyToOne, OneToMany, JoinColumn, Index } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  JoinColumn,
+  Index,
+} from 'typeorm';
 import { OrderItem } from './order-item.entity';
 import { Customer } from 'src/modules/personnel-management/customer/entity/customer.entity';
 import { Coupon } from 'src/modules/product-management/coupon/entity/coupon.entity';
@@ -95,11 +102,19 @@ export class Order extends BaseEntity {
   paymentGateway?: string; // stripe, paypal, ssl_commerz
 
   // ========== Shipping Information ==========
-  @Column({ type: 'enum', enum: ShippingStatus, default: ShippingStatus.NOT_SHIPPED })
+  @Column({
+    type: 'enum',
+    enum: ShippingStatus,
+    default: ShippingStatus.NOT_SHIPPED,
+  })
   @Index()
   shippingStatus: ShippingStatus;
 
-  @Column({ type: 'enum', enum: ShippingMethod, default: ShippingMethod.STANDARD })
+  @Column({
+    type: 'enum',
+    enum: ShippingMethod,
+    default: ShippingMethod.STANDARD,
+  })
   shippingMethod: ShippingMethod;
 
   @Column({ type: 'varchar', length: 100, nullable: true })
@@ -135,7 +150,11 @@ export class Order extends BaseEntity {
   cancelledAt?: Date;
 
   // ========== Return & Refund Information ==========
-  @Column({ type: 'enum', enum: ReturnStatus, default: ReturnStatus.NOT_REQUESTED })
+  @Column({
+    type: 'enum',
+    enum: ReturnStatus,
+    default: ReturnStatus.NOT_REQUESTED,
+  })
   @Index()
   returnStatus: ReturnStatus;
 

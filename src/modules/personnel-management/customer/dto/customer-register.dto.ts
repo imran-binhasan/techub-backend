@@ -1,4 +1,10 @@
-import { IsEmail, IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  MinLength,
+} from 'class-validator';
 
 export class CustomerRegisterDto {
   @IsString()
@@ -21,7 +27,7 @@ export class CustomerRegisterDto {
   @IsOptional()
   @IsString()
   phone?: string;
-  
+
   @IsOptional()
   @IsString()
   preferredLanguage?: string;

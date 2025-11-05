@@ -219,7 +219,9 @@ describe('UploadService', () => {
     });
 
     it('should handle deletion errors gracefully', async () => {
-      cloudinaryService.deleteFile.mockRejectedValue(new Error('Delete failed'));
+      cloudinaryService.deleteFile.mockRejectedValue(
+        new Error('Delete failed'),
+      );
 
       await expect(service.deleteFile('test-public-id', 123)).rejects.toThrow();
     });

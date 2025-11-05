@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, BadRequestException, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Admin } from '../entity/admin.entity';
@@ -8,7 +13,7 @@ import { RedisService } from 'src/core/redis/service/redis.service';
 
 /**
  * Admin Management Service
- * 
+ *
  * Used by super-admins to manage other admin accounts.
  * Includes secure password reset that requires super-admin privileges.
  */
@@ -24,10 +29,10 @@ export class AdminManagementService {
 
   /**
    * Reset password for an admin user (Super-admin only)
-   * 
+   *
    * Enterprise security requirement: Admin passwords can only be reset
    * by a super-admin with proper verification, never via self-service.
-   * 
+   *
    * @param superAdminId - ID of the super-admin performing the reset
    * @param targetAdminEmail - Email of admin whose password will be reset
    * @param newPassword - New password (must meet complexity requirements)
@@ -46,7 +51,9 @@ export class AdminManagementService {
     });
 
     if (!superAdmin?.admin?.role) {
-      throw new ForbiddenException('Only super-admins can reset admin passwords');
+      throw new ForbiddenException(
+        'Only super-admins can reset admin passwords',
+      );
     }
 
     // Check if super-admin has the right permissions
@@ -55,7 +62,10 @@ export class AdminManagementService {
 
     // Find target admin
     const targetUser = await this.userRepository.findOne({
-      where: { email: targetAdminEmail.toLowerCase(), userType: UserType.ADMIN },
+      where: {
+        email: targetAdminEmail.toLowerCase(),
+        userType: UserType.ADMIN,
+      },
       relations: ['admin'],
       select: ['id', 'email', 'firstName', 'lastName', 'userType'],
     });
@@ -66,7 +76,9 @@ export class AdminManagementService {
 
     // Prevent super-admin from being locked out if resetting their own password
     if (targetUser.id === superAdminId) {
-      throw new BadRequestException('Cannot reset your own password. Use change password instead.');
+      throw new BadRequestException(
+        'Cannot reset your own password. Use change password instead.',
+      );
     }
 
     // Hash new password
@@ -87,7 +99,9 @@ export class AdminManagementService {
 
     // Log this action for audit trail
     // TODO: Implement audit logging
-    console.log(`[SECURITY AUDIT] Admin password reset: ${superAdmin.email} reset password for ${targetUser.email}. Reason: ${verificationNote || 'Not provided'}`);
+    console.log(
+      `[SECURITY AUDIT] Admin password reset: ${superAdmin.email} reset password for ${targetUser.email}. Reason: ${verificationNote || 'Not provided'}`,
+    );
 
     return {
       message: `Password reset successful for ${targetUser.email}. All sessions have been invalidated.`,
@@ -96,16 +110,17 @@ export class AdminManagementService {
 
   /**
    * Generate temporary password for new admin (Super-admin only)
-   * 
+   *
    * Use this when creating new admin accounts. Admin must change
    * password on first login.
    */
   async generateTemporaryPassword(): Promise<string> {
     // Generate secure random password
-    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#$%&*';
+    const chars =
+      'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#$%&*';
     let password = '';
     const crypto = require('crypto');
-    
+
     for (let i = 0; i < 16; i++) {
       password += chars[crypto.randomInt(chars.length)];
     }
@@ -113,7 +128,8 @@ export class AdminManagementService {
     // Ensure it meets complexity requirements
     if (!/[A-Z]/.test(password)) password = 'A' + password.slice(1);
     if (!/[a-z]/.test(password)) password = password.slice(0, -1) + 'a';
-    if (!/[0-9]/.test(password)) password = password.slice(0, -2) + '2' + password.slice(-1);
+    if (!/[0-9]/.test(password))
+      password = password.slice(0, -2) + '2' + password.slice(-1);
     if (!/[!@#$%&*]/.test(password)) password = password + '!';
 
     return password;
@@ -121,7 +137,7 @@ export class AdminManagementService {
 
   /**
    * Lock admin account (Super-admin only)
-   * 
+   *
    * Temporarily or permanently disable admin account.
    */
   async lockAdminAccount(
@@ -131,7 +147,10 @@ export class AdminManagementService {
     lockDurationMinutes?: number, // If not provided, lock indefinitely
   ): Promise<{ message: string }> {
     const targetUser = await this.userRepository.findOne({
-      where: { email: targetAdminEmail.toLowerCase(), userType: UserType.ADMIN },
+      where: {
+        email: targetAdminEmail.toLowerCase(),
+        userType: UserType.ADMIN,
+      },
     });
 
     if (!targetUser) {
@@ -159,7 +178,9 @@ export class AdminManagementService {
       lockDurationMinutes ? { ttl: lockDurationMinutes * 60 } : undefined,
     );
 
-    console.log(`[SECURITY AUDIT] Admin account locked: ${targetUser.email}. Reason: ${reason}. Duration: ${lockDurationMinutes || 'Indefinite'} minutes`);
+    console.log(
+      `[SECURITY AUDIT] Admin account locked: ${targetUser.email}. Reason: ${reason}. Duration: ${lockDurationMinutes || 'Indefinite'} minutes`,
+    );
 
     return {
       message: `Admin account ${targetUser.email} has been locked. Reason: ${reason}`,
@@ -174,7 +195,10 @@ export class AdminManagementService {
     targetAdminEmail: string,
   ): Promise<{ message: string }> {
     const targetUser = await this.userRepository.findOne({
-      where: { email: targetAdminEmail.toLowerCase(), userType: UserType.ADMIN },
+      where: {
+        email: targetAdminEmail.toLowerCase(),
+        userType: UserType.ADMIN,
+      },
     });
 
     if (!targetUser) {

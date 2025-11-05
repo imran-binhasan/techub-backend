@@ -20,17 +20,26 @@ export class PayPalService {
 
   constructor(private readonly configService: ConfigService) {
     this.clientId = this.configService.get<string>('PAYPAL_CLIENT_ID', '');
-    this.clientSecret = this.configService.get<string>('PAYPAL_CLIENT_SECRET', '');
-    this.environment = this.configService.get<string>('PAYPAL_ENVIRONMENT', 'sandbox') as 'sandbox' | 'live';
+    this.clientSecret = this.configService.get<string>(
+      'PAYPAL_CLIENT_SECRET',
+      '',
+    );
+    this.environment = this.configService.get<string>(
+      'PAYPAL_ENVIRONMENT',
+      'sandbox',
+    ) as 'sandbox' | 'live';
 
     if (!this.clientId || !this.clientSecret) {
-      this.logger.error('PayPal configuration is incomplete. Please check environment variables.');
+      this.logger.error(
+        'PayPal configuration is incomplete. Please check environment variables.',
+      );
       return;
     }
 
-    this.baseUrl = this.environment === 'live' 
-      ? 'https://api.paypal.com'
-      : 'https://api.sandbox.paypal.com';
+    this.baseUrl =
+      this.environment === 'live'
+        ? 'https://api.paypal.com'
+        : 'https://api.sandbox.paypal.com';
 
     this.axiosInstance = axios.create({
       baseURL: this.baseUrl,
@@ -48,21 +57,24 @@ export class PayPalService {
     }
 
     try {
-      const auth = Buffer.from(`${this.clientId}:${this.clientSecret}`).toString('base64');
-      
-      const response = await this.axiosInstance.post('/v1/oauth2/token', 
+      const auth = Buffer.from(
+        `${this.clientId}:${this.clientSecret}`,
+      ).toString('base64');
+
+      const response = await this.axiosInstance.post(
+        '/v1/oauth2/token',
         'grant_type=client_credentials',
         {
           headers: {
-            'Authorization': `Basic ${auth}`,
+            Authorization: `Basic ${auth}`,
             'Content-Type': 'application/x-www-form-urlencoded',
           },
-        }
+        },
       );
 
       this.accessToken = response.data.access_token;
       const expiresIn = response.data.expires_in;
-      this.tokenExpiry = new Date(Date.now() + (expiresIn * 1000) - 60000);
+      this.tokenExpiry = new Date(Date.now() + expiresIn * 1000 - 60000);
 
       return this.accessToken;
     } catch (error) {
@@ -74,8 +86,11 @@ export class PayPalService {
   async createOrder(orderData: PayPalOrderDto): Promise<any> {
     try {
       const accessToken = await this.getAccessToken();
-      const baseAppUrl = this.configService.get<string>('APP_BASE_URL', 'http://localhost:3000');
-      
+      const baseAppUrl = this.configService.get<string>(
+        'APP_BASE_URL',
+        'http://localhost:3000',
+      );
+
       const requestBody = {
         intent: orderData.intent,
         purchase_units: [
@@ -90,14 +105,17 @@ export class PayPalService {
               breakdown: {
                 item_total: {
                   currency_code: orderData.currency,
-                  value: orderData.items.reduce(
-                    (total, item) => total + (parseFloat(item.unitAmount) * item.quantity),
-                    0
-                  ).toFixed(2),
+                  value: orderData.items
+                    .reduce(
+                      (total, item) =>
+                        total + parseFloat(item.unitAmount) * item.quantity,
+                      0,
+                    )
+                    .toFixed(2),
                 },
               },
             },
-            items: orderData.items.map(item => ({
+            items: orderData.items.map((item) => ({
               name: item.name,
               description: item.description,
               sku: item.sku,
@@ -111,8 +129,12 @@ export class PayPalService {
           },
         ],
         application_context: {
-          return_url: orderData.returnUrl || `${baseAppUrl}/api/payment-gateway/paypal/return`,
-          cancel_url: orderData.cancelUrl || `${baseAppUrl}/api/payment-gateway/paypal/cancel`,
+          return_url:
+            orderData.returnUrl ||
+            `${baseAppUrl}/api/payment-gateway/paypal/return`,
+          cancel_url:
+            orderData.cancelUrl ||
+            `${baseAppUrl}/api/payment-gateway/paypal/cancel`,
           brand_name: orderData.brandName || 'Ecommerce Store',
           locale: orderData.locale || 'en-US',
           landing_page: orderData.landingPage || 'NO_PREFERENCE',
@@ -121,17 +143,24 @@ export class PayPalService {
         },
       };
 
-      const response = await this.axiosInstance.post('/v2/checkout/orders', requestBody, {
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
+      const response = await this.axiosInstance.post(
+        '/v2/checkout/orders',
+        requestBody,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
         },
-      });
+      );
 
       return response.data;
     } catch (error) {
-      this.logger.error('Error creating PayPal order:', error.response?.data || error);
+      this.logger.error(
+        'Error creating PayPal order:',
+        error.response?.data || error,
+      );
       throw new BadRequestException(
-        `Failed to create PayPal order: ${error.response?.data?.message || error.message}`
+        `Failed to create PayPal order: ${error.response?.data?.message || error.message}`,
       );
     }
   }
@@ -139,22 +168,25 @@ export class PayPalService {
   async captureOrder(captureData: PayPalCaptureDto): Promise<any> {
     try {
       const accessToken = await this.getAccessToken();
-      
+
       const response = await this.axiosInstance.post(
         `/v2/checkout/orders/${captureData.orderId}/capture`,
         {},
         {
           headers: {
-            'Authorization': `Bearer ${accessToken}`,
+            Authorization: `Bearer ${accessToken}`,
           },
-        }
+        },
       );
 
       return response.data;
     } catch (error) {
-      this.logger.error('Error capturing PayPal order:', error.response?.data || error);
+      this.logger.error(
+        'Error capturing PayPal order:',
+        error.response?.data || error,
+      );
       throw new BadRequestException(
-        `Failed to capture PayPal order: ${error.response?.data?.message || error.message}`
+        `Failed to capture PayPal order: ${error.response?.data?.message || error.message}`,
       );
     }
   }
@@ -162,18 +194,24 @@ export class PayPalService {
   async getOrder(orderId: string): Promise<any> {
     try {
       const accessToken = await this.getAccessToken();
-      
-      const response = await this.axiosInstance.get(`/v2/checkout/orders/${orderId}`, {
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
+
+      const response = await this.axiosInstance.get(
+        `/v2/checkout/orders/${orderId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
         },
-      });
+      );
 
       return response.data;
     } catch (error) {
-      this.logger.error('Error retrieving PayPal order:', error.response?.data || error);
+      this.logger.error(
+        'Error retrieving PayPal order:',
+        error.response?.data || error,
+      );
       throw new BadRequestException(
-        `Failed to retrieve PayPal order: ${error.response?.data?.message || error.message}`
+        `Failed to retrieve PayPal order: ${error.response?.data?.message || error.message}`,
       );
     }
   }
@@ -181,22 +219,25 @@ export class PayPalService {
   async authorizeOrder(orderId: string): Promise<any> {
     try {
       const accessToken = await this.getAccessToken();
-      
+
       const response = await this.axiosInstance.post(
         `/v2/checkout/orders/${orderId}/authorize`,
         {},
         {
           headers: {
-            'Authorization': `Bearer ${accessToken}`,
+            Authorization: `Bearer ${accessToken}`,
           },
-        }
+        },
       );
 
       return response.data;
     } catch (error) {
-      this.logger.error('Error authorizing PayPal order:', error.response?.data || error);
+      this.logger.error(
+        'Error authorizing PayPal order:',
+        error.response?.data || error,
+      );
       throw new BadRequestException(
-        `Failed to authorize PayPal order: ${error.response?.data?.message || error.message}`
+        `Failed to authorize PayPal order: ${error.response?.data?.message || error.message}`,
       );
     }
   }
@@ -204,7 +245,7 @@ export class PayPalService {
   async refundCapture(refundData: PayPalRefundDto): Promise<any> {
     try {
       const accessToken = await this.getAccessToken();
-      
+
       const requestBody: any = {
         note_to_payee: refundData.reason,
         note_to_payer: refundData.noteToPayer,
@@ -222,16 +263,19 @@ export class PayPalService {
         requestBody,
         {
           headers: {
-            'Authorization': `Bearer ${accessToken}`,
+            Authorization: `Bearer ${accessToken}`,
           },
-        }
+        },
       );
 
       return response.data;
     } catch (error) {
-      this.logger.error('Error creating PayPal refund:', error.response?.data || error);
+      this.logger.error(
+        'Error creating PayPal refund:',
+        error.response?.data || error,
+      );
       throw new BadRequestException(
-        `Failed to create PayPal refund: ${error.response?.data?.message || error.message}`
+        `Failed to create PayPal refund: ${error.response?.data?.message || error.message}`,
       );
     }
   }
@@ -239,18 +283,24 @@ export class PayPalService {
   async getCapture(captureId: string): Promise<any> {
     try {
       const accessToken = await this.getAccessToken();
-      
-      const response = await this.axiosInstance.get(`/v2/payments/captures/${captureId}`, {
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
+
+      const response = await this.axiosInstance.get(
+        `/v2/payments/captures/${captureId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
         },
-      });
+      );
 
       return response.data;
     } catch (error) {
-      this.logger.error('Error retrieving PayPal capture:', error.response?.data || error);
+      this.logger.error(
+        'Error retrieving PayPal capture:',
+        error.response?.data || error,
+      );
       throw new BadRequestException(
-        `Failed to retrieve PayPal capture: ${error.response?.data?.message || error.message}`
+        `Failed to retrieve PayPal capture: ${error.response?.data?.message || error.message}`,
       );
     }
   }
@@ -258,18 +308,24 @@ export class PayPalService {
   async getRefund(refundId: string): Promise<any> {
     try {
       const accessToken = await this.getAccessToken();
-      
-      const response = await this.axiosInstance.get(`/v2/payments/refunds/${refundId}`, {
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
+
+      const response = await this.axiosInstance.get(
+        `/v2/payments/refunds/${refundId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
         },
-      });
+      );
 
       return response.data;
     } catch (error) {
-      this.logger.error('Error retrieving PayPal refund:', error.response?.data || error);
+      this.logger.error(
+        'Error retrieving PayPal refund:',
+        error.response?.data || error,
+      );
       throw new BadRequestException(
-        `Failed to retrieve PayPal refund: ${error.response?.data?.message || error.message}`
+        `Failed to retrieve PayPal refund: ${error.response?.data?.message || error.message}`,
       );
     }
   }

@@ -1,8 +1,17 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { Payment, PaymentGateway, PaymentStatus, PaymentType } from '../entity/payment.entity';
+import {
+  Payment,
+  PaymentGateway,
+  PaymentStatus,
+  PaymentType,
+} from '../entity/payment.entity';
 import { OrderService } from '../../order/service/order.service';
 import { Order } from '../../order/entity/order.entity';
 
@@ -147,20 +156,27 @@ export class PaymentService {
     }
 
     if (refundAmount > originalPayment.amount) {
-      throw new BadRequestException('Refund amount cannot exceed original payment amount');
+      throw new BadRequestException(
+        'Refund amount cannot exceed original payment amount',
+      );
     }
 
     // Check existing refunds
     const existingRefunds = await this.paymentRepository.find({
-      where: { 
+      where: {
         parentPaymentId: originalPaymentId.toString(),
         status: PaymentStatus.COMPLETED,
       },
     });
 
-    const totalRefunded = existingRefunds.reduce((sum, refund) => sum + refund.amount, 0);
+    const totalRefunded = existingRefunds.reduce(
+      (sum, refund) => sum + refund.amount,
+      0,
+    );
     if (totalRefunded + refundAmount > originalPayment.amount) {
-      throw new BadRequestException('Total refund amount exceeds original payment');
+      throw new BadRequestException(
+        'Total refund amount exceeds original payment',
+      );
     }
 
     const refundPayment = this.paymentRepository.create({
@@ -173,9 +189,11 @@ export class PaymentService {
       parentPaymentId: originalPaymentId.toString(),
       gatewayTransactionId: gatewayRefundId || `refund_${Date.now()}`,
       failureReason: reason,
-    } as any);
+    });
 
-    const savedRefund = await this.paymentRepository.save(refundPayment);
+    const savedRefund: Payment = await this.paymentRepository.save(
+      refundPayment,
+    );
 
     // Emit refund created event
     this.eventService.emit('payment.refund.created', {
@@ -204,9 +222,7 @@ export class PaymentService {
       queryBuilder.andWhere('payment.gateway = :gateway', { gateway });
     }
 
-    return queryBuilder
-      .orderBy('payment.createdAt', 'DESC')
-      .getMany();
+    return queryBuilder.orderBy('payment.createdAt', 'DESC').getMany();
   }
 
   async getPaymentStats(gateway?: PaymentGateway): Promise<{
@@ -230,10 +246,31 @@ export class PaymentService {
       refundedAmountResult,
     ] = await Promise.all([
       queryBuilder.getCount(),
-      queryBuilder.clone().andWhere('payment.status = :status', { status: PaymentStatus.COMPLETED }).getCount(),
-      queryBuilder.clone().andWhere('payment.status = :status', { status: PaymentStatus.FAILED }).getCount(),
-      queryBuilder.clone().andWhere('payment.status = :status', { status: PaymentStatus.COMPLETED }).select('SUM(payment.amount)', 'total').getRawOne(),
-      queryBuilder.clone().andWhere('payment.type = :type', { type: 'refund' }).andWhere('payment.status = :status', { status: PaymentStatus.COMPLETED }).select('SUM(payment.amount)', 'total').getRawOne(),
+      queryBuilder
+        .clone()
+        .andWhere('payment.status = :status', {
+          status: PaymentStatus.COMPLETED,
+        })
+        .getCount(),
+      queryBuilder
+        .clone()
+        .andWhere('payment.status = :status', { status: PaymentStatus.FAILED })
+        .getCount(),
+      queryBuilder
+        .clone()
+        .andWhere('payment.status = :status', {
+          status: PaymentStatus.COMPLETED,
+        })
+        .select('SUM(payment.amount)', 'total')
+        .getRawOne(),
+      queryBuilder
+        .clone()
+        .andWhere('payment.type = :type', { type: 'refund' })
+        .andWhere('payment.status = :status', {
+          status: PaymentStatus.COMPLETED,
+        })
+        .select('SUM(payment.amount)', 'total')
+        .getRawOne(),
     ]);
 
     return {

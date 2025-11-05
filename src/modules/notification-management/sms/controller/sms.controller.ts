@@ -22,7 +22,6 @@ import { SendSmsDto } from '../dto/send-sms.dto';
 import { SmsQueryDto } from '../dto/query-sms.dto';
 import { DeliveryStatusDto } from '../dto/delivery-status.dto';
 
-
 @Controller('sms')
 export class SmsController {
   constructor(private readonly smsService: SmsService) {}
@@ -114,7 +113,10 @@ export class SmsController {
   // Utility endpoints
   @RequirePermissions('read:sms')
   @Get('recipient/:recipient')
-  async findByRecipient(@Param('recipient') recipient: string, @Query() query: SmsQueryDto) {
+  async findByRecipient(
+    @Param('recipient') recipient: string,
+    @Query() query: SmsQueryDto,
+  ) {
     const result = await this.smsService.findByRecipient(recipient, query);
     return {
       success: true,

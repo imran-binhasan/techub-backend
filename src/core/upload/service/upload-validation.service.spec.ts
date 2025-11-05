@@ -44,7 +44,11 @@ describe('UploadValidationService', () => {
 
     it('should throw when file is not provided', () => {
       expect(() =>
-        service.validateFileType(null as any, UploaderType.CUSTOMER, UploadType.IMAGE),
+        service.validateFileType(
+          null as any,
+          UploaderType.CUSTOMER,
+          UploadType.IMAGE,
+        ),
       ).toThrow(NoFileProvidedException);
     });
 
@@ -55,7 +59,11 @@ describe('UploadValidationService', () => {
       } as Express.Multer.File;
 
       expect(() =>
-        service.validateFileType(file, UploaderType.CUSTOMER, UploadType.DOCUMENT),
+        service.validateFileType(
+          file,
+          UploaderType.CUSTOMER,
+          UploadType.DOCUMENT,
+        ),
       ).not.toThrow();
     });
 
@@ -118,7 +126,11 @@ describe('UploadValidationService', () => {
 
     it('should throw when file is not provided', () => {
       expect(() =>
-        service.validateFileSize(null as any, UploaderType.CUSTOMER, UploadType.IMAGE),
+        service.validateFileSize(
+          null as any,
+          UploaderType.CUSTOMER,
+          UploadType.IMAGE,
+        ),
       ).toThrow(NoFileProvidedException);
     });
   });
@@ -140,7 +152,9 @@ describe('UploadValidationService', () => {
       } as Express.Multer.File;
 
       // Mock dimension validation to skip sharp complexity
-      jest.spyOn(service, 'validateImageDimensions').mockResolvedValue(undefined);
+      jest
+        .spyOn(service, 'validateImageDimensions')
+        .mockResolvedValue(undefined);
 
       await expect(
         service.validateUpload(

@@ -1,5 +1,3 @@
-
-
 // src/sms/entity/sms-log.entity.ts
 import { BaseEntity } from 'src/shared/entity/base.entity';
 import { Entity, Column, DeleteDateColumn } from 'typeorm';
@@ -35,4 +33,3 @@ export class SmsLog extends BaseEntity {
 }
 
 // src/sms/dto/send-sms.dto.ts
-

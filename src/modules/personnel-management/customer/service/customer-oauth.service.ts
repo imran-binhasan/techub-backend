@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { Customer } from '../entity/customer.entity';
@@ -75,11 +79,11 @@ export class CustomerOAuthService {
       if (!user) {
         // Create new user
         isNewUser = true;
-        
+
         // Generate a random secure password for OAuth users (they won't use it)
         const randomPassword = randomBytes(32).toString('hex');
         const hashedPassword = await PasswordUtil.hash(randomPassword);
-        
+
         user = manager.create(User, {
           email: email.toLowerCase(),
           firstName,
@@ -111,12 +115,16 @@ export class CustomerOAuthService {
       } else {
         // Existing user - verify they are a customer
         if (user.userType !== UserType.CUSTOMER) {
-          throw new BadRequestException('This email is associated with a different account type');
+          throw new BadRequestException(
+            'This email is associated with a different account type',
+          );
         }
-        
+
         // Check if customer is suspended or blacklisted
         if (['suspended', 'blacklisted'].includes(user.customer.status)) {
-          throw new UnauthorizedException(`Your account is ${user.customer.status}. Please contact support`);
+          throw new UnauthorizedException(
+            `Your account is ${user.customer.status}. Please contact support`,
+          );
         }
       }
 

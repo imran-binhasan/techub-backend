@@ -19,32 +19,51 @@ export class SslCommerzService {
 
   constructor(private readonly configService: ConfigService) {
     this.storeId = this.configService.get<string>('SSL_COMMERZ_STORE_ID', '');
-    this.storePassword = this.configService.get<string>('SSL_COMMERZ_STORE_PASSWORD', '');
-    this.isLive = this.configService.get<string>('SSL_COMMERZ_IS_LIVE', 'false') === 'true';
+    this.storePassword = this.configService.get<string>(
+      'SSL_COMMERZ_STORE_PASSWORD',
+      '',
+    );
+    this.isLive =
+      this.configService.get<string>('SSL_COMMERZ_IS_LIVE', 'false') === 'true';
 
     if (!this.storeId || !this.storePassword) {
-      this.logger.error('SSL Commerz configuration is incomplete. Please check environment variables.');
+      this.logger.error(
+        'SSL Commerz configuration is incomplete. Please check environment variables.',
+      );
     }
 
     this.sslCommerz = new SSLCommerzPayment(
       this.storeId,
       this.storePassword,
-      this.isLive
+      this.isLive,
     );
   }
 
-  async initiatePayment(paymentData: SSLCommerzPaymentDto): Promise<SSLCommerzInitResponse> {
+  async initiatePayment(
+    paymentData: SSLCommerzPaymentDto,
+  ): Promise<SSLCommerzInitResponse> {
     try {
-      const baseUrl = this.configService.get<string>('APP_BASE_URL', 'http://localhost:3000');
-      
+      const baseUrl = this.configService.get<string>(
+        'APP_BASE_URL',
+        'http://localhost:3000',
+      );
+
       const data = {
         total_amount: paymentData.totalAmount,
         currency: paymentData.currency,
         tran_id: paymentData.orderId, // use orderId as transaction id
-        success_url: paymentData.successUrl || `${baseUrl}/api/payment-gateway/ssl-commerz/success`,
-        fail_url: paymentData.failUrl || `${baseUrl}/api/payment-gateway/ssl-commerz/fail`,
-        cancel_url: paymentData.cancelUrl || `${baseUrl}/api/payment-gateway/ssl-commerz/cancel`,
-        ipn_url: paymentData.ipnUrl || `${baseUrl}/api/payment-gateway/ssl-commerz/ipn`,
+        success_url:
+          paymentData.successUrl ||
+          `${baseUrl}/api/payment-gateway/ssl-commerz/success`,
+        fail_url:
+          paymentData.failUrl ||
+          `${baseUrl}/api/payment-gateway/ssl-commerz/fail`,
+        cancel_url:
+          paymentData.cancelUrl ||
+          `${baseUrl}/api/payment-gateway/ssl-commerz/cancel`,
+        ipn_url:
+          paymentData.ipnUrl ||
+          `${baseUrl}/api/payment-gateway/ssl-commerz/ipn`,
         shipping_method: paymentData.shippingMethod || 'Courier',
         product_name: paymentData.productName,
         product_category: paymentData.productCategory,
@@ -60,24 +79,33 @@ export class SslCommerzService {
         cus_phone: paymentData.customerPhone || '01711111111',
         cus_fax: '01711111111',
         ship_name: paymentData.customerName,
-        ship_add1: paymentData.shippingAddress || paymentData.customerAddress || 'N/A',
+        ship_add1:
+          paymentData.shippingAddress || paymentData.customerAddress || 'N/A',
         ship_add2: 'N/A',
-        ship_city: paymentData.shippingCity || paymentData.customerCity || 'Dhaka',
-        ship_state: paymentData.shippingState || paymentData.customerState || 'Dhaka',
-        ship_postcode: paymentData.shippingPostcode || paymentData.customerPostcode || '1000',
-        ship_country: paymentData.shippingCountry || paymentData.customerCountry || 'Bangladesh',
+        ship_city:
+          paymentData.shippingCity || paymentData.customerCity || 'Dhaka',
+        ship_state:
+          paymentData.shippingState || paymentData.customerState || 'Dhaka',
+        ship_postcode:
+          paymentData.shippingPostcode ||
+          paymentData.customerPostcode ||
+          '1000',
+        ship_country:
+          paymentData.shippingCountry ||
+          paymentData.customerCountry ||
+          'Bangladesh',
         num_of_item: paymentData.numberOfProducts || 1,
       };
 
       this.logger.debug('Initiating SSL Commerz payment with data:', data);
-      
+
       const apiResponse = await this.sslCommerz.init(data);
-      
+
       this.logger.debug('SSL Commerz init response:', apiResponse);
-      
+
       if (apiResponse.status !== 'SUCCESS') {
         throw new BadRequestException(
-          `SSL Commerz payment initiation failed: ${apiResponse.failedreason || 'Unknown error'}`
+          `SSL Commerz payment initiation failed: ${apiResponse.failedreason || 'Unknown error'}`,
         );
       }
 
@@ -85,15 +113,20 @@ export class SslCommerzService {
     } catch (error) {
       this.logger.error('Error initiating SSL Commerz payment:', error);
       throw new BadRequestException(
-        `Failed to initiate payment: ${error.message}`
+        `Failed to initiate payment: ${error.message}`,
       );
     }
   }
 
-  async validatePayment(validationData: SSLCommerzValidationDto): Promise<SSLCommerzValidationResponse> {
+  async validatePayment(
+    validationData: SSLCommerzValidationDto,
+  ): Promise<SSLCommerzValidationResponse> {
     try {
-      this.logger.debug('Validating SSL Commerz payment with valId:', validationData.valId);
-      
+      this.logger.debug(
+        'Validating SSL Commerz payment with valId:',
+        validationData.valId,
+      );
+
       const validation = await this.sslCommerz.validate({
         val_id: validationData.valId,
         store_id: this.storeId,
@@ -104,7 +137,7 @@ export class SslCommerzService {
 
       if (validation.status !== 'VALID') {
         throw new BadRequestException(
-          `Payment validation failed: ${validation.status}`
+          `Payment validation failed: ${validation.status}`,
         );
       }
 
@@ -112,7 +145,7 @@ export class SslCommerzService {
     } catch (error) {
       this.logger.error('Error validating SSL Commerz payment:', error);
       throw new BadRequestException(
-        `Failed to validate payment: ${error.message}`
+        `Failed to validate payment: ${error.message}`,
       );
     }
   }
@@ -120,7 +153,7 @@ export class SslCommerzService {
   async initiateRefund(
     bankTransId: string,
     refundAmount: number,
-    refundRemarks?: string
+    refundRemarks?: string,
   ): Promise<any> {
     try {
       const refundData = {
@@ -139,7 +172,7 @@ export class SslCommerzService {
     } catch (error) {
       this.logger.error('Error initiating SSL Commerz refund:', error);
       throw new BadRequestException(
-        `Failed to initiate refund: ${error.message}`
+        `Failed to initiate refund: ${error.message}`,
       );
     }
   }
@@ -148,11 +181,12 @@ export class SslCommerzService {
     try {
       this.logger.debug('Querying SSL Commerz transaction:', transactionId);
 
-      const queryResponse = await this.sslCommerz.transactionQueryByTransactionId({
-        tran_id: transactionId,
-        store_id: this.storeId,
-        store_passwd: this.storePassword,
-      });
+      const queryResponse =
+        await this.sslCommerz.transactionQueryByTransactionId({
+          tran_id: transactionId,
+          store_id: this.storeId,
+          store_passwd: this.storePassword,
+        });
 
       this.logger.debug('SSL Commerz query response:', queryResponse);
 
@@ -160,14 +194,17 @@ export class SslCommerzService {
     } catch (error) {
       this.logger.error('Error querying SSL Commerz transaction:', error);
       throw new BadRequestException(
-        `Failed to query transaction: ${error.message}`
+        `Failed to query transaction: ${error.message}`,
       );
     }
   }
 
   async queryTransactionBySessionkey(sessionKey: string): Promise<any> {
     try {
-      this.logger.debug('Querying SSL Commerz transaction by session key:', sessionKey);
+      this.logger.debug(
+        'Querying SSL Commerz transaction by session key:',
+        sessionKey,
+      );
 
       const queryResponse = await this.sslCommerz.transactionQueryBySessionkey({
         sessionkey: sessionKey,
@@ -175,18 +212,28 @@ export class SslCommerzService {
         store_passwd: this.storePassword,
       });
 
-      this.logger.debug('SSL Commerz query by session response:', queryResponse);
+      this.logger.debug(
+        'SSL Commerz query by session response:',
+        queryResponse,
+      );
 
       return queryResponse;
     } catch (error) {
-      this.logger.error('Error querying SSL Commerz transaction by session:', error);
+      this.logger.error(
+        'Error querying SSL Commerz transaction by session:',
+        error,
+      );
       throw new BadRequestException(
-        `Failed to query transaction by session: ${error.message}`
+        `Failed to query transaction by session: ${error.message}`,
       );
     }
   }
 
-  getPaymentStatus(): { storeId: string; isLive: boolean; configured: boolean } {
+  getPaymentStatus(): {
+    storeId: string;
+    isLive: boolean;
+    configured: boolean;
+  } {
     return {
       storeId: this.storeId,
       isLive: this.isLive,

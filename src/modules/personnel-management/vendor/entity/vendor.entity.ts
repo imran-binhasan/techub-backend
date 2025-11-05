@@ -1,5 +1,12 @@
 import { BaseEntity } from 'src/shared/entity/base.entity';
-import { Column, Entity, OneToOne, JoinColumn, Index, OneToMany } from 'typeorm';
+import {
+  Column,
+  Entity,
+  OneToOne,
+  JoinColumn,
+  Index,
+  OneToMany,
+} from 'typeorm';
 import { User } from '../../user/entity/user.entity';
 import { VendorBankInfo } from './vendor-bank-info.entity';
 import { VendorAddress } from './vendor-address.entity';
@@ -39,11 +46,11 @@ export class Vendor extends BaseEntity {
   @Column({ name: 'shop_banner', type: 'varchar', length: 500, nullable: true })
   shopBanner?: string;
 
-  @Column({ 
-    name: 'status', 
-    type: 'enum', 
-    enum: VendorStatus, 
-    default: VendorStatus.PENDING_VERIFICATION 
+  @Column({
+    name: 'status',
+    type: 'enum',
+    enum: VendorStatus,
+    default: VendorStatus.PENDING_VERIFICATION,
   })
   @Index()
   status: VendorStatus;
@@ -61,26 +68,46 @@ export class Vendor extends BaseEntity {
   @Column({ name: 'rejection_reason', type: 'text', nullable: true })
   rejectionReason?: string;
 
-
-  @Column({ 
-    name: 'commission_rate', 
-    type: 'decimal', 
-    precision: 5, 
+  @Column({
+    name: 'commission_rate',
+    type: 'decimal',
+    precision: 5,
     scale: 2,
-    default: 15.00 // Platform default
+    default: 15.0, // Platform default
   })
   commissionRate: number;
 
-  @Column({ name: 'commission_type', type: 'enum', enum: ['percentage', 'flat'], default: 'percentage' })
+  @Column({
+    name: 'commission_type',
+    type: 'enum',
+    enum: ['percentage', 'flat'],
+    default: 'percentage',
+  })
   commissionType: string;
 
-  @Column({ name: 'business_email', type: 'varchar', length: 255, nullable: true })
+  @Column({
+    name: 'business_email',
+    type: 'varchar',
+    length: 255,
+    nullable: true,
+  })
   businessEmail?: string;
 
-  @Column({ name: 'business_phone', type: 'varchar', length: 20, nullable: true })
+  @Column({
+    name: 'business_phone',
+    type: 'varchar',
+    length: 20,
+    nullable: true,
+  })
   businessPhone?: string;
 
-  @Column({ name: 'total_sales', type: 'decimal', precision: 12, scale: 2, default: 0 })
+  @Column({
+    name: 'total_sales',
+    type: 'decimal',
+    precision: 12,
+    scale: 2,
+    default: 0,
+  })
   totalSales: number;
 
   @Column({ name: 'total_orders', type: 'integer', default: 0 })
@@ -92,16 +119,34 @@ export class Vendor extends BaseEntity {
   @Column({ name: 'cancelled_orders', type: 'integer', default: 0 })
   cancelledOrders: number;
 
-  @Column({ name: 'average_rating', type: 'decimal', precision: 3, scale: 2, nullable: true })
+  @Column({
+    name: 'average_rating',
+    type: 'decimal',
+    precision: 3,
+    scale: 2,
+    nullable: true,
+  })
   averageRating?: number;
 
   @Column({ name: 'total_reviews', type: 'integer', default: 0 })
   totalReviews: number;
 
-  @Column({ name: 'pending_payout', type: 'decimal', precision: 12, scale: 2, default: 0 })
+  @Column({
+    name: 'pending_payout',
+    type: 'decimal',
+    precision: 12,
+    scale: 2,
+    default: 0,
+  })
   pendingPayout: number;
 
-  @Column({ name: 'total_payout', type: 'decimal', precision: 12, scale: 2, default: 0 })
+  @Column({
+    name: 'total_payout',
+    type: 'decimal',
+    precision: 12,
+    scale: 2,
+    default: 0,
+  })
   totalPayout: number;
 
   @Column({ name: 'last_payout_at', type: 'timestamptz', nullable: true })

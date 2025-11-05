@@ -28,10 +28,13 @@ export function generateOrderNumber(sequenceNumber: number): string {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const day = String(date.getDate()).padStart(2, '0');
-  
+
   const dateString = `${year}${month}${day}`;
-  const sequence = String(sequenceNumber).padStart(ORDER_NUMBER_CONFIG.SEQUENCE_LENGTH, '0');
-  
+  const sequence = String(sequenceNumber).padStart(
+    ORDER_NUMBER_CONFIG.SEQUENCE_LENGTH,
+    '0',
+  );
+
   return `${ORDER_NUMBER_CONFIG.PREFIX}${ORDER_NUMBER_CONFIG.SEPARATOR}${dateString}${ORDER_NUMBER_CONFIG.SEPARATOR}${sequence}`;
 }
 
@@ -45,8 +48,10 @@ export function isValidOrderNumber(orderNumber: string): boolean {
 /**
  * Calculate order subtotal from items
  */
-export function calculateSubtotal(items: Array<{ unitPrice: number; quantity: number }>): number {
-  return items.reduce((sum, item) => sum + (item.unitPrice * item.quantity), 0);
+export function calculateSubtotal(
+  items: Array<{ unitPrice: number; quantity: number }>,
+): number {
+  return items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
 }
 
 /**
@@ -72,9 +77,9 @@ export function calculateShippingCost(
   isInternational: boolean = false,
 ): number {
   const { SHIPPING } = ORDER_BUSINESS_RULES;
-  
+
   let baseCost = 0;
-  
+
   switch (shippingMethod.toLowerCase()) {
     case 'standard':
       baseCost = SHIPPING.STANDARD_COST;
@@ -94,17 +99,17 @@ export function calculateShippingCost(
     default:
       baseCost = SHIPPING.STANDARD_COST;
   }
-  
+
   // Add weight-based cost (optional)
   if (weight && weight > 5) {
     baseCost += (weight - 5) * 2; // $2 per kg over 5kg
   }
-  
+
   // International surcharge
   if (isInternational) {
     baseCost += SHIPPING.INTERNATIONAL_BASE_COST;
   }
-  
+
   return Number(baseCost.toFixed(2));
 }
 
@@ -118,7 +123,7 @@ export function calculateDiscount(
   maxDiscount?: number,
 ): number {
   let discount = 0;
-  
+
   if (discountType === 'percentage') {
     discount = (subtotal * discountValue) / 100;
     if (maxDiscount) {
@@ -127,7 +132,7 @@ export function calculateDiscount(
   } else if (discountType === 'fixed') {
     discount = Math.min(discountValue, subtotal);
   }
-  
+
   return Number(discount.toFixed(2));
 }
 
@@ -192,7 +197,7 @@ export function canCancelOrder(
   orderDate: Date,
 ): { canCancel: boolean; reason?: string } {
   const { CANCELLATION } = ORDER_BUSINESS_RULES;
-  
+
   // Check status
   if (CANCELLATION.NOT_ALLOWED_STATUSES.includes(orderStatus)) {
     return {
@@ -200,7 +205,7 @@ export function canCancelOrder(
       reason: `Order cannot be cancelled when status is ${orderStatus}`,
     };
   }
-  
+
   // Check time limit
   const hoursSinceOrder = (Date.now() - orderDate.getTime()) / (1000 * 60 * 60);
   if (hoursSinceOrder > CANCELLATION.TIME_LIMIT_HOURS) {
@@ -209,7 +214,7 @@ export function canCancelOrder(
       reason: `Order can only be cancelled within ${CANCELLATION.TIME_LIMIT_HOURS} hours`,
     };
   }
-  
+
   return { canCancel: true };
 }
 
@@ -221,7 +226,7 @@ export function canReturnOrder(
   deliveredDate: Date | null,
 ): { canReturn: boolean; reason?: string } {
   const { RETURN } = ORDER_BUSINESS_RULES;
-  
+
   // Check status
   if (!RETURN.ALLOWED_STATUSES.includes(orderStatus)) {
     return {
@@ -229,7 +234,7 @@ export function canReturnOrder(
       reason: `Order can only be returned when status is ${RETURN.ALLOWED_STATUSES.join(', ')}`,
     };
   }
-  
+
   // Check delivery date
   if (!deliveredDate) {
     return {
@@ -237,16 +242,17 @@ export function canReturnOrder(
       reason: 'Order has not been delivered yet',
     };
   }
-  
+
   // Check return period
-  const daysSinceDelivery = (Date.now() - deliveredDate.getTime()) / (1000 * 60 * 60 * 24);
+  const daysSinceDelivery =
+    (Date.now() - deliveredDate.getTime()) / (1000 * 60 * 60 * 24);
   if (daysSinceDelivery > RETURN.TIME_LIMIT_DAYS) {
     return {
       canReturn: false,
       reason: `Return period of ${RETURN.TIME_LIMIT_DAYS} days has expired`,
     };
   }
-  
+
   return { canReturn: true };
 }
 
@@ -256,9 +262,7 @@ export function canReturnOrder(
 export function validateMinimumOrderValue(totalAmount: number): void {
   const minValue = ORDER_BUSINESS_RULES.ORDER_VALUE.MIN_ORDER_VALUE;
   if (totalAmount < minValue) {
-    throw new BadRequestException(
-      `Order total must be at least $${minValue}`,
-    );
+    throw new BadRequestException(`Order total must be at least $${minValue}`);
   }
 }
 
@@ -268,9 +272,7 @@ export function validateMinimumOrderValue(totalAmount: number): void {
 export function validateMaximumOrderValue(totalAmount: number): void {
   const maxValue = ORDER_BUSINESS_RULES.ORDER_VALUE.MAX_ORDER_VALUE;
   if (totalAmount > maxValue) {
-    throw new BadRequestException(
-      `Order total cannot exceed $${maxValue}`,
-    );
+    throw new BadRequestException(`Order total cannot exceed $${maxValue}`);
   }
 }
 
@@ -283,9 +285,12 @@ export function calculateRefundAmount(
   shippingRefund: boolean = false,
   shippingAmount: number = 0,
 ): number {
-  const itemsRefund = returnedItems.reduce((sum, item) => sum + item.totalPrice, 0);
+  const itemsRefund = returnedItems.reduce(
+    (sum, item) => sum + item.totalPrice,
+    0,
+  );
   const shipping = shippingRefund ? shippingAmount : 0;
-  
+
   return Number(Math.min(itemsRefund + shipping, totalPaid).toFixed(2));
 }
 
@@ -313,28 +318,30 @@ export function getEstimatedDeliveryDate(
   shippingMethod: string,
   orderDate: Date = new Date(),
 ): { min: Date; max: Date } {
-  const minDays = {
-    standard: 5,
-    express: 2,
-    overnight: 1,
-    same_day: 0,
-    international: 10,
-  }[shippingMethod.toLowerCase()] || 5;
-  
-  const maxDays = {
-    standard: 7,
-    express: 3,
-    overnight: 1,
-    same_day: 0,
-    international: 15,
-  }[shippingMethod.toLowerCase()] || 7;
-  
+  const minDays =
+    {
+      standard: 5,
+      express: 2,
+      overnight: 1,
+      same_day: 0,
+      international: 10,
+    }[shippingMethod.toLowerCase()] || 5;
+
+  const maxDays =
+    {
+      standard: 7,
+      express: 3,
+      overnight: 1,
+      same_day: 0,
+      international: 15,
+    }[shippingMethod.toLowerCase()] || 7;
+
   const minDate = new Date(orderDate);
   minDate.setDate(minDate.getDate() + minDays);
-  
+
   const maxDate = new Date(orderDate);
   maxDate.setDate(maxDate.getDate() + maxDays);
-  
+
   return { min: minDate, max: maxDate };
 }
 
@@ -346,11 +353,18 @@ export function isOrderOverdue(
   orderDate: Date,
   expectedDays: number = 7,
 ): boolean {
-  if ([OrderStatus.DELIVERED, OrderStatus.CANCELLED, OrderStatus.REFUNDED].includes(orderStatus)) {
+  if (
+    [
+      OrderStatus.DELIVERED,
+      OrderStatus.CANCELLED,
+      OrderStatus.REFUNDED,
+    ].includes(orderStatus)
+  ) {
     return false;
   }
-  
-  const daysSinceOrder = (Date.now() - orderDate.getTime()) / (1000 * 60 * 60 * 24);
+
+  const daysSinceOrder =
+    (Date.now() - orderDate.getTime()) / (1000 * 60 * 60 * 24);
   return daysSinceOrder > expectedDays;
 }
 
@@ -367,7 +381,7 @@ export function generateTrackingUrl(
     UPS: `https://www.ups.com/tracking?trackingNumber=${trackingNumber}`,
     USPS: `https://www.usps.com/tracking?trackingNumber=${trackingNumber}`,
   };
-  
+
   return carrierUrls[carrier.toUpperCase()] || `#${trackingNumber}`;
 }
 
@@ -379,8 +393,9 @@ export function calculateProcessingTime(
   shippedDate: Date | null,
 ): number | null {
   if (!shippedDate) return null;
-  
-  const hours = (shippedDate.getTime() - orderDate.getTime()) / (1000 * 60 * 60);
+
+  const hours =
+    (shippedDate.getTime() - orderDate.getTime()) / (1000 * 60 * 60);
   return Number(hours.toFixed(2));
 }
 
@@ -392,8 +407,9 @@ export function calculateDeliveryTime(
   deliveredDate: Date | null,
 ): number | null {
   if (!shippedDate || !deliveredDate) return null;
-  
-  const hours = (deliveredDate.getTime() - shippedDate.getTime()) / (1000 * 60 * 60);
+
+  const hours =
+    (deliveredDate.getTime() - shippedDate.getTime()) / (1000 * 60 * 60);
   return Number(hours.toFixed(2));
 }
 
@@ -402,14 +418,17 @@ export function calculateDeliveryTime(
  */
 export function sanitizeOrderNotes(notes: string): string {
   // Remove credit card numbers
-  notes = notes.replace(/\d{4}[-\s]?\d{4}[-\s]?\d{4}[-\s]?\d{4}/g, '****-****-****-****');
-  
+  notes = notes.replace(
+    /\d{4}[-\s]?\d{4}[-\s]?\d{4}[-\s]?\d{4}/g,
+    '****-****-****-****',
+  );
+
   // Remove CVV
   notes = notes.replace(/\bCVV:?\s*\d{3,4}\b/gi, 'CVV: ***');
-  
+
   // Remove email addresses (optional)
   // notes = notes.replace(/[\w.-]+@[\w.-]+\.\w+/g, '***@***.***');
-  
+
   return notes.trim();
 }
 
@@ -418,11 +437,9 @@ export function sanitizeOrderNotes(notes: string): string {
  */
 export function validateQuantity(quantity: number): void {
   const { MIN, MAX } = ORDER_VALIDATION.QUANTITY;
-  
+
   if (quantity < MIN || quantity > MAX) {
-    throw new BadRequestException(
-      `Quantity must be between ${MIN} and ${MAX}`,
-    );
+    throw new BadRequestException(`Quantity must be between ${MIN} and ${MAX}`);
   }
 }
 

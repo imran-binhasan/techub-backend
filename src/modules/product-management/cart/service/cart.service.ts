@@ -46,10 +46,15 @@ export class CartService {
    * Invalidate all cart-related caches for a customer
    * Optimized for free Redis - only invalidates customer-specific keys
    */
-  private async invalidateCustomerCartCaches(customerId: number): Promise<void> {
+  private async invalidateCustomerCartCaches(
+    customerId: number,
+  ): Promise<void> {
     try {
       await Promise.all([
-        this.cacheService.del('cart', `${CART_CACHE_KEYS.CUSTOMER_ITEMS}:${customerId}`),
+        this.cacheService.del(
+          'cart',
+          `${CART_CACHE_KEYS.CUSTOMER_ITEMS}:${customerId}`,
+        ),
         this.cacheService.del('cart', `${CART_CACHE_KEYS.TOTAL}:${customerId}`),
         this.cacheService.del('cart', `${CART_CACHE_KEYS.COUNT}:${customerId}`),
       ]);
@@ -112,10 +117,10 @@ export class CartService {
 
       existingCartItem.quantity = newQuantity;
       const updatedCart = await this.cartRepository.save(existingCartItem);
-      
+
       // Invalidate customer cart caches
       await this.invalidateCustomerCartCaches(customerId);
-      
+
       return this.findOne(updatedCart.id);
     }
 
@@ -127,10 +132,10 @@ export class CartService {
     });
 
     const savedCart = await this.cartRepository.save(cartItem);
-    
+
     // Invalidate customer cart caches
     await this.invalidateCustomerCartCaches(customerId);
-    
+
     return this.findOne(savedCart.id);
   }
 
@@ -255,10 +260,10 @@ export class CartService {
 
     // Update quantity
     await this.cartRepository.update(id, { quantity: updateCartDto.quantity });
-    
+
     // Invalidate customer cart caches
     await this.invalidateCustomerCartCaches(cartItem.customerId);
-    
+
     return this.findOne(id);
   }
 
@@ -273,7 +278,7 @@ export class CartService {
 
     const customerId = cartItem.customerId;
     await this.cartRepository.delete(id);
-    
+
     // Invalidate customer cart caches
     await this.invalidateCustomerCartCaches(customerId);
   }
@@ -289,7 +294,7 @@ export class CartService {
     }
 
     await this.cartRepository.delete({ customerId });
-    
+
     // Invalidate customer cart caches
     await this.invalidateCustomerCartCaches(customerId);
   }
@@ -300,7 +305,10 @@ export class CartService {
   ): Promise<{ total: number; items: number }> {
     // Check cache first - this is frequently called
     const cacheKey = `${CART_CACHE_KEYS.TOTAL}:${customerId}`;
-    const cached = await this.cacheService.get<{ total: number; items: number }>('cart', cacheKey);
+    const cached = await this.cacheService.get<{
+      total: number;
+      items: number;
+    }>('cart', cacheKey);
 
     if (cached) {
       this.logger.debug(`Cache HIT for customer ${customerId} cart total`);

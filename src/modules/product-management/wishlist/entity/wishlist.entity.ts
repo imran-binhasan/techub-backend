@@ -1,4 +1,3 @@
-
 import { Customer } from 'src/modules/personnel-management/customer/entity/customer.entity';
 import { BaseEntity } from 'src/shared/entity/base.entity';
 import { DeleteDateColumn, Entity, ManyToOne, Unique } from 'typeorm';
@@ -16,5 +15,4 @@ export class Wishlist extends BaseEntity {
     onDelete: 'CASCADE',
   })
   product: Product;
-
 }

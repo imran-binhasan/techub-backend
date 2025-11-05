@@ -76,18 +76,9 @@ export const ORDER_STATUS_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
     OrderStatus.CANCELLED,
     OrderStatus.FAILED,
   ],
-  [OrderStatus.CONFIRMED]: [
-    OrderStatus.PROCESSING,
-    OrderStatus.CANCELLED,
-  ],
-  [OrderStatus.PROCESSING]: [
-    OrderStatus.PACKED,
-    OrderStatus.CANCELLED,
-  ],
-  [OrderStatus.PACKED]: [
-    OrderStatus.SHIPPED,
-    OrderStatus.CANCELLED,
-  ],
+  [OrderStatus.CONFIRMED]: [OrderStatus.PROCESSING, OrderStatus.CANCELLED],
+  [OrderStatus.PROCESSING]: [OrderStatus.PACKED, OrderStatus.CANCELLED],
+  [OrderStatus.PACKED]: [OrderStatus.SHIPPED, OrderStatus.CANCELLED],
   [OrderStatus.SHIPPED]: [
     OrderStatus.OUT_FOR_DELIVERY,
     OrderStatus.DELIVERED,
@@ -98,13 +89,9 @@ export const ORDER_STATUS_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
     OrderStatus.RETURNED,
     OrderStatus.FAILED,
   ],
-  [OrderStatus.DELIVERED]: [
-    OrderStatus.RETURNED,
-  ],
+  [OrderStatus.DELIVERED]: [OrderStatus.RETURNED],
   [OrderStatus.CANCELLED]: [], // Terminal state
-  [OrderStatus.RETURNED]: [
-    OrderStatus.REFUNDED,
-  ],
+  [OrderStatus.RETURNED]: [OrderStatus.REFUNDED],
   [OrderStatus.REFUNDED]: [], // Terminal state
   [OrderStatus.FAILED]: [], // Terminal state
 };
@@ -112,7 +99,10 @@ export const ORDER_STATUS_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
 /**
  * Payment Status Transitions
  */
-export const PAYMENT_STATUS_TRANSITIONS: Record<PaymentStatus, PaymentStatus[]> = {
+export const PAYMENT_STATUS_TRANSITIONS: Record<
+  PaymentStatus,
+  PaymentStatus[]
+> = {
   [PaymentStatus.PENDING]: [
     PaymentStatus.PROCESSING,
     PaymentStatus.AUTHORIZED,
@@ -137,9 +127,7 @@ export const PAYMENT_STATUS_TRANSITIONS: Record<PaymentStatus, PaymentStatus[]> 
   ],
   [PaymentStatus.FAILED]: [], // Terminal state
   [PaymentStatus.REFUNDED]: [], // Terminal state
-  [PaymentStatus.PARTIALLY_REFUNDED]: [
-    PaymentStatus.REFUNDED,
-  ],
+  [PaymentStatus.PARTIALLY_REFUNDED]: [PaymentStatus.REFUNDED],
   [PaymentStatus.CANCELLED]: [], // Terminal state
   [PaymentStatus.EXPIRED]: [], // Terminal state
 };
@@ -147,19 +135,14 @@ export const PAYMENT_STATUS_TRANSITIONS: Record<PaymentStatus, PaymentStatus[]> 
 /**
  * Shipping Status Transitions
  */
-export const SHIPPING_STATUS_TRANSITIONS: Record<ShippingStatus, ShippingStatus[]> = {
-  [ShippingStatus.NOT_SHIPPED]: [
-    ShippingStatus.PREPARING,
-  ],
-  [ShippingStatus.PREPARING]: [
-    ShippingStatus.READY_TO_SHIP,
-  ],
-  [ShippingStatus.READY_TO_SHIP]: [
-    ShippingStatus.SHIPPED,
-  ],
-  [ShippingStatus.SHIPPED]: [
-    ShippingStatus.IN_TRANSIT,
-  ],
+export const SHIPPING_STATUS_TRANSITIONS: Record<
+  ShippingStatus,
+  ShippingStatus[]
+> = {
+  [ShippingStatus.NOT_SHIPPED]: [ShippingStatus.PREPARING],
+  [ShippingStatus.PREPARING]: [ShippingStatus.READY_TO_SHIP],
+  [ShippingStatus.READY_TO_SHIP]: [ShippingStatus.SHIPPED],
+  [ShippingStatus.SHIPPED]: [ShippingStatus.IN_TRANSIT],
   [ShippingStatus.IN_TRANSIT]: [
     ShippingStatus.OUT_FOR_DELIVERY,
     ShippingStatus.FAILED_DELIVERY,
@@ -180,33 +163,33 @@ export const SHIPPING_STATUS_TRANSITIONS: Record<ShippingStatus, ShippingStatus[
  * Cache Configuration
  */
 export const ORDER_CACHE_TTL = {
-  SINGLE_ORDER: 1800,              // 30 minutes
-  ORDER_LIST: 600,                 // 10 minutes
-  CUSTOMER_ORDERS: 900,            // 15 minutes
-  ORDER_STATS: 1800,               // 30 minutes
-  REVENUE_REPORT: 3600,            // 1 hour
-  TOP_CUSTOMERS: 3600,             // 1 hour
-  RECENT_ORDERS: 300,              // 5 minutes
-  ORDER_COUNT: 600,                // 10 minutes
-  PENDING_ORDERS: 300,             // 5 minutes (needs frequent updates)
-  ORDER_ANALYTICS: 1800,           // 30 minutes
+  SINGLE_ORDER: 1800, // 30 minutes
+  ORDER_LIST: 600, // 10 minutes
+  CUSTOMER_ORDERS: 900, // 15 minutes
+  ORDER_STATS: 1800, // 30 minutes
+  REVENUE_REPORT: 3600, // 1 hour
+  TOP_CUSTOMERS: 3600, // 1 hour
+  RECENT_ORDERS: 300, // 5 minutes
+  ORDER_COUNT: 600, // 10 minutes
+  PENDING_ORDERS: 300, // 5 minutes (needs frequent updates)
+  ORDER_ANALYTICS: 1800, // 30 minutes
 };
 
 /**
  * Cache Keys
  */
 export const ORDER_CACHE_KEYS = {
-  SINGLE: 'order',                     // order:{id}
-  LIST: 'orders:list',                 // orders:list:{filters}
-  CUSTOMER_ORDERS: 'orders:customer',  // orders:customer:{customerId}
-  STATS: 'orders:stats',               // orders:stats:{period}
-  REVENUE: 'orders:revenue',           // orders:revenue:{period}
+  SINGLE: 'order', // order:{id}
+  LIST: 'orders:list', // orders:list:{filters}
+  CUSTOMER_ORDERS: 'orders:customer', // orders:customer:{customerId}
+  STATS: 'orders:stats', // orders:stats:{period}
+  REVENUE: 'orders:revenue', // orders:revenue:{period}
   TOP_CUSTOMERS: 'orders:top-customers', // orders:top-customers:{limit}
-  RECENT: 'orders:recent',             // orders:recent:{limit}
-  COUNT: 'orders:count',               // orders:count:{status}
-  PENDING: 'orders:pending',           // orders:pending
-  ANALYTICS: 'orders:analytics',       // orders:analytics:{type}
-  SEARCH: 'orders:search',             // orders:search:{query}
+  RECENT: 'orders:recent', // orders:recent:{limit}
+  COUNT: 'orders:count', // orders:count:{status}
+  PENDING: 'orders:pending', // orders:pending
+  ANALYTICS: 'orders:analytics', // orders:analytics:{type}
+  SEARCH: 'orders:search', // orders:search:{query}
 };
 
 /**

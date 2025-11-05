@@ -1,5 +1,13 @@
 import { BaseEntity } from 'src/shared/entity/base.entity';
-import { Column, Entity, OneToOne, JoinColumn, Index, ManyToOne, DeleteDateColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  OneToOne,
+  JoinColumn,
+  Index,
+  ManyToOne,
+  DeleteDateColumn,
+} from 'typeorm';
 import { Vendor } from './vendor.entity';
 
 export enum VendorAddressType {
@@ -12,7 +20,9 @@ export enum VendorAddressType {
 @Entity('vendor_address')
 @Index(['vendor_id'])
 export class VendorAddress extends BaseEntity {
-  @ManyToOne(() => Vendor, (vendor) => vendor.addresses, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Vendor, (vendor) => vendor.addresses, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'vendor_id' })
   vendor: Vendor;
 
@@ -22,7 +32,12 @@ export class VendorAddress extends BaseEntity {
   @Column({ name: 'address_line_1', type: 'varchar', length: 255 })
   addressLine1: string;
 
-  @Column({ name: 'address_line_2', type: 'varchar', length: 255, nullable: true })
+  @Column({
+    name: 'address_line_2',
+    type: 'varchar',
+    length: 255,
+    nullable: true,
+  })
   addressLine2?: string;
 
   @Column({ name: 'city', type: 'varchar', length: 100 })
@@ -42,5 +57,4 @@ export class VendorAddress extends BaseEntity {
 
   @Column({ name: 'is_primary', type: 'boolean', default: false })
   isPrimary: boolean;
-    
 }

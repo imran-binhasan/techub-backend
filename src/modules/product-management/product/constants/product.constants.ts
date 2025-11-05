@@ -159,8 +159,10 @@ export const PRODUCT_IMAGE = {
 export const PRODUCT_ERROR_MESSAGES = {
   NOT_FOUND: 'Product not found',
   ALREADY_EXISTS: 'Product with this name or SKU already exists',
-  INVALID_SKU: 'Invalid SKU format. Use alphanumeric characters, dashes, and underscores only',
-  INVALID_SLUG: 'Invalid slug format. Use lowercase letters, numbers, and dashes only',
+  INVALID_SKU:
+    'Invalid SKU format. Use alphanumeric characters, dashes, and underscores only',
+  INVALID_SLUG:
+    'Invalid slug format. Use lowercase letters, numbers, and dashes only',
   INSUFFICIENT_STOCK: 'Insufficient stock available',
   INVALID_PRICE: 'Product price must be greater than or equal to 0',
   INVALID_DISCOUNT: 'Invalid discount configuration',

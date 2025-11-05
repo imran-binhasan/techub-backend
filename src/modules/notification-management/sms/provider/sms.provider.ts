@@ -1,5 +1,3 @@
-
-
 // src/sms/provider/sms.provider.ts
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -28,7 +26,9 @@ export class SmsProvider {
     this.sendUrl = this.configService.get<string>('SMS_SEND_URL') ?? '';
 
     if (!this.apiKey || !this.senderId || !this.sendUrl) {
-      this.logger.error('SMS configuration is incomplete. Please check environment variables.');
+      this.logger.error(
+        'SMS configuration is incomplete. Please check environment variables.',
+      );
     }
   }
 
@@ -76,11 +76,11 @@ export class SmsProvider {
 
         const req = httpModule.request(options, (res) => {
           let data = '';
-          
+
           res.on('data', (chunk) => {
             data += chunk;
           });
-          
+
           res.on('end', () => {
             let responseData: any;
             try {
@@ -90,7 +90,10 @@ export class SmsProvider {
             }
 
             const code = responseData?.code || responseData?.status_code;
-            const message = this.responseMessages[code] || responseData?.message || 'Unknown response';
+            const message =
+              this.responseMessages[code] ||
+              responseData?.message ||
+              'Unknown response';
 
             if (code === '445000' || responseData?.status === 'success') {
               this.logger.log(`SMS sent successfully to ${recipient}`);
@@ -113,7 +116,10 @@ export class SmsProvider {
         });
 
         req.on('error', (error) => {
-          this.logger.error(`HTTP request error: ${error.message}`, error.stack);
+          this.logger.error(
+            `HTTP request error: ${error.message}`,
+            error.stack,
+          );
           resolve({
             success: false,
             status: 'error',
@@ -125,7 +131,10 @@ export class SmsProvider {
         req.write(postData);
         req.end();
       } catch (error) {
-        this.logger.error(`Exception in SMS provider: ${error.message}`, error.stack);
+        this.logger.error(
+          `Exception in SMS provider: ${error.message}`,
+          error.stack,
+        );
         resolve({
           success: false,
           status: 'error',
@@ -141,7 +150,12 @@ export class SmsProvider {
     return !!(this.apiKey && this.senderId && this.sendUrl);
   }
 
-  getConfiguration(): { configured: boolean; hasApiKey: boolean; hasSenderId: boolean; hasUrl: boolean } {
+  getConfiguration(): {
+    configured: boolean;
+    hasApiKey: boolean;
+    hasSenderId: boolean;
+    hasUrl: boolean;
+  } {
     return {
       configured: this.isConfigured(),
       hasApiKey: !!this.apiKey,

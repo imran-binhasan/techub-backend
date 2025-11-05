@@ -19,7 +19,10 @@ export interface AuthenticatedVendor extends BaseAuthenticatedUser {
   type: 'vendor';
 }
 
-export type AuthenticatedUser = AuthenticatedAdmin | AuthenticatedCustomer | AuthenticatedVendor;
+export type AuthenticatedUser =
+  | AuthenticatedAdmin
+  | AuthenticatedCustomer
+  | AuthenticatedVendor;
 
 export function isAdmin(user: AuthenticatedUser): user is AuthenticatedAdmin {
   return user.type === 'admin';

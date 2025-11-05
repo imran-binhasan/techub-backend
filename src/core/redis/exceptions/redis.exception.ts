@@ -5,7 +5,10 @@ import { REDIS_ERROR_MESSAGES } from '../constants/redis.constants';
  * Base class for all Redis-related exceptions
  */
 export class RedisException extends HttpException {
-  constructor(message: string, statusCode: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR) {
+  constructor(
+    message: string,
+    statusCode: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR,
+  ) {
     super(message, statusCode);
   }
 }

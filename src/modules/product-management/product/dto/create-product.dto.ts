@@ -48,12 +48,10 @@ export class CreateProductDto {
   })
   @IsOptional()
   @IsString()
-  @Length(
-    PRODUCT_VALIDATION.SKU.MIN_LENGTH,
-    PRODUCT_VALIDATION.SKU.MAX_LENGTH,
-  )
+  @Length(PRODUCT_VALIDATION.SKU.MIN_LENGTH, PRODUCT_VALIDATION.SKU.MAX_LENGTH)
   @Matches(PRODUCT_VALIDATION.SKU.PATTERN, {
-    message: 'SKU must contain only alphanumeric characters, dashes, and underscores',
+    message:
+      'SKU must contain only alphanumeric characters, dashes, and underscores',
   })
   sku?: string;
 
@@ -150,7 +148,7 @@ export class CreateProductDto {
 
   @ApiPropertyOptional({
     description: 'Cost per item (for profit calculation)',
-    example: 150.00,
+    example: 150.0,
   })
   @IsOptional()
   @IsNumber({ maxDecimalPlaces: PRODUCT_VALIDATION.PRICE.DECIMAL_PLACES })
@@ -168,7 +166,8 @@ export class CreateProductDto {
   discountType?: DiscountType;
 
   @ApiPropertyOptional({
-    description: 'Discount value (percentage or fixed amount based on discountType)',
+    description:
+      'Discount value (percentage or fixed amount based on discountType)',
     example: 15,
   })
   @IsOptional()

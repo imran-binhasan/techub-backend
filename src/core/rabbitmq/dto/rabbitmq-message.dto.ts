@@ -1,4 +1,13 @@
-import { IsEnum, IsNumber, IsOptional, IsString, IsBoolean, IsObject, Min, Max } from 'class-validator';
+import {
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsString,
+  IsBoolean,
+  IsObject,
+  Min,
+  Max,
+} from 'class-validator';
 import { MessagePriority, DeliveryMode } from '../enum/rabbitmq.enum';
 
 /**

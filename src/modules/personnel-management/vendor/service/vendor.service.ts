@@ -12,5 +12,4 @@ export class VendorService {
     @InjectRepository(User)
     privateuserRepository: Repository<User>,
   ) {}
-
 }

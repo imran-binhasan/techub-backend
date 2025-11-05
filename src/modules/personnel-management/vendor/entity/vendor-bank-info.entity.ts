@@ -24,7 +24,12 @@ export class VendorBankInfo extends BaseEntity {
   @Column({ name: 'bank_code', type: 'varchar', length: 50, nullable: true })
   bankCode?: string; // SWIFT/BIC code
 
-  @Column({ name: 'routing_number', type: 'varchar', length: 100, nullable: true })
+  @Column({
+    name: 'routing_number',
+    type: 'varchar',
+    length: 100,
+    nullable: true,
+  })
   routingNumber?: string;
 
   @Column({ name: 'account_type', type: 'varchar', length: 50, nullable: true })
@@ -39,6 +44,11 @@ export class VendorBankInfo extends BaseEntity {
   @Column({ name: 'verified_at', type: 'timestamptz', nullable: true })
   verifiedAt?: Date;
 
-  @Column({ name: 'verification_method', type: 'varchar', length: 100, nullable: true })
+  @Column({
+    name: 'verification_method',
+    type: 'varchar',
+    length: 100,
+    nullable: true,
+  })
   verificationMethod?: string; // 'micro_deposit', 'instant', 'manual'
 }

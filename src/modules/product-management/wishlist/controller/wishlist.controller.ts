@@ -14,7 +14,10 @@ import {
 import { WishlistService } from '../service/wishlist.service';
 import { CreateWishlistDto } from '../dto/create-wishlist.dto';
 import { UpdateWishlistDto } from '../dto/update-wishlist.dto';
-import { RequireResource, Public } from 'src/core/auth/decorator/auth.decorator';
+import {
+  RequireResource,
+  Public,
+} from 'src/core/auth/decorator/auth.decorator';
 import { WishlistQueryDto } from '../dto/query-wishlist.dto';
 
 @Controller('wishlist')

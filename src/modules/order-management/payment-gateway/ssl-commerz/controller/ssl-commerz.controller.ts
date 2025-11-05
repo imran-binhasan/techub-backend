@@ -48,12 +48,12 @@ export class SslCommerzController {
       bankTransId: string;
       refundAmount: number;
       refundRemarks?: string;
-    }
+    },
   ) {
     const result = await this.sslCommerzService.initiateRefund(
       refundData.bankTransId,
       refundData.refundAmount,
-      refundData.refundRemarks
+      refundData.refundRemarks,
     );
     return {
       success: true,
@@ -90,7 +90,7 @@ export class SslCommerzController {
     try {
       // Log the success callback
       console.log('SSL Commerz Success Callback:', data);
-      
+
       // Validate the payment
       if (data.val_id) {
         const validation = await this.sslCommerzService.validatePayment({
@@ -101,14 +101,20 @@ export class SslCommerzController {
 
         // Here you would typically update your order status
         // and trigger any necessary business logic
-        
-        return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/payment/success?orderId=${data.tran_id}`);
+
+        return res.redirect(
+          `${process.env.FRONTEND_URL || 'http://localhost:3000'}/payment/success?orderId=${data.tran_id}`,
+        );
       }
 
-      return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/payment/error`);
+      return res.redirect(
+        `${process.env.FRONTEND_URL || 'http://localhost:3000'}/payment/error`,
+      );
     } catch (error) {
       console.error('Error in SSL Commerz success handler:', error);
-      return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/payment/error`);
+      return res.redirect(
+        `${process.env.FRONTEND_URL || 'http://localhost:3000'}/payment/error`,
+      );
     }
   }
 
@@ -117,10 +123,12 @@ export class SslCommerzController {
   @HttpCode(HttpStatus.OK)
   async handleFailure(@Body() data: any, @Res() res: Response) {
     console.log('SSL Commerz Failure Callback:', data);
-    
+
     // Here you would typically update your order status to failed
-    
-    return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/payment/failed?orderId=${data.tran_id}`);
+
+    return res.redirect(
+      `${process.env.FRONTEND_URL || 'http://localhost:3000'}/payment/failed?orderId=${data.tran_id}`,
+    );
   }
 
   @Public()
@@ -128,10 +136,12 @@ export class SslCommerzController {
   @HttpCode(HttpStatus.OK)
   async handleCancel(@Body() data: any, @Res() res: Response) {
     console.log('SSL Commerz Cancel Callback:', data);
-    
+
     // Here you would typically update your order status to cancelled
-    
-    return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/payment/cancelled?orderId=${data.tran_id}`);
+
+    return res.redirect(
+      `${process.env.FRONTEND_URL || 'http://localhost:3000'}/payment/cancelled?orderId=${data.tran_id}`,
+    );
   }
 
   @Public()
@@ -140,7 +150,7 @@ export class SslCommerzController {
   async handleIPN(@Body() data: any, @Res() res: Response) {
     try {
       console.log('SSL Commerz IPN Callback:', data);
-      
+
       // Validate the IPN data
       if (data.val_id && data.status === 'VALID') {
         const validation = await this.sslCommerzService.validatePayment({
@@ -155,7 +165,7 @@ export class SslCommerzController {
           // 2. Update inventory
           // 3. Send confirmation emails
           // 4. Trigger any other business logic
-          
+
           console.log('Payment validated successfully via IPN:', validation);
         }
       }

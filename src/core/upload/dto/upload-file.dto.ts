@@ -1,4 +1,11 @@
-import { IsEnum, IsOptional, IsNumber, Min, Max, IsString } from 'class-validator';
+import {
+  IsEnum,
+  IsOptional,
+  IsNumber,
+  Min,
+  Max,
+  IsString,
+} from 'class-validator';
 import { ImageCategory, UploaderType } from '../enum/upload.enum';
 
 /**

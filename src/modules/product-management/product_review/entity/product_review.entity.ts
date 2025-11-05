@@ -1,6 +1,12 @@
 import { BaseEntity } from 'src/shared/entity/base.entity';
 import { Product } from 'src/modules/product-management/product/entity/product.entity';
-import { Column, Entity, ManyToOne, JoinColumn, DeleteDateColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  JoinColumn,
+  DeleteDateColumn,
+} from 'typeorm';
 
 @Entity('product_review')
 export class ProductReview extends BaseEntity {
@@ -19,5 +25,4 @@ export class ProductReview extends BaseEntity {
   })
   @JoinColumn({ name: 'productId' })
   product: Product;
-
 }

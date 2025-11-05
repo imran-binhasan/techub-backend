@@ -307,7 +307,11 @@ export class RedisService {
   }
 
   // Set with expiry (convenience method)
-  async setWithExpiry(key: string, value: string, seconds: number): Promise<boolean> {
+  async setWithExpiry(
+    key: string,
+    value: string,
+    seconds: number,
+  ): Promise<boolean> {
     try {
       await this.redis.setex(key, seconds, value);
       return true;

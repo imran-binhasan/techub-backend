@@ -45,7 +45,7 @@ export class AddressController {
 
   @RequireResource('address', 'read')
   @Get(':id')
-  async findOne(@Param('id', ParseIntPipe) id:number) {
+  async findOne(@Param('id', ParseIntPipe) id: number) {
     const result = await this.addressService.findOne(id);
     return {
       success: true,
@@ -57,7 +57,7 @@ export class AddressController {
   @RequireResource('address', 'update')
   @Patch(':id')
   async update(
-    @Param('id', ParseIntPipe) id:number,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateAddressDto: UpdateAddressDto,
   ) {
     const result = await this.addressService.update(id, updateAddressDto);
@@ -71,7 +71,7 @@ export class AddressController {
   @RequireResource('address', 'delete')
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Param('id', ParseIntPipe) id:number) {
+  async remove(@Param('id', ParseIntPipe) id: number) {
     await this.addressService.remove(id);
     return {
       success: true,
@@ -82,7 +82,7 @@ export class AddressController {
   @RequireResource('address', 'manage')
   @Patch(':id/restore')
   @HttpCode(HttpStatus.OK)
-  async restore(@Param('id', ParseIntPipe) id:number) {
+  async restore(@Param('id', ParseIntPipe) id: number) {
     const result = await this.addressService.restore(id);
     return {
       success: true,
@@ -94,7 +94,7 @@ export class AddressController {
   // Customer-specific endpoints
   @RequireResource('address', 'read')
   @Get('customer/:customerId')
-  async findByCustomer(@Param('customerId', ParseIntPipe) customerId:number) {
+  async findByCustomer(@Param('customerId', ParseIntPipe) customerId: number) {
     const result = await this.addressService.findByCustomer(customerId);
     return {
       success: true,
@@ -106,7 +106,7 @@ export class AddressController {
   @RequireResource('address', 'read')
   @Get('customer/:customerId/default')
   async findDefaultAddress(
-    @Param('customerId', ParseIntPipe) customerId:number,
+    @Param('customerId', ParseIntPipe) customerId: number,
   ) {
     const result = await this.addressService.findDefaultAddress(customerId);
     return {
@@ -118,7 +118,7 @@ export class AddressController {
 
   @RequireResource('address', 'update')
   @Patch(':id/set-default')
-  async setAsDefault(@Param('id', ParseIntPipe) id:number) {
+  async setAsDefault(@Param('id', ParseIntPipe) id: number) {
     const result = await this.addressService.setAsDefault(id);
     return {
       success: true,
@@ -131,7 +131,7 @@ export class AddressController {
   @RequireResource('address', 'read')
   @Get('customer/:customerId/count')
   async getAddressesCount(
-    @Param('customerId', ParseIntPipe) customerId:number,
+    @Param('customerId', ParseIntPipe) customerId: number,
   ) {
     const result = await this.addressService.getAddressesCount(customerId);
     return {

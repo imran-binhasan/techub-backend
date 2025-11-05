@@ -1,4 +1,11 @@
-import { IsBoolean, IsNumber, IsOptional, IsString, Min, Max } from 'class-validator';
+import {
+  IsBoolean,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Min,
+  Max,
+} from 'class-validator';
 
 /**
  * DTO for Redis cache options

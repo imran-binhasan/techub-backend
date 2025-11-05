@@ -19,7 +19,12 @@ export class Address extends BaseEntity {
   @Column({ name: 'address_line_1', type: 'varchar', length: 255 })
   addressLine1: string;
 
-  @Column({ name: 'address_line_2', type: 'varchar', length: 255, nullable: true })
+  @Column({
+    name: 'address_line_2',
+    type: 'varchar',
+    length: 255,
+    nullable: true,
+  })
   addressLine2?: string;
 
   @Column({ name: 'city', type: 'varchar', length: 100 })
@@ -37,7 +42,12 @@ export class Address extends BaseEntity {
   @Column({ name: 'country_code', type: 'varchar', length: 3, nullable: true })
   countryCode?: string; // ISO 3166-1 alpha-2 (e.g., 'BD', 'US', 'DE')
 
-  @Column({ name: 'type', type: 'enum', enum: AddressType, default: AddressType.SHIPPING })
+  @Column({
+    name: 'type',
+    type: 'enum',
+    enum: AddressType,
+    default: AddressType.SHIPPING,
+  })
   type: AddressType;
 
   @Column({ name: 'is_default', type: 'boolean', default: false })

@@ -12,7 +12,6 @@ import { PaginationQuery } from 'src/shared/dto/pagination_query.dto';
 
 export class ProductReviewQueryDto extends PaginationQuery {
   @IsOptional()
-  
   productId?: number;
 
   @IsOptional()

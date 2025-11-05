@@ -1,11 +1,5 @@
 import { BaseEntity } from 'src/shared/entity/base.entity';
-import {
-  Column,
-  Entity,
-  ManyToOne,
-  OneToMany,
-  Index,
-} from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany, Index } from 'typeorm';
 import { Product } from '../../product/entity/product.entity';
 
 @Entity('category')

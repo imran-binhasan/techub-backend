@@ -17,9 +17,15 @@ import { RedisService } from '../service/redis.service';
         let username = configService.get<string>('REDIS_USERNAME');
         let password = configService.get<string>('REDIS_PASSWORD');
         let useTLS = configService.get<string>('REDIS_TLS') === 'true';
-        
-        console.log('Environment Redis config:', { host, port, username: !!username, password: !!password, useTLS });
-        
+
+        console.log('Environment Redis config:', {
+          host,
+          port,
+          username: !!username,
+          password: !!password,
+          useTLS,
+        });
+
         // Fallback to Redis Cloud configuration if env vars not found
         if (!host || !port || !password) {
           console.log('Using fallback Redis Cloud configuration');
@@ -29,18 +35,22 @@ import { RedisService } from '../service/redis.service';
           password = 'wb2RPMyMwavJ28WvVwwkDqvmaXRKxRBm';
           useTLS = false; // Redis Cloud instance doesn't use TLS based on redis:// URL
         }
-        
+
         // Special override for this specific Redis Cloud instance (doesn't use TLS)
-        if (host === 'redis-16855.c252.ap-southeast-1-1.ec2.redns.redis-cloud.com') {
+        if (
+          host === 'redis-16855.c252.ap-southeast-1-1.ec2.redns.redis-cloud.com'
+        ) {
           console.log('Overriding TLS to false for this Redis Cloud instance');
           useTLS = false;
         }
-        
+
         let client: Redis;
-        
+
         try {
-          console.log(`Connecting to Redis Cloud: ${host}:${port} (TLS: ${useTLS})`);
-          
+          console.log(
+            `Connecting to Redis Cloud: ${host}:${port} (TLS: ${useTLS})`,
+          );
+
           client = new Redis({
             host,
             port,
@@ -59,11 +69,19 @@ import { RedisService } from '../service/redis.service';
             family: 4, // Force IPv4
           });
 
-          client.on('connect', () => console.log('✅ Redis connected successfully'));
-          client.on('error', (err) => console.error('❌ Redis Error:', err.message));
-          client.on('ready', () => console.log('🚀 Redis ready for operations'));
+          client.on('connect', () =>
+            console.log('✅ Redis connected successfully'),
+          );
+          client.on('error', (err) =>
+            console.error('❌ Redis Error:', err.message),
+          );
+          client.on('ready', () =>
+            console.log('🚀 Redis ready for operations'),
+          );
           client.on('close', () => console.log('🔌 Redis connection closed'));
-          client.on('reconnecting', () => console.log('🔄 Redis reconnecting...'));
+          client.on('reconnecting', () =>
+            console.log('🔄 Redis reconnecting...'),
+          );
 
           // Test the connection immediately
           await client.ping();

@@ -4,7 +4,6 @@ import { PaginationQuery } from 'src/shared/dto/pagination_query.dto';
 
 export class ProductImageQueryDto extends PaginationQuery {
   @IsOptional()
-  
   productId?: string;
 
   @IsOptional()

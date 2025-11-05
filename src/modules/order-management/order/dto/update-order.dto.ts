@@ -1,6 +1,13 @@
 import { PartialType } from '@nestjs/swagger';
 import { CreateOrderDto } from './create-order.dto';
-import { IsEnum, IsOptional, IsString, IsNumber, MaxLength, Min } from 'class-validator';
+import {
+  IsEnum,
+  IsOptional,
+  IsString,
+  IsNumber,
+  MaxLength,
+  Min,
+} from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
@@ -108,7 +115,7 @@ export class UpdateOrderDto extends PartialType(CreateOrderDto) {
 
   @ApiPropertyOptional({
     description: 'Refund amount',
-    example: 50.00,
+    example: 50.0,
     minimum: 0,
   })
   @IsOptional()

@@ -7,32 +7,32 @@
  * Order Status Lifecycle
  */
 export enum OrderStatus {
-  PENDING = 'pending',           // Order created, awaiting payment
-  CONFIRMED = 'confirmed',       // Payment received, order confirmed
-  PROCESSING = 'processing',     // Order being prepared
-  PACKED = 'packed',            // Order packed, ready to ship
-  SHIPPED = 'shipped',          // Order dispatched to customer
+  PENDING = 'pending', // Order created, awaiting payment
+  CONFIRMED = 'confirmed', // Payment received, order confirmed
+  PROCESSING = 'processing', // Order being prepared
+  PACKED = 'packed', // Order packed, ready to ship
+  SHIPPED = 'shipped', // Order dispatched to customer
   OUT_FOR_DELIVERY = 'out_for_delivery', // Order out for delivery
-  DELIVERED = 'delivered',      // Order delivered successfully
-  CANCELLED = 'cancelled',      // Order cancelled (before shipping)
-  RETURNED = 'returned',        // Order returned by customer
-  REFUNDED = 'refunded',        // Payment refunded to customer
-  FAILED = 'failed',            // Order processing failed
+  DELIVERED = 'delivered', // Order delivered successfully
+  CANCELLED = 'cancelled', // Order cancelled (before shipping)
+  RETURNED = 'returned', // Order returned by customer
+  REFUNDED = 'refunded', // Payment refunded to customer
+  FAILED = 'failed', // Order processing failed
 }
 
 /**
  * Payment Status
  */
 export enum PaymentStatus {
-  PENDING = 'pending',           // Payment not yet initiated
-  PROCESSING = 'processing',     // Payment being processed
-  AUTHORIZED = 'authorized',     // Payment authorized (not captured)
-  PAID = 'paid',                // Payment successful
-  FAILED = 'failed',            // Payment failed
-  REFUNDED = 'refunded',        // Payment refunded
+  PENDING = 'pending', // Payment not yet initiated
+  PROCESSING = 'processing', // Payment being processed
+  AUTHORIZED = 'authorized', // Payment authorized (not captured)
+  PAID = 'paid', // Payment successful
+  FAILED = 'failed', // Payment failed
+  REFUNDED = 'refunded', // Payment refunded
   PARTIALLY_REFUNDED = 'partially_refunded', // Partial refund issued
-  CANCELLED = 'cancelled',      // Payment cancelled
-  EXPIRED = 'expired',          // Payment authorization expired
+  CANCELLED = 'cancelled', // Payment cancelled
+  EXPIRED = 'expired', // Payment authorization expired
 }
 
 /**
@@ -70,11 +70,11 @@ export enum ShippingStatus {
  * Shipping Method Types
  */
 export enum ShippingMethod {
-  STANDARD = 'standard',         // 5-7 business days
-  EXPRESS = 'express',           // 2-3 business days
-  OVERNIGHT = 'overnight',       // Next day delivery
-  SAME_DAY = 'same_day',        // Same day delivery
-  PICKUP = 'pickup',            // Customer pickup
+  STANDARD = 'standard', // 5-7 business days
+  EXPRESS = 'express', // 2-3 business days
+  OVERNIGHT = 'overnight', // Next day delivery
+  SAME_DAY = 'same_day', // Same day delivery
+  PICKUP = 'pickup', // Customer pickup
   INTERNATIONAL = 'international', // International shipping
 }
 
@@ -145,7 +145,7 @@ export enum OrderSource {
   ADMIN_PANEL = 'admin_panel',
   API = 'api',
   PHONE = 'phone',
-  POS = 'pos',               // Point of Sale
+  POS = 'pos', // Point of Sale
   MARKETPLACE = 'marketplace', // Third-party marketplace
 }
 

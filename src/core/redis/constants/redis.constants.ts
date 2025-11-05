@@ -7,18 +7,18 @@ export const REDIS_CONFIG = {
   retryDelayMs: 100,
   connectionTimeout: 10000,
   keepAlive: 30000,
-  
+
   // Pool settings
   minConnections: 5,
   maxConnections: 50,
-  
+
   // Key settings
   keyPrefix: 'techub:',
   maxKeyLength: 512,
-  
+
   // Value settings
   maxValueSize: 10 * 1024 * 1024, // 10MB
-  
+
   // Operation settings
   commandTimeout: 5000,
   pipelineBatchSize: 100,

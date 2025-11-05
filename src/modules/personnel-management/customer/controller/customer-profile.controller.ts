@@ -1,20 +1,29 @@
-import { Body, Controller, Post, Get, Put, UploadedFile, UseInterceptors } from "@nestjs/common";
-import { ApiConsumes, ApiOperation, ApiResponse } from "@nestjs/swagger";
-import { CustomerProfileService } from "../service/customer-profile.service";
-import { CurrentUser } from "src/core/auth/decorator/current-user.decorator";
-import { FileInterceptor } from "@nestjs/platform-express";
-import { CustomerProfileDto } from "../dto/customer-profile.dto";
-import type { AuthenticatedUser } from "src/core/auth/interface/auth-user.interface";
+import {
+  Body,
+  Controller,
+  Post,
+  Get,
+  Put,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
+import { ApiConsumes, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { CustomerProfileService } from '../service/customer-profile.service';
+import { CurrentUser } from 'src/core/auth/decorator/current-user.decorator';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { CustomerProfileDto } from '../dto/customer-profile.dto';
+import type { AuthenticatedUser } from 'src/core/auth/interface/auth-user.interface';
 
 @Controller({ path: 'customer/profile', version: '1' })
-
-
 export class CustomerProfileController {
   constructor(private profileService: CustomerProfileService) {}
 
   @Get()
   @ApiOperation({ summary: 'Get customer profile' })
-  @ApiResponse({ status: 200, description: 'Customer profile retrieved successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Customer profile retrieved successfully',
+  })
   async getProfile(
     @CurrentUser() user: AuthenticatedUser,
   ): Promise<CustomerProfileDto> {
@@ -23,7 +32,10 @@ export class CustomerProfileController {
 
   @Put()
   @ApiOperation({ summary: 'Update customer profile' })
-  @ApiResponse({ status: 200, description: 'Customer profile updated successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Customer profile updated successfully',
+  })
   async updateProfile(
     @CurrentUser() user: AuthenticatedUser,
     @Body() dto: Partial<CustomerProfileDto>,
@@ -35,7 +47,10 @@ export class CustomerProfileController {
   @UseInterceptors(FileInterceptor('file'))
   @ApiOperation({ summary: 'Upload profile image' })
   @ApiConsumes('multipart/form-data')
-  @ApiResponse({ status: 200, schema: { type: 'object', properties: { url: { type: 'string' } } } })
+  @ApiResponse({
+    status: 200,
+    schema: { type: 'object', properties: { url: { type: 'string' } } },
+  })
   async uploadImage(
     @CurrentUser() user: AuthenticatedUser,
     @UploadedFile() file: Express.Multer.File,

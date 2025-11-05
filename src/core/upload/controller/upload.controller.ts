@@ -73,11 +73,7 @@ export class UploadController {
 
     const uploaderType = this.mapUserTypeToUploaderType(user.type);
 
-    return this.uploadService.uploadDocument(
-      file,
-      user.id,
-      uploaderType,
-    );
+    return this.uploadService.uploadDocument(file, user.id, uploaderType);
   }
 
   /**

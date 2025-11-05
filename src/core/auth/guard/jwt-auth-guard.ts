@@ -52,7 +52,14 @@ export class JwtAuthGuard implements CanActivate {
 
       const user = await this.userRepository.findOne({
         where: { id: parseInt(payload.sub) },
-        select: ['id', 'email', 'firstName', 'lastName', 'userType', 'deletedAt'],
+        select: [
+          'id',
+          'email',
+          'firstName',
+          'lastName',
+          'userType',
+          'deletedAt',
+        ],
         relations: payload.type === 'admin' ? ['admin'] : [],
       });
 
@@ -67,17 +74,17 @@ export class JwtAuthGuard implements CanActivate {
         firstName: user.firstName,
         lastName: user.lastName,
         type: payload.type,
-        ...(payload.type === 'admin' && user.admin && {
-          roleId: user.admin.roleId,
-          permissions: payload.permissions || [],
-        }),
+        ...(payload.type === 'admin' &&
+          user.admin && {
+            roleId: user.admin.roleId,
+            permissions: payload.permissions || [],
+          }),
       };
 
       return true;
-
     } catch (error) {
       if (error instanceof UnauthorizedException) throw error;
-      
+
       this.logger.warn(`Authentication failed: ${error.message}`);
       throw new UnauthorizedException('Invalid or expired token');
     }

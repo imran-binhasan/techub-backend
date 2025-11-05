@@ -10,9 +10,19 @@ import {
   HttpStatus,
   HttpCode,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+  ApiQuery,
+} from '@nestjs/swagger';
 import { PaymentService } from '../service/payment.service';
-import { Payment, PaymentGateway, PaymentStatus } from '../entity/payment.entity';
+import {
+  Payment,
+  PaymentGateway,
+  PaymentStatus,
+} from '../entity/payment.entity';
 import { AdminOnly, Auth } from 'src/core/auth/decorator/auth.decorator';
 
 @ApiTags('Payments')
@@ -29,7 +39,8 @@ export class PaymentController {
   @HttpCode(HttpStatus.CREATED)
   async createPayment(
     @Param('orderId') orderId: number,
-    @Body() createPaymentDto: {
+    @Body()
+    createPaymentDto: {
       gateway: PaymentGateway;
       amount: number;
       gatewayTransactionId: string;
@@ -55,11 +66,15 @@ export class PaymentController {
   @Patch(':id/status')
   @AdminOnly()
   @ApiOperation({ summary: 'Update payment status' })
-  @ApiResponse({ status: 200, description: 'Payment status updated successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Payment status updated successfully',
+  })
   @ApiResponse({ status: 404, description: 'Payment not found' })
   async updatePaymentStatus(
     @Param('id') id: number,
-    @Body() updateData: {
+    @Body()
+    updateData: {
       status: PaymentStatus;
       gatewayResponse?: any;
     },
@@ -101,7 +116,8 @@ export class PaymentController {
   @HttpCode(HttpStatus.CREATED)
   async createRefund(
     @Param('paymentId') paymentId: string,
-    @Body() refundData: {
+    @Body()
+    refundData: {
       amount: number;
       reason?: string;
       gatewayRefundId?: string;
@@ -126,7 +142,10 @@ export class PaymentController {
   @AdminOnly()
   @ApiOperation({ summary: 'Get payment statistics' })
   @ApiQuery({ name: 'gateway', required: false, enum: PaymentGateway })
-  @ApiResponse({ status: 200, description: 'Payment statistics retrieved successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Payment statistics retrieved successfully',
+  })
   async getPaymentStats(@Query('gateway') gateway?: PaymentGateway): Promise<{
     message: string;
     data: {

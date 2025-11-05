@@ -156,9 +156,7 @@ export class DynamicRbacGuard implements CanActivate {
     }
 
     if (!userPermissions.includes(requiredPermission)) {
-      this.logger.warn(
-        `User ${user.id} denied ${action} on ${resource}`,
-      );
+      this.logger.warn(`User ${user.id} denied ${action} on ${resource}`);
       throw new ForbiddenException(
         `Permission denied: ${action} on ${resource}`,
       );

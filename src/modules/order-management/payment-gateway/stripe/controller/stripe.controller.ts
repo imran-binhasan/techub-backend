@@ -55,7 +55,8 @@ export class StripeController {
 
   @Get('payment-intent/:id')
   async getPaymentIntent(@Param('id') paymentIntentId: string) {
-    const result = await this.stripeService.retrievePaymentIntent(paymentIntentId);
+    const result =
+      await this.stripeService.retrievePaymentIntent(paymentIntentId);
     return {
       success: true,
       message: 'Payment intent retrieved successfully',
@@ -86,11 +87,11 @@ export class StripeController {
   @Post('payment-intent/:id/confirm')
   async confirmPaymentIntent(
     @Param('id') paymentIntentId: string,
-    @Body() confirmData: { paymentMethodId?: string }
+    @Body() confirmData: { paymentMethodId?: string },
   ) {
     const result = await this.stripeService.confirmPaymentIntent(
       paymentIntentId,
-      confirmData.paymentMethodId
+      confirmData.paymentMethodId,
     );
     return {
       success: true,
@@ -101,7 +102,8 @@ export class StripeController {
 
   @Post('payment-intent/:id/cancel')
   async cancelPaymentIntent(@Param('id') paymentIntentId: string) {
-    const result = await this.stripeService.cancelPaymentIntent(paymentIntentId);
+    const result =
+      await this.stripeService.cancelPaymentIntent(paymentIntentId);
     return {
       success: true,
       message: 'Payment intent cancelled successfully',
@@ -136,12 +138,12 @@ export class StripeController {
   async handleWebhook(
     @RawBody() body: Buffer,
     @Headers('stripe-signature') signature: string,
-    @Res() res: Response
+    @Res() res: Response,
   ) {
     try {
       const event = await this.stripeService.constructWebhookEvent(
         body.toString(),
-        signature
+        signature,
       );
 
       console.log('Stripe webhook event received:', event.type);

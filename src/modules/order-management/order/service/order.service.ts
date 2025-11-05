@@ -1,10 +1,20 @@
-import { Injectable, NotFoundException, BadRequestException, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+  Logger,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource, Between } from 'typeorm';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Order } from '../entity/order.entity';
 import { OrderItem } from '../entity/order-item.entity';
-import { CreateOrderDto, UpdateOrderDto, QueryOrderDto, OrderResponse } from '../dto';
+import {
+  CreateOrderDto,
+  UpdateOrderDto,
+  QueryOrderDto,
+  OrderResponse,
+} from '../dto';
 import { InventoryService } from '../../inventory/service/inventory.service';
 import { TransactionType } from '../../inventory/entity/inventory-transaction.entity';
 import { ProductService } from 'src/modules/product-management/product/service/product.service';
@@ -71,14 +81,18 @@ export class OrderService {
 
     try {
       // Validate addresses exist - no ownership restriction for flexibility
-      const billingAddress = await this.addressService.findOne(createOrderDto.billingAddressId);
+      const billingAddress = await this.addressService.findOne(
+        createOrderDto.billingAddressId,
+      );
       if (!billingAddress) {
         throw new NotFoundException('Billing address not found');
       }
 
       let shippingAddress = billingAddress; // Default to billing address
       if (createOrderDto.shippingAddressId) {
-        shippingAddress = await this.addressService.findOne(createOrderDto.shippingAddressId);
+        shippingAddress = await this.addressService.findOne(
+          createOrderDto.shippingAddressId,
+        );
         if (!shippingAddress) {
           throw new NotFoundException('Shipping address not found');
         }
@@ -100,13 +114,19 @@ export class OrderService {
       for (const itemDto of createOrderDto.items) {
         const product = await this.productService.findOne(itemDto.productId);
         if (!product) {
-          throw new NotFoundException(`Product with ID ${itemDto.productId} not found`);
+          throw new NotFoundException(
+            `Product with ID ${itemDto.productId} not found`,
+          );
         }
 
         // Check inventory
-        const inventory = await this.inventoryService.findByProductId(itemDto.productId);
+        const inventory = await this.inventoryService.findByProductId(
+          itemDto.productId,
+        );
         if (!inventory || inventory.currentStock < itemDto.quantity) {
-          throw new BadRequestException(`Insufficient inventory for product: ${product.name}`);
+          throw new BadRequestException(
+            `Insufficient inventory for product: ${product.name}`,
+          );
         }
 
         // Create order item without null values
@@ -128,7 +148,9 @@ export class OrderService {
       // Calculate totals
       const shippingCost = createOrderDto.shippingCost || 0;
       const taxAmount = createOrderDto.taxAmount || 0;
-      const discountAmount = coupon ? this.calculateDiscount(subtotal, coupon) : 0;
+      const discountAmount = coupon
+        ? this.calculateDiscount(subtotal, coupon)
+        : 0;
       const totalAmount = subtotal + shippingCost + taxAmount - discountAmount;
 
       // Calculate sequence number for order number generation
@@ -159,7 +181,8 @@ export class OrderService {
         paymentStatus: PaymentStatus.PENDING,
         paymentMethod: createOrderDto.paymentMethod,
         shippingStatus: ShippingStatus.NOT_SHIPPED,
-        shippingMethod: createOrderDto.shippingMethod || ShippingMethod.STANDARD,
+        shippingMethod:
+          createOrderDto.shippingMethod || ShippingMethod.STANDARD,
         priority: createOrderDto.priority || OrderPriority.NORMAL,
         orderSource: createOrderDto.orderSource || OrderSource.WEB,
         orderType: createOrderDto.orderType || OrderType.STANDARD,
@@ -190,7 +213,7 @@ export class OrderService {
             quantity: itemDto.quantity,
             reason: `Order ${savedOrder.orderNumber}`,
             referenceId: savedOrder.id,
-          }
+          },
         );
       }
 
@@ -236,13 +259,18 @@ export class OrderService {
     }>('orders', cacheKey);
 
     if (cached) {
-      this.logger.debug(`Cache HIT for order list with query: ${JSON.stringify(queryDto)}`);
+      this.logger.debug(
+        `Cache HIT for order list with query: ${JSON.stringify(queryDto)}`,
+      );
       return cached;
     }
 
-    this.logger.debug(`Cache MISS for order list with query: ${JSON.stringify(queryDto)}`);
+    this.logger.debug(
+      `Cache MISS for order list with query: ${JSON.stringify(queryDto)}`,
+    );
 
-    const queryBuilder = this.orderRepository.createQueryBuilder('order')
+    const queryBuilder = this.orderRepository
+      .createQueryBuilder('order')
       .leftJoinAndSelect('order.customer', 'customer')
       .leftJoinAndSelect('customer.user', 'user')
       .leftJoinAndSelect('order.billingAddress', 'billingAddress')
@@ -253,57 +281,81 @@ export class OrderService {
 
     // Apply filters
     if (queryDto.customerId) {
-      queryBuilder.andWhere('order.customerId = :customerId', { customerId: queryDto.customerId });
+      queryBuilder.andWhere('order.customerId = :customerId', {
+        customerId: queryDto.customerId,
+      });
     }
 
     if (queryDto.status) {
-      queryBuilder.andWhere('order.status = :status', { status: queryDto.status });
+      queryBuilder.andWhere('order.status = :status', {
+        status: queryDto.status,
+      });
     }
 
     if (queryDto.paymentStatus) {
-      queryBuilder.andWhere('order.paymentStatus = :paymentStatus', { paymentStatus: queryDto.paymentStatus });
+      queryBuilder.andWhere('order.paymentStatus = :paymentStatus', {
+        paymentStatus: queryDto.paymentStatus,
+      });
     }
 
     if (queryDto.paymentMethod) {
-      queryBuilder.andWhere('order.paymentMethod = :paymentMethod', { paymentMethod: queryDto.paymentMethod });
+      queryBuilder.andWhere('order.paymentMethod = :paymentMethod', {
+        paymentMethod: queryDto.paymentMethod,
+      });
     }
 
     if (queryDto.shippingStatus) {
-      queryBuilder.andWhere('order.shippingStatus = :shippingStatus', { shippingStatus: queryDto.shippingStatus });
+      queryBuilder.andWhere('order.shippingStatus = :shippingStatus', {
+        shippingStatus: queryDto.shippingStatus,
+      });
     }
 
     if (queryDto.returnStatus) {
-      queryBuilder.andWhere('order.returnStatus = :returnStatus', { returnStatus: queryDto.returnStatus });
+      queryBuilder.andWhere('order.returnStatus = :returnStatus', {
+        returnStatus: queryDto.returnStatus,
+      });
     }
 
     if (queryDto.orderSource) {
-      queryBuilder.andWhere('order.orderSource = :orderSource', { orderSource: queryDto.orderSource });
+      queryBuilder.andWhere('order.orderSource = :orderSource', {
+        orderSource: queryDto.orderSource,
+      });
     }
 
     if (queryDto.priority) {
-      queryBuilder.andWhere('order.priority = :priority', { priority: queryDto.priority });
+      queryBuilder.andWhere('order.priority = :priority', {
+        priority: queryDto.priority,
+      });
     }
 
     if (queryDto.orderDateFrom) {
-      queryBuilder.andWhere('order.createdAt >= :orderDateFrom', { orderDateFrom: queryDto.orderDateFrom });
+      queryBuilder.andWhere('order.createdAt >= :orderDateFrom', {
+        orderDateFrom: queryDto.orderDateFrom,
+      });
     }
 
     if (queryDto.orderDateTo) {
-      queryBuilder.andWhere('order.createdAt <= :orderDateTo', { orderDateTo: queryDto.orderDateTo });
+      queryBuilder.andWhere('order.createdAt <= :orderDateTo', {
+        orderDateTo: queryDto.orderDateTo,
+      });
     }
 
     if (queryDto.minTotal) {
-      queryBuilder.andWhere('order.totalAmount >= :minTotal', { minTotal: queryDto.minTotal });
+      queryBuilder.andWhere('order.totalAmount >= :minTotal', {
+        minTotal: queryDto.minTotal,
+      });
     }
 
     if (queryDto.maxTotal) {
-      queryBuilder.andWhere('order.totalAmount <= :maxTotal', { maxTotal: queryDto.maxTotal });
+      queryBuilder.andWhere('order.totalAmount <= :maxTotal', {
+        maxTotal: queryDto.maxTotal,
+      });
     }
 
     if (queryDto.search) {
       queryBuilder.andWhere(
         '(order.orderNumber ILIKE :search OR user.firstName ILIKE :search OR user.lastName ILIKE :search OR user.email ILIKE :search)',
-        { search: `%${queryDto.search}%` }
+        { search: `%${queryDto.search}%` },
       );
     }
 
@@ -319,7 +371,7 @@ export class OrderService {
     const [orders, total] = await queryBuilder.getManyAndCount();
 
     const result = {
-      data: orders.map(order => this.transformToOrderResponse(order)),
+      data: orders.map((order) => this.transformToOrderResponse(order)),
       total,
       page: page,
       limit: limit,
@@ -336,7 +388,10 @@ export class OrderService {
   async findById(id: number): Promise<OrderResponse> {
     // Check cache first
     const cacheKey = `${ORDER_CACHE_KEYS.SINGLE}:${id}`;
-    const cached = await this.cacheService.get<OrderResponse>('orders', cacheKey);
+    const cached = await this.cacheService.get<OrderResponse>(
+      'orders',
+      cacheKey,
+    );
 
     if (cached) {
       this.logger.debug(`Cache HIT for order ${id}`);
@@ -371,7 +426,10 @@ export class OrderService {
     return response;
   }
 
-  async updateOrder(id: number, updateOrderDto: UpdateOrderDto): Promise<OrderResponse> {
+  async updateOrder(
+    id: number,
+    updateOrderDto: UpdateOrderDto,
+  ): Promise<OrderResponse> {
     const order = await this.orderRepository.findOne({
       where: { id },
       relations: ['customer', 'items'],
@@ -382,9 +440,13 @@ export class OrderService {
     }
 
     // Validate status transitions
-    if (updateOrderDto.status && !isValidOrderStatusTransition(order.status, updateOrderDto.status)) {
+    if (
+      updateOrderDto.status &&
+      !isValidOrderStatusTransition(order.status, updateOrderDto.status)
+    ) {
       throw new BadRequestException(
-        ORDER_MESSAGES.ERROR.INVALID_STATUS_TRANSITION + `: ${order.status} -> ${updateOrderDto.status}`,
+        ORDER_MESSAGES.ERROR.INVALID_STATUS_TRANSITION +
+          `: ${order.status} -> ${updateOrderDto.status}`,
       );
     }
 
@@ -423,7 +485,9 @@ export class OrderService {
     // Use utility function to check if order can be cancelled
     const { canCancel, reason } = canCancelOrder(order.status, order.orderDate);
     if (!canCancel) {
-      throw new BadRequestException(reason || ORDER_MESSAGES.ERROR.CANNOT_CANCEL);
+      throw new BadRequestException(
+        reason || ORDER_MESSAGES.ERROR.CANNOT_CANCEL,
+      );
     }
 
     const queryRunner = this.dataSource.createQueryRunner();
@@ -438,7 +502,9 @@ export class OrderService {
 
       // Release inventory by adding stock back
       for (const item of order.orderItems) {
-        const inventory = await this.inventoryService.findByProductId(item.productId);
+        const inventory = await this.inventoryService.findByProductId(
+          item.productId,
+        );
         await this.inventoryService.adjustStock(inventory.id, {
           type: TransactionType.IN,
           quantity: item.quantity,
@@ -494,7 +560,7 @@ export class OrderService {
     if (paymentStatus === PaymentStatus.PAID) {
       order.status = OrderStatus.PROCESSING;
       order.confirmedAt = new Date();
-      
+
       // Inventory stock was already reduced during order creation
       // No additional inventory operations needed here
     }
@@ -513,10 +579,16 @@ export class OrderService {
       transactionId: transactionId,
     });
 
-    this.logger.log(`Payment status updated for order ${updatedOrder.id} to ${paymentStatus}`);
+    this.logger.log(
+      `Payment status updated for order ${updatedOrder.id} to ${paymentStatus}`,
+    );
   }
 
-  async getOrdersByCustomerId(customerId: number, page: number = 1, limit: number = 10): Promise<{
+  async getOrdersByCustomerId(
+    customerId: number,
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<{
     data: OrderResponse[];
     total: number;
     page: number;
@@ -532,11 +604,15 @@ export class OrderService {
     }>('orders', cacheKey);
 
     if (cached) {
-      this.logger.debug(`Cache HIT for customer ${customerId} orders (page ${page})`);
+      this.logger.debug(
+        `Cache HIT for customer ${customerId} orders (page ${page})`,
+      );
       return cached;
     }
 
-    this.logger.debug(`Cache MISS for customer ${customerId} orders (page ${page})`);
+    this.logger.debug(
+      `Cache MISS for customer ${customerId} orders (page ${page})`,
+    );
 
     const [orders, total] = await this.orderRepository.findAndCount({
       where: { customer: { id: customerId } },
@@ -555,7 +631,7 @@ export class OrderService {
     });
 
     const result = {
-      data: orders.map(order => this.transformToOrderResponse(order)),
+      data: orders.map((order) => this.transformToOrderResponse(order)),
       total,
       page,
       limit,
@@ -571,13 +647,18 @@ export class OrderService {
 
   private async generateOrderNumber(): Promise<string> {
     const date = new Date();
-    const dateStr = date.getFullYear().toString() + 
-                   (date.getMonth() + 1).toString().padStart(2, '0') + 
-                   date.getDate().toString().padStart(2, '0');
-    
+    const dateStr =
+      date.getFullYear().toString() +
+      (date.getMonth() + 1).toString().padStart(2, '0') +
+      date.getDate().toString().padStart(2, '0');
+
     const count = await this.orderRepository.count({
       where: {
-        createdAt: new Date(date.getFullYear(), date.getMonth(), date.getDate()),
+        createdAt: new Date(
+          date.getFullYear(),
+          date.getMonth(),
+          date.getDate(),
+        ),
       },
     });
 
@@ -601,12 +682,14 @@ export class OrderService {
       id: order.id,
       orderNumber: order.orderNumber,
       customerId: order.customerId,
-      customer: order.customer?.user ? {
-        id: order.customer.id,
-        firstName: order.customer.user.firstName,
-        lastName: order.customer.user.lastName,
-        email: order.customer.user.email || '',
-      } : undefined,
+      customer: order.customer?.user
+        ? {
+            id: order.customer.id,
+            firstName: order.customer.user.firstName,
+            lastName: order.customer.user.lastName,
+            email: order.customer.user.email || '',
+          }
+        : undefined,
       subtotal: order.subtotal,
       taxAmount: order.taxAmount,
       shippingAmount: order.shippingAmount,
@@ -638,17 +721,18 @@ export class OrderService {
       coupon: order.coupon,
       shippingAddress: order.shippingAddress,
       billingAddress: order.billingAddress,
-      orderItems: order.orderItems?.map(item => ({
-        id: item.id,
-        productId: item.productId,
-        productName: item.productName,
-        productSku: item.productSku,
-        productImage: item.productImage,
-        quantity: item.quantity,
-        unitPrice: item.unitPrice,
-        totalPrice: item.totalPrice,
-        productAttributes: item.productAttributes,
-      })) || [],
+      orderItems:
+        order.orderItems?.map((item) => ({
+          id: item.id,
+          productId: item.productId,
+          productName: item.productName,
+          productSku: item.productSku,
+          productImage: item.productImage,
+          quantity: item.quantity,
+          unitPrice: item.unitPrice,
+          totalPrice: item.totalPrice,
+          productAttributes: item.productAttributes,
+        })) || [],
       itemCount: order.itemCount,
       processingTimeMinutes: order.processingTimeMinutes,
       deliveryTimeHours: order.deliveryTimeHours,
@@ -660,10 +744,16 @@ export class OrderService {
   /**
    * Invalidate order caches
    */
-  private async invalidateOrderCaches(orderId: number, order: Order): Promise<void> {
+  private async invalidateOrderCaches(
+    orderId: number,
+    order: Order,
+  ): Promise<void> {
     try {
       // Invalidate single order cache
-      await this.cacheService.del('orders', `${ORDER_CACHE_KEYS.SINGLE}:${orderId}`);
+      await this.cacheService.del(
+        'orders',
+        `${ORDER_CACHE_KEYS.SINGLE}:${orderId}`,
+      );
 
       // Invalidate customer orders
       await this.cacheService.deleteByPattern(
@@ -672,18 +762,33 @@ export class OrderService {
       );
 
       // Invalidate order lists
-      await this.cacheService.deleteByPattern('orders', `${ORDER_CACHE_KEYS.LIST}:*`);
+      await this.cacheService.deleteByPattern(
+        'orders',
+        `${ORDER_CACHE_KEYS.LIST}:*`,
+      );
 
       // Invalidate pending orders
-      await this.cacheService.deleteByPattern('orders', `${ORDER_CACHE_KEYS.PENDING}:*`);
+      await this.cacheService.deleteByPattern(
+        'orders',
+        `${ORDER_CACHE_KEYS.PENDING}:*`,
+      );
 
       // Invalidate stats and analytics
-      await this.cacheService.deleteByPattern('orders', `${ORDER_CACHE_KEYS.STATS}:*`);
-      await this.cacheService.deleteByPattern('orders', `${ORDER_CACHE_KEYS.ANALYTICS}:*`);
+      await this.cacheService.deleteByPattern(
+        'orders',
+        `${ORDER_CACHE_KEYS.STATS}:*`,
+      );
+      await this.cacheService.deleteByPattern(
+        'orders',
+        `${ORDER_CACHE_KEYS.ANALYTICS}:*`,
+      );
 
       this.logger.debug(`Invalidated caches for order ${orderId}`);
     } catch (error) {
-      this.logger.error(`Failed to invalidate caches for order ${orderId}:`, error);
+      this.logger.error(
+        `Failed to invalidate caches for order ${orderId}:`,
+        error,
+      );
       // Don't throw - cache failures shouldn't break order operations
     }
   }

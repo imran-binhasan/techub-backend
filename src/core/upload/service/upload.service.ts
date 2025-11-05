@@ -3,7 +3,12 @@ import { CloudinaryService } from './cloudinary.service';
 import { UploadValidationService } from './upload-validation.service';
 import { ImageOptimizationService } from './image-optimization.service';
 import { RedisService } from '../../redis/service/redis.service';
-import { ImageCategory, UploaderType, UploadType, ImageVariant } from '../enum/upload.enum';
+import {
+  ImageCategory,
+  UploaderType,
+  UploadType,
+  ImageVariant,
+} from '../enum/upload.enum';
 import {
   UploadResponseDto,
   ImageVariantDto,
@@ -173,7 +178,10 @@ export class UploadService {
   /**
    * Delete file and all its variants
    */
-  async deleteFile(publicId: string, uploaderId: number): Promise<DeleteResponseDto> {
+  async deleteFile(
+    publicId: string,
+    uploaderId: number,
+  ): Promise<DeleteResponseDto> {
     try {
       // Delete from Cloudinary
       await this.cloudinaryService.deleteFile(publicId);
@@ -185,7 +193,10 @@ export class UploadService {
           await this.cloudinaryService.deleteFile(`${publicId}_${variant}`);
         }
       } catch (error) {
-        this.logger.warn(`Failed to delete some variants for ${publicId}`, error);
+        this.logger.warn(
+          `Failed to delete some variants for ${publicId}`,
+          error,
+        );
       }
 
       this.logger.log(`File deleted: ${publicId} by user:${uploaderId}`);
@@ -205,7 +216,10 @@ export class UploadService {
   /**
    * Generate signed URL for private file access
    */
-  async getSignedUrl(publicId: string, expiresIn: number = 3600): Promise<SignedUrlDto> {
+  async getSignedUrl(
+    publicId: string,
+    expiresIn: number = 3600,
+  ): Promise<SignedUrlDto> {
     try {
       const url = this.cloudinaryService.getSignedUrl(publicId, expiresIn);
       const expiresAt = new Date(Date.now() + expiresIn * 1000);
@@ -224,7 +238,10 @@ export class UploadService {
   /**
    * Get upload folder based on category and uploader type
    */
-  private getUploadFolder(category: ImageCategory, uploaderType: UploaderType): string {
+  private getUploadFolder(
+    category: ImageCategory,
+    uploaderType: UploaderType,
+  ): string {
     const baseFolder = UPLOAD_FOLDERS.images;
     return `${baseFolder}/${category.toLowerCase()}/${uploaderType.toLowerCase()}`;
   }
@@ -232,10 +249,13 @@ export class UploadService {
   /**
    * Check if user has exceeded rate limit
    */
-  private async checkRateLimit(uploaderId: number, uploaderType: UploaderType): Promise<void> {
+  private async checkRateLimit(
+    uploaderId: number,
+    uploaderType: UploaderType,
+  ): Promise<void> {
     const key = `upload:ratelimit:${uploaderType}:${uploaderId}`;
     const limit = this.validationService.getRateLimit(uploaderType);
-    
+
     const count = await this.redisService.get(key);
     const currentCount = count ? parseInt(count, 10) : 0;
 
@@ -247,7 +267,10 @@ export class UploadService {
   /**
    * Increment rate limit counter
    */
-  private async incrementRateLimit(uploaderId: number, uploaderType: UploaderType): Promise<void> {
+  private async incrementRateLimit(
+    uploaderId: number,
+    uploaderType: UploaderType,
+  ): Promise<void> {
     const key = `upload:ratelimit:${uploaderType}:${uploaderId}`;
     const exists = await this.redisService.exists(key);
 

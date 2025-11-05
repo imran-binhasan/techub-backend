@@ -40,10 +40,11 @@ export class ScopePermissionGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const permissionOptions = this.reflector.getAllAndOverride<PermissionOptions>(
-      PERMISSION_KEY,
-      [context.getHandler(), context.getClass()],
-    );
+    const permissionOptions =
+      this.reflector.getAllAndOverride<PermissionOptions>(PERMISSION_KEY, [
+        context.getHandler(),
+        context.getClass(),
+      ]);
 
     // If no permission decorator, allow access (handled by other guards)
     if (!permissionOptions) {

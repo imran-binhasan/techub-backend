@@ -5,7 +5,10 @@ import { RABBITMQ_ERROR_MESSAGES } from '../constants/rabbitmq.constants';
  * Base class for all RabbitMQ-related exceptions
  */
 export class RabbitMQException extends HttpException {
-  constructor(message: string, statusCode: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR) {
+  constructor(
+    message: string,
+    statusCode: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR,
+  ) {
     super(message, statusCode);
   }
 }
